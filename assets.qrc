@@ -1,0 +1,15 @@
+<RCC>
+    <qresource>
+        <file>assets/icons/table-import.png</file>
+        <file>assets/icons/table-export.png</file>
+        <file>assets/icons/cross-circle.png</file>
+        <file>assets/icons/broom.png</file>
+        <file>assets/icons/table-delete-row.png</file>
+        <file>assets/icons/table-select-all.png</file>
+        <file>assets/icons/table.png</file>
+        <file>assets/icons/information.png</file>
+        <file>assets/icons/zone-resize-actual.png</file>
+        <file>assets/icons/control.png</file>
+        <file>assets/icons/control-stop-square.png</file>
+    </qresource>
+</RCC>
