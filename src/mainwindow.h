@@ -44,6 +44,8 @@ private:
     void createWidgets();
     void createStatusBar();
     void createConnections();
+    void loadSettings();
+    void saveSettings();
 
     // Actions
     QAction *m_importUrlsAction;
@@ -82,6 +84,7 @@ private:
     QProgressBar *m_progressBar;
     QStatusBar *m_statusBar;
     QLabel *m_activeThreadsLabel;
+    QString m_settingsFilePath;
 
     QStandardItemModel *m_resultsModel;
 };

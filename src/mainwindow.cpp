@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QDir>
 #include <QFile>
 #include <QFileDialog>
 #include <QIcon>
@@ -17,6 +18,7 @@
 #include <QProgressBar>
 #include <QPushButton>
 #include <QRect>
+#include <QSettings>
 #include <QSpinBox>
 #include <QStandardItem>
 #include <QStandardItemModel>
@@ -39,14 +41,22 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     setWindowTitle(QStringLiteral("URL Checker"));
     resize(800, 600);
 
-    m_columnRatios << 0.5 << 0.2 << 0.1;
+    m_columnRatios << 0.5 << 0.2 << 0.2;
+//     QString applicationDirPath = QApplication::applicationDirPath();
+    QDir applicationDir(QApplication::applicationDirPath());
+//     m_settingsFilePath = applicationDirPath + "settings.ini";
+    m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
+//     qDebug() << m_settingsFilePath;
     createActions();
     createMenuBar();
     createToolBar();
     createWidgets();
     createStatusBar();
     createConnections();
-    centerWindow();
+    if (QFile::exists(m_settingsFilePath))
+        loadSettings();
+    else
+        centerWindow();
 }
 
 MainWindow::~MainWindow()
@@ -215,16 +225,36 @@ void MainWindow::createConnections()
     connect(m_invertSelectionAction, &QAction::triggered, [this] {m_resultsTable->invertSelection();});
 }
 
+void MainWindow::saveSettings()
+{
+    QSettings settings(m_settingsFilePath, QSettings::IniFormat);
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+    settings.setValue("threadsCount", m_threadsSpinBox->value());
+    settings.setValue("timeout", m_timeoutSpinBox->value());
+}
+
+void MainWindow::loadSettings()
+{
+    if (QFile::exists(m_settingsFilePath))
+    {
+        QSettings settings(m_settingsFilePath, QSettings::IniFormat);
+        restoreGeometry(settings.value("geometry").toByteArray());
+        restoreState(settings.value("windowState").toByteArray());
+        m_threadsSpinBox->setValue(settings.value("threadsCount", 1).toInt());
+        m_timeoutSpinBox->setValue(settings.value("timeout", 20).toInt());
+    }
+}
+
 // Events
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    qDebug() << "close event";
+    saveSettings();
     QMainWindow::closeEvent(event);
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    qDebug() << "resize event";
     m_resultsTable->resizeColumns();
     QMainWindow::resizeEvent(event);
 }
