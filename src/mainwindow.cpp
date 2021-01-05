@@ -35,10 +35,11 @@
 #include "config.h"
 #include "mainwindow.h"
 #include "table.h"
+#include "version.h"
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 {
-    setWindowTitle(QStringLiteral("URL Checker"));
+    setWindowTitle(QStringLiteral("URL Checker - %1").arg(APP_VERSION));
     resize(800, 600);
 
     m_columnRatios << 0.5 << 0.2 << 0.2;
