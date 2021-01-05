@@ -24,6 +24,11 @@ Table::~Table()
         delete m_tableView;
 }
 
+void Table::setColumnRatios(QList<float> columnRatios)
+{
+    m_columnRatios = columnRatios;
+}
+
 void Table::resizeColumns()
 {
     for (int i = 0; i < m_tableModel->columnCount(); ++i)

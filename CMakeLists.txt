@@ -13,6 +13,7 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 set(urlchecker_SRC
   src/main.cpp
   src/mainwindow.cpp
+  src/table.cpp
   assets.qrc
 )
 

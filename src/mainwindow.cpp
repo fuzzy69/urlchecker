@@ -9,7 +9,7 @@
 #include <QIODevice>
 #include <QHeaderView>
 #include <QLabel>
-#include <QList>
+// #include <QList>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -32,12 +32,14 @@
 
 #include "config.h"
 #include "mainwindow.h"
+#include "table.h"
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 {
     setWindowTitle(QStringLiteral("URL Checker"));
     resize(800, 600);
 
+    m_columnRatios << 0.5 << 0.2 << 0.1;
     createActions();
     createMenuBar();
     createToolBar();
@@ -68,13 +70,14 @@ void MainWindow::importUrls()
         // TODO: validate URL
         if (line.length() > 0)
         {
-            m_resultsModel->appendRow(
-                QList<QStandardItem*>()
-                << new QStandardItem(line)
-                << new QStandardItem("")
-                << new QStandardItem("")
-                << new QStandardItem("")
-            );
+            m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+//             m_resultsModel->appendRow(
+//                 QList<QStandardItem*>()
+//                 << new QStandardItem(line)
+//                 << new QStandardItem("")
+//                 << new QStandardItem("")
+//                 << new QStandardItem("")
+//             );
         }
     }
 }
@@ -156,12 +159,14 @@ void MainWindow::createWidgets()
     m_mainWidget = new QWidget;
     m_mainLayout = new QVBoxLayout(m_mainWidget);
     m_bottomLayout = new QHBoxLayout;
-    m_resultsTableView = new QTableView;
-    m_resultsModel = new QStandardItemModel;
-    m_resultsModel->setHorizontalHeaderLabels(QStringList() << "URL" << "Result" << "Code" << "Status");
-    m_resultsTableView->horizontalHeader()->setStretchLastSection(true);
-    m_resultsTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_resultsTableView->setModel(m_resultsModel);
+//     m_resultsTableView = new QTableView;
+    m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
+//     m_resultsModel = new QStandardItemModel;
+//     m_resultsModel->setHorizontalHeaderLabels(QStringList() << "URL" << "Result" << "Code" << "Status");
+    m_resultsTable->setColumnRatios(m_columnRatios);
+//     m_resultsTableView->horizontalHeader()->setStretchLastSection(true);
+//     m_resultsTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+//     m_resultsTableView->setModel(m_resultsModel);
     m_threadsLabel = new QLabel("Threads");
     m_timeoutLabel = new QLabel("Timeout (secs)");
     m_threadsSpinBox = new QSpinBox;
@@ -172,7 +177,7 @@ void MainWindow::createWidgets()
     m_stopPushButton = new QPushButton(QIcon(":assets/icons/control-stop-square.png"), "Stop");
     m_progressBar = new QProgressBar;
 
-    m_mainLayout->addWidget( m_resultsTableView );
+    m_mainLayout->addWidget( m_resultsTable->tableView() );
     m_bottomLayout->addWidget(m_threadsLabel);
     m_bottomLayout->addWidget(m_threadsSpinBox);
     m_bottomLayout->addWidget(m_timeoutLabel);
@@ -205,4 +210,21 @@ void MainWindow::createConnections()
         "Kamiyamane</a>"
     );});
     connect(m_importUrlsAction, &QAction::triggered, this, &MainWindow::importUrls);
+    connect(m_clearTableAction, &QAction::triggered, [this] {m_resultsTable->removeAllRows();});
+    connect(m_selectAllAction, &QAction::triggered, [this] {m_resultsTable->selectAll();});
+    connect(m_invertSelectionAction, &QAction::triggered, [this] {m_resultsTable->invertSelection();});
+}
+
+// Events
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    qDebug() << "close event";
+    QMainWindow::closeEvent(event);
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+    qDebug() << "resize event";
+    m_resultsTable->resizeColumns();
+    QMainWindow::resizeEvent(event);
 }

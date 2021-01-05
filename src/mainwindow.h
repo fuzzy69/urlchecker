@@ -4,6 +4,7 @@
 
 class QAction;
 class QLabel;
+// class QList<float>;
 class QMenu;
 class QProgressBar;
 class QPushButton;
@@ -15,6 +16,8 @@ class QToolBar;
 class QHBoxLayout;
 class QVBoxLayout;
 class QWidget;
+
+class Table;
 
 class MainWindow : public QMainWindow
 {
@@ -29,6 +32,9 @@ protected slots:
     void exportResults();
 
 protected:
+    void resizeEvent(QResizeEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
+
     void centerWindow();
 
 private:
@@ -64,7 +70,9 @@ private:
     QWidget *m_mainWidget;
     QVBoxLayout *m_mainLayout;
     QHBoxLayout *m_bottomLayout;
-    QTableView *m_resultsTableView;
+//     QTableView *m_resultsTableView;
+    Table *m_resultsTable;
+    QList<float> m_columnRatios;
     QLabel *m_threadsLabel;
     QLabel *m_timeoutLabel;
     QSpinBox *m_threadsSpinBox;
