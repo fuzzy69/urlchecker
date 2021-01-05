@@ -24,6 +24,10 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected slots:
+    void importUrls();
+    void exportResults();
+
 protected:
     void centerWindow();
 

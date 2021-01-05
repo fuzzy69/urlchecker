@@ -1,10 +1,15 @@
 #include <QAbstractItemView>
 #include <QAction>
 #include <QApplication>
+#include <QDebug>
 #include <QDesktopWidget>
+#include <QFile>
+#include <QFileDialog>
 #include <QIcon>
+#include <QIODevice>
 #include <QHeaderView>
 #include <QLabel>
+#include <QList>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -13,9 +18,11 @@
 #include <QPushButton>
 #include <QRect>
 #include <QSpinBox>
+#include <QStandardItem>
 #include <QStandardItemModel>
 #include <QStatusBar>
 #include <QStringList>
+#include <QTextStream>
 #include <QMainWindow>
 #include <QTableView>
 #include <QToolBar>
@@ -41,6 +48,38 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 }
 
 MainWindow::~MainWindow()
+{
+    
+}
+
+void MainWindow::importUrls()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Import URLs", "/", "Text files (*.txt);;All files (*.*)");
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this, "Failed to open URLs file", file.errorString());
+        return;
+    }
+    QTextStream textStream(&file);
+    while (!textStream.atEnd())
+    {
+        QString line = textStream.readLine().trimmed();
+        // TODO: validate URL
+        if (line.length() > 0)
+        {
+            m_resultsModel->appendRow(
+                QList<QStandardItem*>()
+                << new QStandardItem(line)
+                << new QStandardItem("")
+                << new QStandardItem("")
+                << new QStandardItem("")
+            );
+        }
+    }
+}
+
+void MainWindow::exportResults()
 {
     
 }
@@ -165,4 +204,5 @@ void MainWindow::createConnections()
         "<p>Fugue icons are provided by <a href='http://p.yusukekamiyamane.com/'>Yusuke"
         "Kamiyamane</a>"
     );});
+    connect(m_importUrlsAction, &QAction::triggered, this, &MainWindow::importUrls);
 }
