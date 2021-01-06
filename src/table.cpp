@@ -70,13 +70,18 @@ void Table::appendRow(QStringList cells)
     for (QString cell : cells)
     {
         rowCells << new QStandardItem(cell);
-        qDebug() << cell;
+//         qDebug() << cell;
     }
-    qDebug() << rowCells.count();
+//     qDebug() << rowCells.count();
     m_tableModel->appendRow(rowCells);
 }
 
-bool Table::cell(int rowIndex, int colIndex, QVariant value)
+QVariant Table::cell(int rowIndex, int colIndex) const
+{
+    return m_tableModel->data(m_tableModel->index(rowIndex, colIndex));
+}
+
+bool Table::setCell(int rowIndex, int colIndex, QVariant value)
 {
     return m_tableModel->setData(m_tableModel->index(rowIndex, colIndex), value);
 }
@@ -128,4 +133,9 @@ QString Table::name() const
 QTableView *Table::tableView() const
 {
     return m_tableView;
+}
+
+QStandardItemModel * Table::tableModel() const
+{
+    return m_tableModel;
 }

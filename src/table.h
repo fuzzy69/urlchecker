@@ -20,7 +20,8 @@ public:
     void removeAllRows();
     void row(int rowIndex) const;
     void appendRow(QStringList cells);
-    bool cell(int rowIndex, int colIndex, QVariant value);
+    QVariant cell(int rowIndex, int colIndex) const;
+    bool setCell(int rowIndex, int colIndex, QVariant value);
     void selectAll();
     void selectNone();
     void invertSelection();
@@ -29,6 +30,7 @@ public:
     void name(QString name);
     QString name() const;
     QTableView* tableView() const;
+    QStandardItemModel* tableModel() const;
 signals:
 
 public slots:

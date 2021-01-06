@@ -85,6 +85,7 @@ private:
     QStatusBar *m_statusBar;
     QLabel *m_activeThreadsLabel;
     QString m_settingsFilePath;
+    QString m_lastDirectory;
 
     QStandardItemModel *m_resultsModel;
 };

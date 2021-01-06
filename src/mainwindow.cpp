@@ -33,6 +33,7 @@
 #include <QWidget>
 
 #include "config.h"
+#include "file.h"
 #include "mainwindow.h"
 #include "table.h"
 #include "version.h"
@@ -47,6 +48,7 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     QDir applicationDir(QApplication::applicationDirPath());
 //     m_settingsFilePath = applicationDirPath + "settings.ini";
     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
+    m_lastDirectory = applicationDir.absolutePath(); 
 //     qDebug() << m_settingsFilePath;
     createActions();
     createMenuBar();
@@ -58,6 +60,14 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
         loadSettings();
     else
         centerWindow();
+
+    for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
+    {
+        line = line.trimmed();
+        // TODO: validate URL
+        if (line.length() > 0)
+            m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+    }
 }
 
 MainWindow::~MainWindow()
@@ -67,35 +77,37 @@ MainWindow::~MainWindow()
 
 void MainWindow::importUrls()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, "Import URLs", "/", "Text files (*.txt);;All files (*.*)");
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        QMessageBox::warning(this, "Failed to open URLs file", file.errorString());
+    QString filePath = QFileDialog::getOpenFileName(this, "Import URLs", m_lastDirectory, "Text files (*.txt);;All files (*.*)");
+    if (!QFile::exists(filePath))
         return;
-    }
-    QTextStream textStream(&file);
-    while (!textStream.atEnd())
+    for (auto& line : File::readTextLines(filePath))
     {
-        QString line = textStream.readLine().trimmed();
+        line = line.trimmed();
         // TODO: validate URL
         if (line.length() > 0)
-        {
             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
-//             m_resultsModel->appendRow(
-//                 QList<QStandardItem*>()
-//                 << new QStandardItem(line)
-//                 << new QStandardItem("")
-//                 << new QStandardItem("")
-//                 << new QStandardItem("")
-//             );
-        }
     }
+    m_lastDirectory = QDir(filePath).absolutePath();
 }
 
 void MainWindow::exportResults()
 {
-    
+    QString filePath(QDir(m_lastDirectory).absoluteFilePath("results.txt"));
+    filePath = QFileDialog::getSaveFileName(this, "Export Results", filePath, "Text files (*.txt)");
+    QStringList urls;
+    int columnCount = 4;
+    int rowCount = m_resultsTable->rowCount();
+    for (int i = 0; i < rowCount; ++i)
+    {
+        urls << m_resultsTable->cell(i, 0).toString();
+    }
+    if (urls.length() == 0)
+    {
+        QMessageBox::information(this, "Export Results", "Nothing to export!");
+        return;
+    }
+    File::writeTextFile(filePath, urls);
+    m_lastDirectory = QDir(filePath).absolutePath();
 }
 
 void MainWindow::centerWindow()
@@ -130,6 +142,7 @@ void MainWindow::createMenuBar()
 
     m_fileMenu->addAction(m_importUrlsAction);
     m_fileMenu->addAction(m_exportResultsAction);
+    m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_quitAction);
 
     m_editMenu->addAction(m_clearTableAction);
@@ -221,6 +234,7 @@ void MainWindow::createConnections()
         "Kamiyamane</a>"
     );});
     connect(m_importUrlsAction, &QAction::triggered, this, &MainWindow::importUrls);
+    connect(m_exportResultsAction, &QAction::triggered, this, &MainWindow::exportResults);
     connect(m_clearTableAction, &QAction::triggered, [this] {m_resultsTable->removeAllRows();});
     connect(m_selectAllAction, &QAction::triggered, [this] {m_resultsTable->selectAll();});
     connect(m_invertSelectionAction, &QAction::triggered, [this] {m_resultsTable->invertSelection();});
@@ -233,6 +247,7 @@ void MainWindow::saveSettings()
     settings.setValue("windowState", saveState());
     settings.setValue("threadsCount", m_threadsSpinBox->value());
     settings.setValue("timeout", m_timeoutSpinBox->value());
+    settings.setValue("lastDirectory", m_lastDirectory);
 }
 
 void MainWindow::loadSettings()
@@ -244,6 +259,7 @@ void MainWindow::loadSettings()
         restoreState(settings.value("windowState").toByteArray());
         m_threadsSpinBox->setValue(settings.value("threadsCount", 1).toInt());
         m_timeoutSpinBox->setValue(settings.value("timeout", 20).toInt());
+        m_lastDirectory = settings.value("lastDirectory", m_lastDirectory).toString();
     }
 }
 
