@@ -110,6 +110,36 @@ void MainWindow::exportResults()
     m_lastDirectory = QDir(filePath).absolutePath();
 }
 
+void MainWindow::removeDuplicates()
+{
+    QSet<QString> urls;
+    QSet<int> duplicateIndexes;
+    QString url;
+    for (int i = 0; i < m_resultsTable->rowCount(); ++i)
+    {
+        url = m_resultsTable->cell(i, 0).toString();
+        if (urls.contains(url))
+            duplicateIndexes.insert(i);
+        else
+            urls.insert(url);
+    }
+    for (int i = m_resultsTable->rowCount() - 1; i >= 0; --i)
+    {
+        if (duplicateIndexes.contains(i))
+            m_resultsTable->removeRow(i);
+    }
+}
+
+void MainWindow::removeSelected()
+{
+    QSet<int> selectedIndexes = m_resultsTable->selectedRows();
+    for (int i = m_resultsTable->rowCount() - 1; i >= 0; --i)
+    {
+        if (selectedIndexes.contains(i))
+            m_resultsTable->removeRow(i);
+    }
+}
+
 void MainWindow::centerWindow()
 {
     QRect fg = this->frameGeometry();
@@ -238,6 +268,8 @@ void MainWindow::createConnections()
     connect(m_clearTableAction, &QAction::triggered, [this] {m_resultsTable->removeAllRows();});
     connect(m_selectAllAction, &QAction::triggered, [this] {m_resultsTable->selectAll();});
     connect(m_invertSelectionAction, &QAction::triggered, [this] {m_resultsTable->invertSelection();});
+    connect(m_removeDuplicatesAction, &QAction::triggered, this, &MainWindow::removeDuplicates);
+    connect(m_removeSelectedAction, &QAction::triggered, this, &MainWindow::removeSelected);
 }
 
 void MainWindow::saveSettings()

@@ -30,6 +30,8 @@ public:
 protected slots:
     void importUrls();
     void exportResults();
+    void removeDuplicates();
+    void removeSelected();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

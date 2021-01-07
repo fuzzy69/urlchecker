@@ -1,3 +1,5 @@
+#include <QAbstractItemView>
+#include <QItemSelectionModel>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QTableView>
@@ -14,6 +16,8 @@ Table::Table(QStringList columns, QObject *parent) : m_columns(columns), QObject
     m_tableView->setModel(m_tableModel);
     m_tableView->horizontalHeader()->setStretchLastSection(true);
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_tableView->setSelectionMode(QAbstractItemView::MultiSelection);
 }
 
 Table::~Table()
@@ -50,7 +54,11 @@ bool Table::removeRow(int rowIndex)
 
 void Table::removeAllRows()
 {
-    m_tableModel->clear();
+//     m_tableModel->clear();
+    for (int i = m_tableModel->rowCount() - 1; i >= 0; --i)
+    {
+        m_tableModel->removeRow(i);
+    }
 }
 
 void Table::row(int rowIndex) const
@@ -99,13 +107,39 @@ void Table::selectNone()
 void Table::invertSelection()
 {
     QSet<int> selectedIndexes = selectedRows();
-    selectNone();
-    for (int rowIndex = 0; rowIndex < m_tableModel->rowCount(); ++rowIndex) {
-//        if (!selectedIndexes.contains(rowIndex))
-//        {
-            m_tableView->selectRow(rowIndex);
-            qDebug() << "Select row " << rowIndex;
-//        }
+    if (selectedIndexes.count() == 0)
+    {
+        selectAll();
+    }
+    else if (selectedIndexes.count() == m_tableModel->rowCount())
+    {
+        selectNone();
+    }
+    else
+    {
+        if (selectedIndexes.count() > m_tableModel->rowCount() / 2)
+        {
+            selectNone();
+            for (int i = 0; i < m_tableModel->rowCount(); ++i)
+            {
+                if (!selectedIndexes.contains(i))
+                    m_tableView->selectRow(i);
+            }
+        }
+        else
+        {
+            selectAll();
+            for (int i = 0; i < m_tableModel->rowCount(); ++i)
+            {
+                if (selectedIndexes.contains(i))
+                {
+                    for (int j = 0; j < m_tableModel->columnCount(); ++j)
+                    {
+                        m_tableView->selectionModel()->select(m_tableModel->index(i, j), QItemSelectionModel::Deselect);
+                    }
+                }
+            }
+        }
     }
 }
 
