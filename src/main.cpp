@@ -1,7 +1,7 @@
 #include <QApplication>
 
-#include "config.h"
-#include "mainwindow.h"
+#include "application/config.h"
+#include "application/mainwindow.h"
 
 int main(int argc, char *argv[])
 {
