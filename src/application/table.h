@@ -32,6 +32,7 @@ public:
     QTableView* tableView() const;
     QStandardItemModel* tableModel() const;
 signals:
+    void doubleClicked(const QModelIndex &modelIndex);
 
 public slots:
 

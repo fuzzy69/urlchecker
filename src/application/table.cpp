@@ -18,6 +18,8 @@ Table::Table(QStringList columns, QObject *parent) : m_columns(columns), QObject
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableView->setSelectionMode(QAbstractItemView::MultiSelection);
+
+    connect(m_tableView, &QTableView::doubleClicked, this, &Table::doubleClicked);
 }
 
 Table::~Table()

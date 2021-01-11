@@ -2,6 +2,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QDebug>
+#include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QDir>
 #include <QFile>
@@ -14,6 +15,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QModelIndex>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
@@ -278,6 +280,9 @@ void MainWindow::createConnections()
     connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startChecking);
     connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopChecking);
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::urlChecked);
+    connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
+        QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
+    });
 }
 
 void MainWindow::saveSettings()
