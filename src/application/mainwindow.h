@@ -1,11 +1,17 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QQueue>
+#include <QPair>
+#include <QUrl>
+#include <QList>
 
 class QAction;
 class QLabel;
 // class QList<float>;
 class QMenu;
+class QNetworkAccessManager;
+class QNetworkReply;
 class QProgressBar;
 class QPushButton;
 class QSpinBox;
@@ -16,6 +22,7 @@ class QToolBar;
 class QHBoxLayout;
 class QVBoxLayout;
 class QWidget;
+class QNetworkReply;
 
 class Table;
 
@@ -32,6 +39,10 @@ protected slots:
     void exportResults();
     void removeDuplicates();
     void removeSelected();
+
+    void startChecking();
+    void stopChecking();
+    void urlChecked(QNetworkReply *reply);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -88,6 +99,13 @@ private:
     QLabel *m_activeThreadsLabel;
     QString m_settingsFilePath;
     QString m_lastDirectory;
+//    QQueue<QPair<int, QUrl>> m_dataQueue;
+    QList<QNetworkReply*> m_replies;
+
+    QNetworkAccessManager *m_networkManager;
+    int m_currentRowIndex = 0;
+    bool m_running = false;
+    
 
     QStandardItemModel *m_resultsModel;
 };

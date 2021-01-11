@@ -14,6 +14,10 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
+#include <QPair>
 #include <QPoint>
 #include <QProgressBar>
 #include <QPushButton>
@@ -50,6 +54,7 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
     m_lastDirectory = applicationDir.absolutePath(); 
 //     qDebug() << m_settingsFilePath;
+    m_networkManager = new QNetworkAccessManager(this);
     createActions();
     createMenuBar();
     createToolBar();
@@ -270,6 +275,9 @@ void MainWindow::createConnections()
     connect(m_invertSelectionAction, &QAction::triggered, [this] {m_resultsTable->invertSelection();});
     connect(m_removeDuplicatesAction, &QAction::triggered, this, &MainWindow::removeDuplicates);
     connect(m_removeSelectedAction, &QAction::triggered, this, &MainWindow::removeSelected);
+    connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startChecking);
+    connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopChecking);
+    connect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::urlChecked);
 }
 
 void MainWindow::saveSettings()
@@ -306,4 +314,43 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 {
     m_resultsTable->resizeColumns();
     QMainWindow::resizeEvent(event);
+}
+
+// Slots
+void MainWindow::startChecking()
+{
+    m_currentRowIndex = 0;
+    m_running = true;
+    QNetworkRequest request(m_resultsTable->cell(m_currentRowIndex, 0).toString());
+    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0");
+//     request.setAttribute(QNetworkRequest::User, QVariant(0));
+    QNetworkReply *reply = m_networkManager->head(request);
+}
+
+void MainWindow::stopChecking()
+{
+    m_running = false;
+}
+
+void MainWindow::urlChecked(QNetworkReply* reply)
+{
+    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    QString statusText = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+    qDebug() << reply;
+    qDebug() << m_currentRowIndex;
+    qDebug() << reply->url();
+    m_resultsTable->setCell(m_currentRowIndex, 2, QVariant(statusCode));
+    m_resultsTable->setCell(m_currentRowIndex, 3, QVariant(statusText));
+    reply->deleteLater();
+    if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
+    {
+//         disconnect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::urlChecked);
+        return;
+    }
+    ++m_currentRowIndex;
+    QNetworkRequest request;
+    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0");
+    request.setUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString());
+//     request.setAttribute(QNetworkRequest::User, QVariant(m_currentRowIndex));
+    m_networkManager->head(request);
 }

@@ -9,6 +9,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt5Widgets CONFIG REQUIRED)
+find_package(Qt5Network REQUIRED)
 
 set(urlchecker_SRC
   src/main.cpp
@@ -21,3 +22,4 @@ set(urlchecker_SRC
 add_executable(urlchecker ${urlchecker_SRC})
 
 target_link_libraries(urlchecker Qt5::Widgets)
+target_link_libraries(urlchecker Qt5::Network)
