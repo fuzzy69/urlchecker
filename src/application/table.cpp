@@ -1,4 +1,6 @@
 #include <QAbstractItemView>
+#include <QBrush>
+#include <QColor>
 #include <QItemSelectionModel>
 #include <QStandardItemModel>
 #include <QStandardItem>
@@ -174,4 +176,13 @@ QTableView *Table::tableView() const
 QStandardItemModel * Table::tableModel() const
 {
     return m_tableModel;
+}
+
+void Table::setRowColor(int rowIndex, const QColor& textColor, const QColor &backgroundColor)
+{
+    for (int columnIndex = 0; columnIndex < rowCount(); ++columnIndex)
+    {
+        m_tableModel->setData(m_tableModel->index(rowIndex, columnIndex), QBrush(textColor), Qt::TextColorRole);
+        m_tableModel->setData(m_tableModel->index(rowIndex, columnIndex), QBrush(backgroundColor), Qt::BackgroundColorRole);
+    }
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QColor>
 #include <QObject>
 #include <QStringList>
 
@@ -26,7 +27,7 @@ public:
     void selectNone();
     void invertSelection();
     QSet<int> selectedRows() const;
-
+    void setRowColor(int rowIndex, const QColor &textColor, const QColor &backgroundColor);
     void name(QString name);
     QString name() const;
     QTableView* tableView() const;

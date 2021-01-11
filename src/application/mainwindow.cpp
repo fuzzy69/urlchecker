@@ -56,6 +56,7 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
     m_lastDirectory = applicationDir.absolutePath(); 
 //     qDebug() << m_settingsFilePath;
+//     m_progressBar->setRange(0, 100);
     m_networkManager = new QNetworkAccessManager(this);
     createActions();
     createMenuBar();
@@ -237,6 +238,7 @@ void MainWindow::createWidgets()
     m_startPushButton = new QPushButton(QIcon(":assets/icons/control.png"), "Start");
     m_stopPushButton = new QPushButton(QIcon(":assets/icons/control-stop-square.png"), "Stop");
     m_progressBar = new QProgressBar;
+    m_progressBar->setRange(0, 100);
 
     m_mainLayout->addWidget( m_resultsTable->tableView() );
     m_bottomLayout->addWidget(m_threadsLabel);
@@ -324,6 +326,7 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 // Slots
 void MainWindow::startChecking()
 {
+    m_progressBar->setValue(0);
     m_currentRowIndex = 0;
     m_running = true;
     QNetworkRequest request(m_resultsTable->cell(m_currentRowIndex, 0).toString());
@@ -346,6 +349,18 @@ void MainWindow::urlChecked(QNetworkReply* reply)
     qDebug() << reply->url();
     m_resultsTable->setCell(m_currentRowIndex, 2, QVariant(statusCode));
     m_resultsTable->setCell(m_currentRowIndex, 3, QVariant(statusText));
+    if (statusCode >= 200 && statusCode < 300)
+        m_resultsTable->setRowColor(m_currentRowIndex, QColor(Qt::white), QColor(Qt::darkGreen));
+    else if (statusCode >= 300 && statusCode < 400)
+        m_resultsTable->setRowColor(m_currentRowIndex, QColor(Qt::white), QColor(Qt::darkBlue));
+    else if (statusCode >= 400)
+        m_resultsTable->setRowColor(m_currentRowIndex, QColor(Qt::white), QColor(Qt::darkRed));
+    else
+        m_resultsTable->setRowColor(m_currentRowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
+
+    //     int progress = (float) m_currentRowIndex / m_resultsTable->rowCount() * 100;
+    int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
+    m_progressBar->setValue(currentProgress);
     reply->deleteLater();
     if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
     {
