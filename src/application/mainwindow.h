@@ -63,6 +63,9 @@ private:
     void saveSettings();
     void initRecentUrlFiles();
     void addToRecentUrlFiles(const QString &filePath);
+    void startRequest(const QUrl &url);
+    void updateResultsRow(int rowIndex, const QVariant &statusCode, const QVariant &statusText);
+
 
     // Actions
     QAction *m_importUrlsAction;

@@ -51,17 +51,12 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     resize(800, 600);
 
     m_columnRatios << 0.5 << 0.2 << 0.2;
-//     QString applicationDirPath = QApplication::applicationDirPath();
     QDir applicationDir(QApplication::applicationDirPath());
-//     m_settingsFilePath = applicationDirPath + "settings.ini";
     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
     m_lastDirectory = applicationDir.absolutePath(); 
-//     qDebug() << m_settingsFilePath;
-//     m_progressBar->setRange(0, 100);
     m_networkManager = new QNetworkAccessManager(this);
     m_responseTimeoutTimer = new QTimer(this);
     m_reply = nullptr;
-//     m_responseTimeoutTimer->start();
     m_recentUrlFileActions = QList<QAction*>();
     createActions();
     createMenuBar();
@@ -231,14 +226,8 @@ void MainWindow::createWidgets()
     m_mainWidget = new QWidget;
     m_mainLayout = new QVBoxLayout(m_mainWidget);
     m_bottomLayout = new QHBoxLayout;
-//     m_resultsTableView = new QTableView;
     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
-//     m_resultsModel = new QStandardItemModel;
-//     m_resultsModel->setHorizontalHeaderLabels(QStringList() << "URL" << "Result" << "Code" << "Status");
     m_resultsTable->setColumnRatios(m_columnRatios);
-//     m_resultsTableView->horizontalHeader()->setStretchLastSection(true);
-//     m_resultsTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-//     m_resultsTableView->setModel(m_resultsModel);
     m_threadsLabel = new QLabel("Threads");
     m_timeoutLabel = new QLabel("Timeout (secs)");
     m_threadsSpinBox = new QSpinBox;
@@ -340,12 +329,7 @@ void MainWindow::startChecking()
     m_progressBar->setValue(0);
     m_currentRowIndex = 0;
     m_running = true;
-    QNetworkRequest request(m_resultsTable->cell(m_currentRowIndex, 0).toString());
-    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0");
-//     request.setAttribute(QNetworkRequest::User, QVariant(0));
-//     QNetworkReply *reply = m_networkManager->head(request);
-    m_reply = m_networkManager->head(request);
-    m_responseTimeoutTimer->start(m_timeoutSpinBox->value() * 1000);
+    startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
 }
 
 void MainWindow::stopChecking()
@@ -357,23 +341,10 @@ void MainWindow::urlChecked(QNetworkReply* reply)
 {
     if (m_responseTimeoutTimer->isActive())
         m_responseTimeoutTimer->stop();
-    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    QString statusText = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
     qDebug() << reply;
     qDebug() << m_currentRowIndex;
     qDebug() << reply->url();
-    m_resultsTable->setCell(m_currentRowIndex, 2, QVariant(statusCode));
-    m_resultsTable->setCell(m_currentRowIndex, 3, QVariant(statusText));
-    if (statusCode >= 200 && statusCode < 300)
-        m_resultsTable->setRowColor(m_currentRowIndex, QColor(Qt::white), QColor(Qt::darkGreen));
-    else if (statusCode >= 300 && statusCode < 400)
-        m_resultsTable->setRowColor(m_currentRowIndex, QColor(Qt::white), QColor(Qt::darkBlue));
-    else if (statusCode >= 400)
-        m_resultsTable->setRowColor(m_currentRowIndex, QColor(Qt::white), QColor(Qt::darkRed));
-    else
-        m_resultsTable->setRowColor(m_currentRowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
-
-    //     int progress = (float) m_currentRowIndex / m_resultsTable->rowCount() * 100;
+    updateResultsRow(m_currentRowIndex, reply->attribute(QNetworkRequest::HttpStatusCodeAttribute), reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute));
     int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
     m_progressBar->setValue(currentProgress);
     reply->deleteLater();
@@ -383,12 +354,7 @@ void MainWindow::urlChecked(QNetworkReply* reply)
         return;
     }
     ++m_currentRowIndex;
-    QNetworkRequest request;
-    request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0");
-    request.setUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString());
-//     request.setAttribute(QNetworkRequest::User, QVariant(m_currentRowIndex));
-    m_reply = m_networkManager->head(request);
-    m_responseTimeoutTimer->start(m_timeoutSpinBox->value());
+    startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
 }
 
 void MainWindow::initRecentUrlFiles()
@@ -408,4 +374,27 @@ void MainWindow::addToRecentUrlFiles(const QString& filePath)
 void MainWindow::onReplyTimeout()
 {
     m_reply->abort();
+}
+
+void MainWindow::startRequest(const QUrl &url)
+{
+    QNetworkRequest request(url);
+    request.setRawHeader("User-Agent", USER_AGENT);
+    m_reply = m_networkManager->head(request);
+    m_responseTimeoutTimer->start(m_timeoutSpinBox->value() * 1000);
+}
+
+void MainWindow::updateResultsRow(int rowIndex, const QVariant& statusCode, const QVariant& statusText)
+{
+    m_resultsTable->setCell(rowIndex, 2, QVariant(statusCode));
+    m_resultsTable->setCell(rowIndex, 3, QVariant(statusText));
+    int _statusCode = statusCode.toInt();
+    if (_statusCode >= 200 && _statusCode < 300)
+        m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkGreen));
+    else if (_statusCode >= 300 && _statusCode < 400)
+        m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkBlue));
+    else if (_statusCode >= 400)
+        m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkRed));
+    else
+        m_resultsTable->setRowColor(rowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
 }
