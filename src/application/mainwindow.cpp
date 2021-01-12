@@ -31,6 +31,7 @@
 #include <QStatusBar>
 #include <QStringList>
 #include <QTextStream>
+#include <QTimer>
 #include <QMainWindow>
 #include <QTableView>
 #include <QToolBar>
@@ -58,6 +59,10 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 //     qDebug() << m_settingsFilePath;
 //     m_progressBar->setRange(0, 100);
     m_networkManager = new QNetworkAccessManager(this);
+    m_responseTimeoutTimer = new QTimer(this);
+    m_reply = nullptr;
+//     m_responseTimeoutTimer->start();
+    m_recentUrlFileActions = QList<QAction*>();
     createActions();
     createMenuBar();
     createToolBar();
@@ -68,7 +73,7 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
         loadSettings();
     else
         centerWindow();
-
+    initRecentUrlFiles();
     for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
     {
         line = line.trimmed();
@@ -96,6 +101,7 @@ void MainWindow::importUrls()
             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
+    addToRecentUrlFiles(filePath);
 }
 
 void MainWindow::exportResults()
@@ -159,7 +165,9 @@ void MainWindow::centerWindow()
 void MainWindow::createActions()
 {
     m_importUrlsAction = new QAction(QIcon(":assets/icons/table-import.png"), "Import URLs", this);
-    m_exportResultsAction= new QAction(QIcon(":assets/icons/table-export.png"), "Export Results", this);
+    m_recentUrlFilesMenu = new QMenu("Open Recent URL File", this);
+    m_clearRecentUrlFilesAction = new QAction(QIcon(":assets/icons/broom.png"), "Clear List", this);
+    m_exportResultsAction = new QAction(QIcon(":assets/icons/table-export.png"), "Export Results", this);
     m_quitAction = new QAction(QIcon(":assets/icons/cross-circle.png"), "Quit", this);
     m_clearTableAction = new QAction(QIcon(":assets/icons/broom.png"), "Clear Results Table", this);
     m_removeDuplicatesAction = new QAction(QIcon(":assets/icons/table-delete-row.png"), "Remove Duplicates", this);
@@ -179,6 +187,8 @@ void MainWindow::createMenuBar()
     m_helpMenu = menuBar()->addMenu(tr("Help"));
 
     m_fileMenu->addAction(m_importUrlsAction);
+    m_fileMenu->addMenu(m_recentUrlFilesMenu);
+    m_recentUrlFilesMenu->addAction(m_clearRecentUrlFilesAction);
     m_fileMenu->addAction(m_exportResultsAction);
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_quitAction);
@@ -285,6 +295,7 @@ void MainWindow::createConnections()
     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
     });
+    connect(m_responseTimeoutTimer, &QTimer::timeout, this, &MainWindow::onReplyTimeout);
 }
 
 void MainWindow::saveSettings()
@@ -332,7 +343,9 @@ void MainWindow::startChecking()
     QNetworkRequest request(m_resultsTable->cell(m_currentRowIndex, 0).toString());
     request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0");
 //     request.setAttribute(QNetworkRequest::User, QVariant(0));
-    QNetworkReply *reply = m_networkManager->head(request);
+//     QNetworkReply *reply = m_networkManager->head(request);
+    m_reply = m_networkManager->head(request);
+    m_responseTimeoutTimer->start(m_timeoutSpinBox->value() * 1000);
 }
 
 void MainWindow::stopChecking()
@@ -342,6 +355,8 @@ void MainWindow::stopChecking()
 
 void MainWindow::urlChecked(QNetworkReply* reply)
 {
+    if (m_responseTimeoutTimer->isActive())
+        m_responseTimeoutTimer->stop();
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     QString statusText = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
     qDebug() << reply;
@@ -372,5 +387,25 @@ void MainWindow::urlChecked(QNetworkReply* reply)
     request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0");
     request.setUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString());
 //     request.setAttribute(QNetworkRequest::User, QVariant(m_currentRowIndex));
-    m_networkManager->head(request);
+    m_reply = m_networkManager->head(request);
+    m_responseTimeoutTimer->start(m_timeoutSpinBox->value());
+}
+
+void MainWindow::initRecentUrlFiles()
+{
+    for (int i = 0; i < m_maxRecentFiles; ++i)
+    {
+        m_recentUrlFileActions.append(new QAction("xxx", this));
+        m_recentUrlFilesMenu->addAction(new QAction("xxx", this));
+    }
+}
+
+void MainWindow::addToRecentUrlFiles(const QString& filePath)
+{
+    m_recentUrlFileActions.append(new QAction(filePath, this));
+}
+
+void MainWindow::onReplyTimeout()
+{
+    m_reply->abort();
 }

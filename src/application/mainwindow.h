@@ -18,6 +18,7 @@ class QSpinBox;
 class QStandardItemModel;
 class QStatusBar;
 class QTableView;
+class QTimer;
 class QToolBar;
 class QHBoxLayout;
 class QVBoxLayout;
@@ -43,6 +44,7 @@ protected slots:
     void startChecking();
     void stopChecking();
     void urlChecked(QNetworkReply *reply);
+    void onReplyTimeout();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -59,9 +61,13 @@ private:
     void createConnections();
     void loadSettings();
     void saveSettings();
+    void initRecentUrlFiles();
+    void addToRecentUrlFiles(const QString &filePath);
 
     // Actions
     QAction *m_importUrlsAction;
+    QMenu *m_recentUrlFilesMenu;
+    QAction *m_clearRecentUrlFilesAction;
     QAction *m_exportResultsAction;
     QAction *m_quitAction;
     QAction *m_clearTableAction;
@@ -101,11 +107,14 @@ private:
     QString m_lastDirectory;
 //    QQueue<QPair<int, QUrl>> m_dataQueue;
     QList<QNetworkReply*> m_replies;
+    QNetworkReply *m_reply;
 
     QNetworkAccessManager *m_networkManager;
     int m_currentRowIndex = 0;
     bool m_running = false;
-    
+    int m_maxRecentFiles = 5;
+    QList<QAction*> m_recentUrlFileActions;
 
     QStandardItemModel *m_resultsModel;
+    QTimer *m_responseTimeoutTimer;
 };
