@@ -16,6 +16,8 @@ set(urlchecker_SRC
   src/application/mainwindow.cpp
   src/application/table.cpp
   src/application/file.cpp
+  src/application/httpclient.cpp
+  src/application/recentfiles.cpp
   assets.qrc
 )
 
