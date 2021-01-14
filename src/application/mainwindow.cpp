@@ -28,6 +28,7 @@
 #include <QSpinBox>
 #include <QStandardItem>
 #include <QStandardItemModel>
+#include <QStackedWidget>
 #include <QStatusBar>
 #include <QStringList>
 #include <QTextStream>
@@ -41,9 +42,13 @@
 
 #include "config.h"
 #include "file.h"
+#include "httpclient.h"
 #include "mainwindow.h"
 #include "table.h"
 #include "version.h"
+#include "recentfiles.h"
+#include "sidebar.h"
+
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 {
@@ -55,7 +60,9 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
     m_lastDirectory = applicationDir.absolutePath(); 
     m_networkManager = new QNetworkAccessManager(this);
+    m_httpClient = new HttpClient(this);
     m_responseTimeoutTimer = new QTimer(this);
+    m_recentFiles = new RecentFiles(5, this);
     m_reply = nullptr;
     m_recentUrlFileActions = QList<QAction*>();
     createActions();
@@ -64,6 +71,10 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     createWidgets();
     createStatusBar();
     createConnections();
+
+    m_httpClient->setTimeout(m_timeoutSpinBox->value());
+    m_httpClient->setUserAgent(QString(USER_AGENT));
+
     if (QFile::exists(m_settingsFilePath))
         loadSettings();
     else
@@ -159,6 +170,13 @@ void MainWindow::centerWindow()
 
 void MainWindow::createActions()
 {
+    // Sidebar
+    m_projectAction = new QAction(QIcon(":assets/icons/network-clouds.png"), "Projects", this);
+    m_settingsAction = new QAction(QIcon(":assets/icons/gear.png"), "Settings", this);
+    m_proxiesAction = new QAction(QIcon(":assets/icons/mask.png"), "Proxies", this);
+    m_helpAction = new QAction(QIcon(":assets/icons/question.png"), "Help", this);
+
+
     m_importUrlsAction = new QAction(QIcon(":assets/icons/table-import.png"), "Import URLs", this);
     m_recentUrlFilesMenu = new QMenu("Open Recent URL File", this);
     m_clearRecentUrlFilesAction = new QAction(QIcon(":assets/icons/broom.png"), "Clear List", this);
@@ -223,8 +241,46 @@ void MainWindow::createToolBar()
 
 void MainWindow::createWidgets()
 {
-    m_mainWidget = new QWidget;
-    m_mainLayout = new QVBoxLayout(m_mainWidget);
+//     m_mainWidget = new QWidget;
+    m_centralWidget = new QWidget;
+    m_mainStackedWidget = new QStackedWidget;
+
+    m_centralLayout = new QHBoxLayout(m_centralWidget);
+//     m_centralLayout = new QHBoxLayout(m_mainStackedWidget);
+    m_sideBar = new SideBar;
+
+//     auto actionIcons = QStringList({":assets/icons/control.png", ":assets/icons/control.png", ":assets/icons/control.png", ":assets/icons/control.png"});
+//     for (auto& icon : actionIcons) {
+//         m_sideBar->addAction(QString("Action"), QIcon(QString(icon)));
+//     }
+    m_sideBar->addAction(m_projectAction);
+    m_sideBar->addAction(m_settingsAction);
+    m_sideBar->addAction(m_proxiesAction);
+    m_sideBar->addAction(m_helpAction);
+
+    m_projectPageWidget = new QWidget;
+    m_projectPageLayout = new QVBoxLayout(m_projectPageWidget);
+    m_settingsPageWidget = new QWidget;
+    m_settingsPageLayout = new QVBoxLayout(m_settingsPageWidget);
+    m_proxiesPageWidget = new QWidget;
+    m_proxiesPageLayout = new QVBoxLayout(m_proxiesPageWidget);
+    m_helpPageWidget = new QWidget;
+    m_helpPageLayout = new QVBoxLayout(m_helpPageWidget);
+
+    m_centralLayout->addWidget(m_sideBar);
+    m_centralLayout->addWidget(m_mainStackedWidget);
+
+
+    m_mainStackedWidget->addWidget(m_projectPageWidget);
+    m_mainStackedWidget->addWidget(m_settingsPageWidget);
+    m_mainStackedWidget->addWidget(m_proxiesPageWidget);
+    m_mainStackedWidget->addWidget(m_helpPageWidget);
+
+
+//     m_mainLayout = new QVBoxLayout;
+//     m_centralLayout->addLayout(m_mainLayout);
+    
+//     m_mainLayout = new QVBoxLayout(m_mainWidget);
     m_bottomLayout = new QHBoxLayout;
     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
     m_resultsTable->setColumnRatios(m_columnRatios);
@@ -239,17 +295,22 @@ void MainWindow::createWidgets()
     m_progressBar = new QProgressBar;
     m_progressBar->setRange(0, 100);
 
-    m_mainLayout->addWidget( m_resultsTable->tableView() );
-    m_bottomLayout->addWidget(m_threadsLabel);
-    m_bottomLayout->addWidget(m_threadsSpinBox);
-    m_bottomLayout->addWidget(m_timeoutLabel);
-    m_bottomLayout->addWidget(m_timeoutSpinBox);
+
+
+
+    m_projectPageLayout->addWidget( m_resultsTable->tableView() );
     m_bottomLayout->addStretch(0);
     m_bottomLayout->addWidget(m_startPushButton);
     m_bottomLayout->addWidget(m_stopPushButton);
-    m_mainLayout->addLayout(m_bottomLayout);
-    m_mainLayout->addWidget(m_progressBar);
-    setCentralWidget(m_mainWidget);
+    m_projectPageLayout->addLayout(m_bottomLayout);
+    m_projectPageLayout->addWidget(m_progressBar);
+
+    m_settingsPageLayout->addWidget(m_threadsLabel);
+    m_settingsPageLayout->addWidget(m_threadsSpinBox);
+    m_settingsPageLayout->addWidget(m_timeoutLabel);
+    m_settingsPageLayout->addWidget(m_timeoutSpinBox);
+    m_settingsPageLayout->addStretch(0);
+    setCentralWidget(m_centralWidget);
 }
 
 void MainWindow::createStatusBar()
@@ -263,6 +324,13 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createConnections()
 {
+    connect(m_projectAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
+    connect(m_settingsAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
+    connect(m_proxiesAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
+    connect(m_helpAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
+
+
+
     connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
     connect(m_quitAction, &QAction::triggered, this, &MainWindow::close);
     connect(m_aboutAction, &QAction::triggered, [&] {QMessageBox::about(this,
@@ -280,11 +348,15 @@ void MainWindow::createConnections()
     connect(m_removeSelectedAction, &QAction::triggered, this, &MainWindow::removeSelected);
     connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startChecking);
     connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopChecking);
-    connect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::urlChecked);
     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
     });
-    connect(m_responseTimeoutTimer, &QTimer::timeout, this, &MainWindow::onReplyTimeout);
+    connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::onSelectedRecentUrlFile);
+
+//     connect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::urlChecked);
+//     connect(m_responseTimeoutTimer, &QTimer::timeout, this, &MainWindow::onReplyTimeout);
+    connect(m_httpClient, &HttpClient::replyFinished, this, &MainWindow::urlChecked2);
+//     connect(m_httpClient, &HttpClient::replyTimeout, this, &MainWindow::onReplyTimeout);
 }
 
 void MainWindow::saveSettings()
@@ -326,14 +398,19 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 // Slots
 void MainWindow::startChecking()
 {
-    m_progressBar->setValue(0);
-    m_currentRowIndex = 0;
-    m_running = true;
-    startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
+    if (m_resultsTable->rowCount() > 0)
+    {
+        m_progressBar->setValue(0);
+        m_currentRowIndex = 0;
+        m_running = true;
+    //     startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
+        m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
+    }
 }
 
 void MainWindow::stopChecking()
 {
+//     m_recentFiles->addFile("xxx");
     m_running = false;
 }
 
@@ -354,16 +431,41 @@ void MainWindow::urlChecked(QNetworkReply* reply)
         return;
     }
     ++m_currentRowIndex;
-    startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
+//     startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
+    m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
+}
+
+void MainWindow::urlChecked2(int statusCode, const QString& statusText, const QString& text)
+{
+    updateResultsRow(m_currentRowIndex, statusCode, statusText);
+    int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
+    m_progressBar->setValue(currentProgress);
+    if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
+    {
+        return;
+    }
+    ++m_currentRowIndex;
+    m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
 }
 
 void MainWindow::initRecentUrlFiles()
 {
+    for (QAction *action : m_recentFiles->actions())
+    {
+        m_recentUrlFilesMenu->addAction(action);
+    }
+/*
+    return;
+    for (int i = 0; i < m_recentFiles->recentFilesCount(); ++i)
+    {
+//         m_recentUrlFileActions.append(new QAction("xxx", this));
+        m_recentUrlFilesMenu->addAction(new QAction("xxx", this));
+    }
     for (int i = 0; i < m_maxRecentFiles; ++i)
     {
         m_recentUrlFileActions.append(new QAction("xxx", this));
         m_recentUrlFilesMenu->addAction(new QAction("xxx", this));
-    }
+    }*/
 }
 
 void MainWindow::addToRecentUrlFiles(const QString& filePath)
@@ -397,4 +499,9 @@ void MainWindow::updateResultsRow(int rowIndex, const QVariant& statusCode, cons
         m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkRed));
     else
         m_resultsTable->setRowColor(rowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
+}
+
+void MainWindow::onSelectedRecentUrlFile(const QString& filePath)
+{
+    qDebug() << "open recent file" << filePath;
 }

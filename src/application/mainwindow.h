@@ -15,6 +15,7 @@ class QNetworkReply;
 class QProgressBar;
 class QPushButton;
 class QSpinBox;
+class QStackedWidget;
 class QStandardItemModel;
 class QStatusBar;
 class QTableView;
@@ -25,6 +26,9 @@ class QVBoxLayout;
 class QWidget;
 class QNetworkReply;
 
+class HttpClient;
+class RecentFiles;
+class SideBar;
 class Table;
 
 class MainWindow : public QMainWindow
@@ -44,7 +48,9 @@ protected slots:
     void startChecking();
     void stopChecking();
     void urlChecked(QNetworkReply *reply);
+    void urlChecked2(int statusCode, const QString &statusText, const QString &text);
     void onReplyTimeout();
+    void onSelectedRecentUrlFile(const QString &filePath);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -68,6 +74,11 @@ private:
 
 
     // Actions
+    QAction *m_projectAction;
+    QAction *m_proxiesAction;
+    QAction *m_settingsAction;
+    QAction *m_helpAction;
+
     QAction *m_importUrlsAction;
     QMenu *m_recentUrlFilesMenu;
     QAction *m_clearRecentUrlFilesAction;
@@ -91,7 +102,20 @@ private:
     // ToolBar
     QToolBar *m_toolBar;
 
-    QWidget *m_mainWidget;
+    QWidget *m_centralWidget;
+//     QWidget *m_mainWidget;
+    QStackedWidget *m_mainStackedWidget;
+    QWidget *m_projectPageWidget;
+    QWidget *m_settingsPageWidget;
+    QWidget *m_proxiesPageWidget;
+    QWidget *m_helpPageWidget;
+
+    QVBoxLayout *m_projectPageLayout;
+    QVBoxLayout *m_settingsPageLayout;
+    QVBoxLayout *m_proxiesPageLayout;
+    QVBoxLayout *m_helpPageLayout;
+
+    QHBoxLayout *m_centralLayout;
     QVBoxLayout *m_mainLayout;
     QHBoxLayout *m_bottomLayout;
 //     QTableView *m_resultsTableView;
@@ -120,4 +144,8 @@ private:
 
     QStandardItemModel *m_resultsModel;
     QTimer *m_responseTimeoutTimer;
+
+    HttpClient *m_httpClient;
+    RecentFiles *m_recentFiles;
+    SideBar *m_sideBar;
 };
