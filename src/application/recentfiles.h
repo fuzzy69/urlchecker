@@ -3,23 +3,26 @@
 #include <QList>
 #include <QObject>
 #include <QString>
-// #include <QList>
 
 class QAction;
 
+/// Manages recent files actions list
 class RecentFiles : public QObject
 {
     Q_OBJECT
     
 public:
     explicit RecentFiles(int maxRecentFiles, QObject *parent = nullptr);
-//     ~RecentFiles();
 
+    /// Adds a recent file path
     void addFile(const QString &filePath);
+    /// Returns collection of pointers to actions
     QList<QAction*> actions();
+    /// Returns number of stored recent files
     int count() const;
 
 signals:
+    /// Triggered when recent file action is clicked. Sends file path stored in clicked action instance
     void filePathSelected(const QString &filePath);
 
 private:

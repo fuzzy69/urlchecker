@@ -29,6 +29,11 @@ QString File::readTextFile(const QString &filePath)
     return content;
 }
 
+/**
+* \brief Return random pointer from built-in array
+* \param array The built-in array with elements
+* \return Pointer to random element in array
+*/
 QStringList File::readTextLines(const QString &filePath)
 {
     QStringList lines;
