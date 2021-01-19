@@ -5,22 +5,19 @@
 
 class QAction;
 
-/**
- * Source https://stackoverflow.com/a/44327462
- */
+/// Sidebar widget with user defined actions
+/// Based on https://stackoverflow.com/a/44327462
 class SideBar : public QWidget
 {
     Q_OBJECT
 public:
     explicit SideBar(QWidget *parent = nullptr);
-//    void addAction(QAction* action) override;
+    /// Adds an action to sidebar
     void addAction(QAction* action);
+    /// Returns pointer to a created action from given text and icon
     QAction* addAction(const QString& text, const QIcon& icon);
     QSize minimumSizeHint() const;
 
-signals:
-
-public slots:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

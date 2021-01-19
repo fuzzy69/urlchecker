@@ -8,6 +8,11 @@
 #include "sidebar.h"
 
 #define ACTION_HEIGHT 80
+#define ACTION_DEFAULT_COLOR QColor(100, 100, 100)
+#define ACTION_HOVER_COLOR QColor(150, 150, 150)
+#define ACTION_SELECTED_COLOR QColor(35, 35, 35)
+#define ACTION_TEXT_COLOR QColor(255, 255, 255)
+
 
 SideBar::SideBar(QWidget *parent) : QWidget(parent),
     _checkedAction(nullptr), _hoveredAction(nullptr)
@@ -18,17 +23,15 @@ SideBar::SideBar(QWidget *parent) : QWidget(parent),
 void SideBar::addAction(QAction *action)
 {
     _actions.push_back(action);
-    action->setCheckable(true);
+//     action->setCheckable(true);
     update();
 }
 
 QAction *SideBar::addAction(const QString &text, const QIcon &icon)
 {
     QAction* action = new QAction(icon, text, this);
-    action->setCheckable(true);
+//     action->setCheckable(true);
     _actions.push_back(action);
-    qDebug() << text << " " << icon.name();
-    //
     update();
     return action;
 }
@@ -44,17 +47,17 @@ void SideBar::paintEvent(QPaintEvent *event)
     QFont textFont(painter.font());
     textFont.setFamily("Helvetica Neue");
     painter.setFont(textFont);
-    painter.fillRect(rect(), QColor(100, 100, 100));
+    painter.fillRect(rect(), ACTION_DEFAULT_COLOR);
     int actionY = 0;
     for (auto action : _actions) {
         QRect actionRect(0, actionY, event->rect().width(), ACTION_HEIGHT);
-        if (action->isChecked()) {
-            painter.fillRect(actionRect, QColor(35, 35, 35));
+        if (action == _checkedAction) {
+            painter.fillRect(actionRect, ACTION_SELECTED_COLOR);
         }
-        if (action == _hoveredAction) {
-            painter.fillRect(actionRect, QColor(150, 150, 150));
+        else if (action == _hoveredAction) {
+            painter.fillRect(actionRect, ACTION_HOVER_COLOR);
         }
-        painter.setPen(QColor(255, 255, 255));
+        painter.setPen(ACTION_TEXT_COLOR);
         QSize actionTextSize = painter.fontMetrics().size(Qt::TextSingleLine, action->text());
         QRect actionTextRect(QPoint(actionRect.width() / 2 - actionTextSize.width() / 2, actionRect.bottom() - actionTextSize.height() - 5), actionTextSize);
         painter.drawText(actionTextRect, Qt::AlignCenter, action->text());
@@ -68,12 +71,14 @@ void SideBar::paintEvent(QPaintEvent *event)
 void SideBar::mouseMoveEvent(QMouseEvent *event)
 {
     QAction* action = actionAt(event->pos());
-    if (action == nullptr) {
+    if (action == nullptr)
+    {
         _hoveredAction = nullptr;
         update();
-        return;    QAction* action = actionAt(event->pos());
+        return;
     }
-    if (action == _hoveredAction || action->isChecked())
+//     if (action == _hoveredAction || action->isChecked())
+    if (action == _hoveredAction)
     {
         return;
     }
@@ -85,11 +90,11 @@ void SideBar::mouseMoveEvent(QMouseEvent *event)
 void SideBar::mousePressEvent(QMouseEvent *event)
 {
     QAction* action = actionAt(event->pos());
-    emit action->trigger();
     if (action == _checkedAction)
         return;
     _checkedAction = action;
     update();
+    emit action->trigger();
     QWidget::mousePressEvent(event);
 }
 
