@@ -19,6 +19,7 @@ class QStackedWidget;
 class QStandardItemModel;
 class QStatusBar;
 class QTableView;
+// class QTextEdit;
 class QTimer;
 class QToolBar;
 class QHBoxLayout;
@@ -28,6 +29,7 @@ class QNetworkReply;
 
 class HttpClient;
 class RecentFiles;
+class ProxiesWidget;
 class SideBar;
 class Table;
 
@@ -109,6 +111,9 @@ private:
     QWidget *m_settingsPageWidget;
     QWidget *m_proxiesPageWidget;
     QWidget *m_helpPageWidget;
+
+//     QTextEdit *m_proxiesTextEdit;
+    ProxiesWidget *m_proxiesTextEdit;
 
     QVBoxLayout *m_projectPageLayout;
     QVBoxLayout *m_settingsPageLayout;

@@ -19,6 +19,8 @@ set(urlchecker_SRC
   src/application/httpclient.cpp
   src/application/recentfiles.cpp
   src/application/sidebar.cpp
+  src/application/useragents.cpp
+  src/application/proxieswidget.cpp
   assets.qrc
 )
 

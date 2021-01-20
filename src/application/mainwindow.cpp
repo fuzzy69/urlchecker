@@ -32,6 +32,7 @@
 #include <QStatusBar>
 #include <QStringList>
 #include <QTextStream>
+#include <QTextEdit>
 #include <QTimer>
 #include <QMainWindow>
 #include <QTableView>
@@ -48,6 +49,7 @@
 #include "version.h"
 #include "recentfiles.h"
 #include "sidebar.h"
+#include "proxieswidget.h"
 
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
@@ -281,6 +283,7 @@ void MainWindow::createWidgets()
 //     m_centralLayout->addLayout(m_mainLayout);
     
 //     m_mainLayout = new QVBoxLayout(m_mainWidget);
+    //
     m_bottomLayout = new QHBoxLayout;
     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
     m_resultsTable->setColumnRatios(m_columnRatios);
@@ -295,8 +298,8 @@ void MainWindow::createWidgets()
     m_progressBar = new QProgressBar;
     m_progressBar->setRange(0, 100);
 
-
-
+    m_proxiesTextEdit = new ProxiesWidget;
+    m_proxiesTextEdit->setReadOnly(true);
 
     m_projectPageLayout->addWidget( m_resultsTable->tableView() );
     m_bottomLayout->addStretch(0);
@@ -310,6 +313,9 @@ void MainWindow::createWidgets()
     m_settingsPageLayout->addWidget(m_timeoutLabel);
     m_settingsPageLayout->addWidget(m_timeoutSpinBox);
     m_settingsPageLayout->addStretch(0);
+
+    m_proxiesPageLayout->addWidget(m_proxiesTextEdit);
+
     setCentralWidget(m_centralWidget);
 }
 
