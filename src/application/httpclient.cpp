@@ -40,6 +40,8 @@ void HttpClient::onReplyTimeout()
 
 void HttpClient::onReplyFinished(QNetworkReply* reply)
 {
+    if (m_replyTimeoutTimer->isActive())
+        m_replyTimeoutTimer->stop();
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     QString statusText = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
     QString text = (reply->error() != QNetworkReply::NoError)? "" : reply->readAll();
