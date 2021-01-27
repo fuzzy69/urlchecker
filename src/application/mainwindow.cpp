@@ -41,6 +41,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "applicationstate.h"
 #include "config.h"
 #include "file.h"
 #include "httpclient.h"
@@ -63,10 +64,14 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_lastDirectory = applicationDir.absolutePath(); 
     m_networkManager = new QNetworkAccessManager(this);
     m_httpClient = new HttpClient(this);
-    m_responseTimeoutTimer = new QTimer(this);
+    m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(5, this);
     m_reply = nullptr;
     m_recentUrlFileActions = QList<QAction*>();
+
+   m_applicationState = new ApplicationState(this);
+   m_applicationState->start();
+
     createActions();
     createMenuBar();
     createToolBar();
@@ -82,6 +87,7 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     else
         centerWindow();
     initRecentUrlFiles();
+
     for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
     {
         line = line.trimmed();
@@ -89,11 +95,13 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
         if (line.length() > 0)
             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
     }
+    m_pulseTimer->start(1 * 1000);
+    emit m_applicationState->applicationReady();
 }
 
 MainWindow::~MainWindow()
 {
-    
+//     delete m_applicationState;
 }
 
 void MainWindow::importUrls()
@@ -295,6 +303,7 @@ void MainWindow::createWidgets()
     m_timeoutSpinBox->setRange(1, 120);
     m_startPushButton = new QPushButton(QIcon(":assets/icons/control.png"), "Start");
     m_stopPushButton = new QPushButton(QIcon(":assets/icons/control-stop-square.png"), "Stop");
+    m_testPushButton = new QPushButton("Test");
     m_progressBar = new QProgressBar;
     m_progressBar->setRange(0, 100);
 
@@ -305,6 +314,7 @@ void MainWindow::createWidgets()
     m_bottomLayout->addStretch(0);
     m_bottomLayout->addWidget(m_startPushButton);
     m_bottomLayout->addWidget(m_stopPushButton);
+    m_bottomLayout->addWidget(m_testPushButton);
     m_projectPageLayout->addLayout(m_bottomLayout);
     m_projectPageLayout->addWidget(m_progressBar);
 
@@ -330,11 +340,15 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createConnections()
 {
+    connect(m_testPushButton, &QPushButton::clicked, [this]{
+        m_startPushButton->setEnabled(false);
+    });
+    connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
+
     connect(m_projectAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
     connect(m_settingsAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
     connect(m_proxiesAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
     connect(m_helpAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
-
 
 
     connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
@@ -361,8 +375,65 @@ void MainWindow::createConnections()
 
 //     connect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::urlChecked);
 //     connect(m_responseTimeoutTimer, &QTimer::timeout, this, &MainWindow::onReplyTimeout);
-    connect(m_httpClient, &HttpClient::replyFinished, this, &MainWindow::urlChecked2);
+    connect(m_httpClient, &HttpClient::replyFinished, this, &MainWindow::urlChecked);
 //     connect(m_httpClient, &HttpClient::replyTimeout, this, &MainWindow::onReplyTimeout);
+//    connect(m_testPushButton, &QPushButton::clicked, []{
+//        qDebug() << "OK";
+//    });
+
+    // Application state
+//    connect(m_applicationState, &ApplicationState::applicationStarting, [this]{m_statusBar->showMessage("Starting ...");});
+//    connect(m_applicationState, &ApplicationState::applicationIdling, [this]{
+//        m_statusBar->showMessage("Ready.");
+//        m_startPushButton->setEnabled(true);
+//        m_stopPushButton->setEnabled(true);
+//    });
+//    connect(m_applicationState, &ApplicationState::applicationExiting, [this]{m_statusBar->showMessage("Exiting ...");});
+//    connect(m_applicationState, &ApplicationState::jobStarting, [this]{
+//        m_statusBar->showMessage("Job starting ...");
+//        m_startPushButton->setEnabled(false);
+//    });
+//    connect(m_applicationState, &ApplicationState::jobFinishing, [this]{m_statusBar->showMessage("Job running ...");});
+//    connect(m_applicationState, &ApplicationState::jobStopping, [this]{
+//        m_statusBar->showMessage("Job stopping ...");
+//        m_stopPushButton->setEnabled(false);
+//    });
+//    connect(m_applicationState, &ApplicationState::jobFinishing, [this]{m_statusBar->showMessage("Job finishing ...");});
+
+    connect(m_applicationState, &ApplicationState::applicationStarted, [this]{
+        m_statusBar->showMessage("Starting ...");
+        qDebug() << "Application starting ...";
+    });
+    connect(m_applicationState, &ApplicationState::applicationReady, [this]{
+        m_statusBar->showMessage("Ready.");
+        m_startPushButton->setEnabled(true);
+        m_stopPushButton->setEnabled(false);
+        qDebug() << "Application idling ...";
+    });
+    connect(m_applicationState, &ApplicationState::applicationExit, [this]{
+        m_statusBar->showMessage("Exiting ...");
+        m_startPushButton->setEnabled(false);
+        qDebug() << "Application exiting ...";
+    });
+    connect(m_applicationState, &ApplicationState::jobStarted, [this]{
+        m_statusBar->showMessage("Working ...");
+        m_startPushButton->setEnabled(false);
+        m_stopPushButton->setEnabled(true);
+        qDebug() << "Job started";
+    });
+    connect(m_applicationState, &ApplicationState::jobStopped, [this]{
+        m_statusBar->showMessage("Stopping ...");
+        m_startPushButton->setEnabled(false);
+        m_stopPushButton->setEnabled(false);
+        qDebug() << "Job stopped";
+    });
+    connect(m_applicationState, &ApplicationState::jobFinished, [this]{
+//         m_statusBar->showMessage("Stopping ...");
+        m_startPushButton->setEnabled(false);
+        m_stopPushButton->setEnabled(false);
+        qDebug() << "Job finished";
+    });
+    
 }
 
 void MainWindow::saveSettings()
@@ -391,6 +462,7 @@ void MainWindow::loadSettings()
 // Events
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+   emit m_applicationState->applicationExiting();
     saveSettings();
     QMainWindow::closeEvent(event);
 }
@@ -404,50 +476,53 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 // Slots
 void MainWindow::startChecking()
 {
+    emit m_applicationState->jobStarting();
     if (m_resultsTable->rowCount() > 0)
     {
         m_progressBar->setValue(0);
         m_currentRowIndex = 0;
         m_running = true;
     //     startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
+        m_httpClient->setTimeout(m_timeoutSpinBox->value());
         m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
     }
 }
 
 void MainWindow::stopChecking()
 {
-//     m_recentFiles->addFile("xxx");
+    emit m_applicationState->jobStopping();
     m_running = false;
 }
 
-void MainWindow::urlChecked(QNetworkReply* reply)
-{
-    if (m_responseTimeoutTimer->isActive())
-        m_responseTimeoutTimer->stop();
-    qDebug() << reply;
-    qDebug() << m_currentRowIndex;
-    qDebug() << reply->url();
-    updateResultsRow(m_currentRowIndex, reply->attribute(QNetworkRequest::HttpStatusCodeAttribute), reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute));
-    int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
-    m_progressBar->setValue(currentProgress);
-    reply->deleteLater();
-    if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
-    {
-//         disconnect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::urlChecked);
-        return;
-    }
-    ++m_currentRowIndex;
-//     startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
-    m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
-}
+//void MainWindow::urlChecked(QNetworkReply* reply)
+//{
+//    if (m_pulseTimer->isActive())
+//        m_pulseTimer->stop();
+//    qDebug() << reply;
+//    qDebug() << m_currentRowIndex;
+//    qDebug() << reply->url();
+//    updateResultsRow(m_currentRowIndex, reply->attribute(QNetworkRequest::HttpStatusCodeAttribute), reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute));
+//    int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
+//    m_progressBar->setValue(currentProgress);
+//    reply->deleteLater();
+//    if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
+//    {
+////         disconnect(m_networkManager, &QNetworkAccessManager::finished, this, &MainWindow::urlChecked);
+//        return;
+//    }
+//    ++m_currentRowIndex;
+////     startRequest(QUrl(m_resultsTable->cell(m_currentRowIndex, 0).toString()));
+//    m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
+//}
 
-void MainWindow::urlChecked2(int statusCode, const QString& statusText, const QString& text)
+void MainWindow::urlChecked(int statusCode, const QString& statusText, const QString& text)
 {
     updateResultsRow(m_currentRowIndex, statusCode, statusText);
     int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
     m_progressBar->setValue(currentProgress);
     if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
     {
+        emit m_applicationState->jobFinishing();
         return;
     }
     ++m_currentRowIndex;
@@ -479,18 +554,18 @@ void MainWindow::addToRecentUrlFiles(const QString& filePath)
     m_recentUrlFileActions.append(new QAction(filePath, this));
 }
 
-void MainWindow::onReplyTimeout()
-{
-    m_reply->abort();
-}
+//void MainWindow::onReplyTimeout()
+//{
+//    m_reply->abort();
+//}
 
-void MainWindow::startRequest(const QUrl &url)
-{
-    QNetworkRequest request(url);
-    request.setRawHeader("User-Agent", USER_AGENT);
-    m_reply = m_networkManager->head(request);
-    m_responseTimeoutTimer->start(m_timeoutSpinBox->value() * 1000);
-}
+//void MainWindow::startRequest(const QUrl &url)
+//{
+//    QNetworkRequest request(url);
+//    request.setRawHeader("User-Agent", USER_AGENT);
+//    m_reply = m_networkManager->head(request);
+//    m_pulseTimer->start(m_timeoutSpinBox->value() * 1000);
+//}
 
 void MainWindow::updateResultsRow(int rowIndex, const QVariant& statusCode, const QVariant& statusText)
 {
@@ -507,7 +582,13 @@ void MainWindow::updateResultsRow(int rowIndex, const QVariant& statusCode, cons
         m_resultsTable->setRowColor(rowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
 }
 
+void MainWindow::onPulse()
+{
+    //
+}
+
 void MainWindow::onSelectedRecentUrlFile(const QString& filePath)
 {
     qDebug() << "open recent file" << filePath;
 }
+

@@ -10,16 +10,30 @@ class ApplicationState : public QStateMachine
     Q_OBJECT
 
 public:
-    ApplicationState(QStateMachine *parent = nullptr);
+    ApplicationState(QObject *parent = nullptr);
+
+    void startingStateAssignProperty(QObject *object, const char *name, const QVariant &value);
+    void idleStateAssignProperty(QObject *object, const char *name, const QVariant &value);
+    void exitingStateAssignProperty(QObject *object, const char *name, const QVariant &value);
+    void jobStateAssignProperty(QObject *object, const char *name, const QVariant &value);
+    void jobStoppingStateAssignProperty(QObject *object, const char *name, const QVariant &value);
+    void jobFinishingStateAssignProperty(QObject *object, const char *name, const QVariant &value);
 
 signals:
-    void applicationStarting();
+    void applicationReady();
     void applicationIdling();
     void applicationExiting();
     void jobStarting();
     void jobStopping();
     void jobFinishing();
 
+    void applicationStarted();
+    void applicationIdle();
+    void applicationExit();
+    void jobStarted();
+    void jobRunning();
+    void jobStopped();
+    void jobFinished();
 
 private:
     QState *m_startingState;

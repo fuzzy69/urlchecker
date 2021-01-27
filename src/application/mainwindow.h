@@ -32,6 +32,8 @@ class RecentFiles;
 class ProxiesWidget;
 class SideBar;
 class Table;
+class ApplicationState;
+
 
 class MainWindow : public QMainWindow
 {
@@ -49,9 +51,9 @@ protected slots:
 
     void startChecking();
     void stopChecking();
-    void urlChecked(QNetworkReply *reply);
-    void urlChecked2(int statusCode, const QString &statusText, const QString &text);
-    void onReplyTimeout();
+//    void urlChecked(QNetworkReply *reply);
+    void urlChecked(int statusCode, const QString &statusText, const QString &text);
+//    void onReplyTimeout();
     void onSelectedRecentUrlFile(const QString &filePath);
 
 protected:
@@ -71,9 +73,9 @@ private:
     void saveSettings();
     void initRecentUrlFiles();
     void addToRecentUrlFiles(const QString &filePath);
-    void startRequest(const QUrl &url);
+//    void startRequest(const QUrl &url);
     void updateResultsRow(int rowIndex, const QVariant &statusCode, const QVariant &statusText);
-
+    void onPulse();
 
     // Actions
     QAction *m_projectAction;
@@ -132,6 +134,7 @@ private:
     QSpinBox *m_timeoutSpinBox;
     QPushButton *m_startPushButton;
     QPushButton *m_stopPushButton;
+    QPushButton *m_testPushButton;
     QProgressBar *m_progressBar;
     QStatusBar *m_statusBar;
     QLabel *m_activeThreadsLabel;
@@ -148,9 +151,10 @@ private:
     QList<QAction*> m_recentUrlFileActions;
 
     QStandardItemModel *m_resultsModel;
-    QTimer *m_responseTimeoutTimer;
+    QTimer *m_pulseTimer;
 
     HttpClient *m_httpClient;
     RecentFiles *m_recentFiles;
     SideBar *m_sideBar;
+    ApplicationState *m_applicationState;
 };

@@ -3,6 +3,7 @@
 #include "application/config.h"
 #include "application/mainwindow.h"
 
+
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
@@ -28,4 +29,3 @@ QStatusBar#activeToolLabel {
 
     return application.exec();
 }
-

@@ -21,6 +21,7 @@ set(urlchecker_SRC
   src/application/sidebar.cpp
   src/application/useragents.cpp
   src/application/proxieswidget.cpp
+  src/application/applicationstate.cpp
   assets.qrc
 )
 
