@@ -34,12 +34,14 @@
 #include <QTextStream>
 #include <QTextEdit>
 #include <QTimer>
+#include <QTreeWidget>
 #include <QMainWindow>
 #include <QTableView>
 #include <QToolBar>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QGridLayout>
 
 #include "applicationstate.h"
 #include "config.h"
@@ -292,6 +294,8 @@ void MainWindow::createWidgets()
     
 //     m_mainLayout = new QVBoxLayout(m_mainWidget);
     //
+    m_toolsTreeWidget = new QTreeWidget;
+    m_toolsTreeWidget->setFixedWidth(200);
     m_bottomLayout = new QHBoxLayout;
     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
     m_resultsTable->setColumnRatios(m_columnRatios);
@@ -310,7 +314,10 @@ void MainWindow::createWidgets()
     m_proxiesTextEdit = new ProxiesWidget;
     m_proxiesTextEdit->setReadOnly(true);
 
-    m_projectPageLayout->addWidget( m_resultsTable->tableView() );
+    auto projectPageHLayout = new QHBoxLayout;
+    m_projectPageLayout->addLayout(projectPageHLayout);
+    projectPageHLayout->addWidget(m_toolsTreeWidget);
+    projectPageHLayout->addWidget( m_resultsTable->tableView() );
     m_bottomLayout->addStretch(0);
     m_bottomLayout->addWidget(m_startPushButton);
     m_bottomLayout->addWidget(m_stopPushButton);
@@ -333,8 +340,21 @@ void MainWindow::createStatusBar()
 {
     m_statusBar = new QStatusBar;
     setStatusBar(m_statusBar);
+
+    auto toolsPushButton = new QPushButton(QIcon(":assets/icons/hammer.png"), "");
+    auto statusBarLabel = new QLabel;
     m_activeThreadsLabel = new QLabel(" Active threads: /");
-    m_statusBar->showMessage("Ready.");
+
+    connect(toolsPushButton, &QPushButton::clicked, [this]{
+        qDebug() << "Tools";
+        if (m_toolsTreeWidget->isVisible())
+            m_toolsTreeWidget->setVisible(false);
+        else
+            m_toolsTreeWidget->setVisible(true);
+    });
+
+    m_statusBar->addPermanentWidget(toolsPushButton);
+    m_statusBar->addPermanentWidget(statusBarLabel, 1);
     m_statusBar->addPermanentWidget(m_activeThreadsLabel);
 }
 

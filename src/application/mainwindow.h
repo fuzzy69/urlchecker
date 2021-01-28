@@ -26,6 +26,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QWidget;
 class QNetworkReply;
+class QTreeWidget;
 
 class HttpClient;
 class RecentFiles;
@@ -135,6 +136,7 @@ private:
     QPushButton *m_startPushButton;
     QPushButton *m_stopPushButton;
     QPushButton *m_testPushButton;
+    QPushButton *m_toolsPushButton;
     QProgressBar *m_progressBar;
     QStatusBar *m_statusBar;
     QLabel *m_activeThreadsLabel;
@@ -157,4 +159,5 @@ private:
     RecentFiles *m_recentFiles;
     SideBar *m_sideBar;
     ApplicationState *m_applicationState;
+    QTreeWidget *m_toolsTreeWidget;
 };
