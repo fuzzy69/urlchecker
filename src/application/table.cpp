@@ -10,7 +10,7 @@
 
 #include "table.h"
 
-Table::Table(QStringList columns, QObject *parent) : m_columns(columns), QObject(parent)
+Table::Table(QStringList columns, QObject *parent) : QObject(parent), m_columns(columns)
 {
     m_tableView = new QTableView;
     m_tableModel = new QStandardItemModel;
@@ -58,7 +58,6 @@ bool Table::removeRow(int rowIndex)
 
 void Table::removeAllRows()
 {
-//     m_tableModel->clear();
     for (int i = m_tableModel->rowCount() - 1; i >= 0; --i)
     {
         m_tableModel->removeRow(i);
@@ -77,14 +76,11 @@ void Table::row(int rowIndex) const
 
 void Table::appendRow(QStringList cells)
 {
-//    QStandardItem
     QList<QStandardItem*> rowCells;
     for (QString cell : cells)
     {
         rowCells << new QStandardItem(cell);
-//         qDebug() << cell;
     }
-//     qDebug() << rowCells.count();
     m_tableModel->appendRow(rowCells);
 }
 

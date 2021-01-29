@@ -3,7 +3,6 @@
 #include <QList>
 #include <QString>
 
-
 /// Manages collection of user agent strings
 class UserAgents
 {

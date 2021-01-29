@@ -9,7 +9,6 @@
 
 RecentFiles::RecentFiles(int maxRecentFiles, QObject* parent) : QObject(parent), m_maxRecentFiles(maxRecentFiles), m_recentFilesCount(0)
 {
-//     m_maxRecentFiles = maxRecentFiles;
     m_recentFiles = QList<QString>();
     m_recentFilesActions = QList<QAction*>();
     for (int i = 0; i < m_maxRecentFiles; ++i)
@@ -19,9 +18,6 @@ RecentFiles::RecentFiles(int maxRecentFiles, QObject* parent) : QObject(parent),
         auto action = new QAction(filePath, this);
         action->setVisible(false);
         connect(action, &QAction::triggered, [action, this] {
-            qDebug() << action;
-//             auto _action = qobject_cast<QAction*>(sender());
-//             qDebug() << _action;
             emit filePathSelected(action->text());
         });
         m_recentFilesActions.append(action);
@@ -44,9 +40,7 @@ void RecentFiles::updateActions()
     for (int i = 0; i < m_maxRecentFiles; ++i)
     {
         const QString &filePath = m_recentFiles[i];
-//         qDebug() << filePath;
         QAction *action = m_recentFilesActions[i];
-//         qDebug() << action;
         if (filePath.isEmpty())
         {
             action->setText("");

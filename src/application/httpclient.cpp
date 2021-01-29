@@ -12,7 +12,6 @@ HttpClient::HttpClient(QObject* parent)
     m_networkManager = new QNetworkAccessManager(this);
     m_replyTimeoutTimer = new QTimer(this);
 
-//     connect(m_replyTimeoutTimer, &QTimer::timeout, this, &HttpClient::replyTimeout);
     connect(m_replyTimeoutTimer, &QTimer::timeout, this, &HttpClient::onReplyTimeout);
     connect(m_networkManager, &QNetworkAccessManager::finished, this, &HttpClient::onReplyFinished);
 

@@ -12,7 +12,6 @@ class HttpClient : public QObject
     
 public:
     explicit HttpClient(QObject *parent = nullptr);
-//     ~HttpClient();
 
     QNetworkReply* head(const QUrl& url);
     QNetworkReply* head(const QString& url);

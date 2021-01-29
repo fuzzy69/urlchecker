@@ -23,7 +23,6 @@ ApplicationState::ApplicationState(QObject *parent) : QStateMachine(parent)
     m_jobState->addTransition(this, &ApplicationState::jobFinishing, m_jobFinishingState);
     m_jobStoppingState->addTransition(this, &ApplicationState::applicationReady, m_idleState);
     m_jobFinishingState->addTransition(this, &ApplicationState::applicationReady, m_idleState);
-//     m_startingState->assignProperty();
 
     //
     addState(m_startingState);
@@ -44,7 +43,6 @@ ApplicationState::ApplicationState(QObject *parent) : QStateMachine(parent)
     connect(m_jobFinishingState, &QState::entered, this, &ApplicationState::jobFinished);
 
     setInitialState(m_startingState);
-//     start();
 }
 
 void ApplicationState::startingStateAssignProperty(QObject* object, const char* name, const QVariant& value)

@@ -8,7 +8,6 @@
 
 class QAction;
 class QLabel;
-// class QList<float>;
 class QMenu;
 class QNetworkAccessManager;
 class QNetworkReply;
@@ -19,7 +18,6 @@ class QStackedWidget;
 class QStandardItemModel;
 class QStatusBar;
 class QTableView;
-// class QTextEdit;
 class QTimer;
 class QToolBar;
 class QHBoxLayout;
@@ -52,9 +50,7 @@ protected slots:
 
     void startChecking();
     void stopChecking();
-//    void urlChecked(QNetworkReply *reply);
     void urlChecked(int statusCode, const QString &statusText, const QString &text);
-//    void onReplyTimeout();
     void onSelectedRecentUrlFile(const QString &filePath);
 
 protected:
@@ -74,7 +70,6 @@ private:
     void saveSettings();
     void initRecentUrlFiles();
     void addToRecentUrlFiles(const QString &filePath);
-//    void startRequest(const QUrl &url);
     void updateResultsRow(int rowIndex, const QVariant &statusCode, const QVariant &statusText);
     void onPulse();
 

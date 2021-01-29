@@ -23,14 +23,12 @@ SideBar::SideBar(QWidget *parent) : QWidget(parent),
 void SideBar::addAction(QAction *action)
 {
     _actions.push_back(action);
-//     action->setCheckable(true);
     update();
 }
 
 QAction *SideBar::addAction(const QString &text, const QIcon &icon)
 {
     QAction* action = new QAction(icon, text, this);
-//     action->setCheckable(true);
     _actions.push_back(action);
     update();
     return action;
@@ -77,7 +75,6 @@ void SideBar::mouseMoveEvent(QMouseEvent *event)
         update();
         return;
     }
-//     if (action == _hoveredAction || action->isChecked())
     if (action == _hoveredAction)
     {
         return;
