@@ -32,7 +32,7 @@ class ProxiesWidget;
 class SideBar;
 class Table;
 class ApplicationState;
-
+class ToolsWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -154,5 +154,6 @@ private:
     RecentFiles *m_recentFiles;
     SideBar *m_sideBar;
     ApplicationState *m_applicationState;
-    QTreeWidget *m_toolsTreeWidget;
+//     QTreeWidget *m_toolsTreeWidget;
+    ToolsWidget *m_toolsWidget;
 };

@@ -53,7 +53,7 @@
 #include "recentfiles.h"
 #include "sidebar.h"
 #include "proxieswidget.h"
-
+#include "toolswidget.h"
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 {
@@ -182,7 +182,7 @@ void MainWindow::centerWindow()
 void MainWindow::createActions()
 {
     // Sidebar
-    m_projectAction = new QAction(QIcon(":assets/icons/network-clouds.png"), "Projects", this);
+    m_projectAction = new QAction(QIcon(":assets/icons/network-clouds.png"), "Workspace", this);
     m_settingsAction = new QAction(QIcon(":assets/icons/gear.png"), "Settings", this);
     m_proxiesAction = new QAction(QIcon(":assets/icons/mask.png"), "Proxies", this);
     m_helpAction = new QAction(QIcon(":assets/icons/question.png"), "Help", this);
@@ -281,18 +281,21 @@ void MainWindow::createWidgets()
     m_mainStackedWidget->addWidget(m_proxiesPageWidget);
     m_mainStackedWidget->addWidget(m_helpPageWidget);
 
-    m_toolsTreeWidget = new QTreeWidget;
-    m_toolsTreeWidget->setFixedWidth(200);
-    m_toolsTreeWidget->setColumnCount(1);
-    m_toolsTreeWidget->setHeaderLabel("Tools");
-    QList<QTreeWidgetItem *> items;
-    QTreeWidgetItem *item = nullptr;
-    item = new QTreeWidgetItem(QStringList(QString("Check URL Status")));
-    item->setIcon(0, QIcon(":assets/icons/hammer.png"));
-    items.append(item);
-    item = new QTreeWidgetItem(QStringList(QString("Check Alexa Rank")));
-    item->setIcon(0, QIcon(":assets/icons/hammer.png"));
-    items.append(item);
+    m_toolsWidget = new ToolsWidget;
+    m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Check URL Status"));
+    m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Check Alexa Rank"));
+//     m_toolsTreeWidget = new QTreeWidget;
+//     m_toolsTreeWidget->setFixedWidth(200);
+//     m_toolsTreeWidget->setColumnCount(1);
+//     m_toolsTreeWidget->setHeaderLabel("Tools");
+//     QList<QTreeWidgetItem *> items;
+//     QTreeWidgetItem *item = nullptr;
+//     item = new QTreeWidgetItem(QStringList(QString("Check URL Status")));
+//     item->setIcon(0, QIcon(":assets/icons/hammer.png"));
+//     items.append(item);
+//     item = new QTreeWidgetItem(QStringList(QString("Check Alexa Rank")));
+//     item->setIcon(0, QIcon(":assets/icons/hammer.png"));
+//     items.append(item);
     //     for (int i = 0; i < 10; ++i)
 //     {
 //         auto item = new QTreeWidgetItem(QStringList(QString("item: %1").arg(i)));
@@ -300,11 +303,10 @@ void MainWindow::createWidgets()
 //         items.append(item);
 //     }
 // //         items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("item: %1").arg(i))));
-    m_toolsTreeWidget->insertTopLevelItems(0, items);
-    connect(m_toolsTreeWidget, &QTreeWidget::currentItemChanged, [this](QTreeWidgetItem *current, QTreeWidgetItem *previous){
-        m_toolsPushButton->setText(QString(" %1").arg(current->text(0)));
+//     m_toolsTreeWidget->insertTopLevelItems(0, items);
+    connect(m_toolsWidget, &ToolsWidget::toolSelected, [this](QString toolText){
+        m_toolsPushButton->setText(QString(" %1").arg(toolText));
     });
-
 
     m_bottomLayout = new QHBoxLayout;
     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
@@ -326,7 +328,7 @@ void MainWindow::createWidgets()
 
     auto projectPageHLayout = new QHBoxLayout;
     m_projectPageLayout->addLayout(projectPageHLayout);
-    projectPageHLayout->addWidget(m_toolsTreeWidget);
+    projectPageHLayout->addWidget(m_toolsWidget);
     projectPageHLayout->addWidget( m_resultsTable->tableView() );
     m_bottomLayout->addStretch(0);
     m_bottomLayout->addWidget(m_startPushButton);
@@ -356,10 +358,10 @@ void MainWindow::createStatusBar()
     m_activeThreadsLabel = new QLabel(" Active threads: /");
 
     connect(m_toolsPushButton, &QPushButton::clicked, [this]{
-        if (m_toolsTreeWidget->isVisible())
-            m_toolsTreeWidget->setVisible(false);
+        if (m_toolsWidget->isVisible())
+            m_toolsWidget->setVisible(false);
         else
-            m_toolsTreeWidget->setVisible(true);
+            m_toolsWidget->setVisible(true);
     });
 
     m_statusBar->addPermanentWidget(m_toolsPushButton);
