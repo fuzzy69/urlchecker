@@ -283,6 +283,29 @@ void MainWindow::createWidgets()
 
     m_toolsTreeWidget = new QTreeWidget;
     m_toolsTreeWidget->setFixedWidth(200);
+    m_toolsTreeWidget->setColumnCount(1);
+    m_toolsTreeWidget->setHeaderLabel("Tools");
+    QList<QTreeWidgetItem *> items;
+    QTreeWidgetItem *item = nullptr;
+    item = new QTreeWidgetItem(QStringList(QString("Check URL Status")));
+    item->setIcon(0, QIcon(":assets/icons/hammer.png"));
+    items.append(item);
+    item = new QTreeWidgetItem(QStringList(QString("Check Alexa Rank")));
+    item->setIcon(0, QIcon(":assets/icons/hammer.png"));
+    items.append(item);
+    //     for (int i = 0; i < 10; ++i)
+//     {
+//         auto item = new QTreeWidgetItem(QStringList(QString("item: %1").arg(i)));
+//         item->setIcon(0, QIcon(":assets/icons/hammer.png"));
+//         items.append(item);
+//     }
+// //         items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("item: %1").arg(i))));
+    m_toolsTreeWidget->insertTopLevelItems(0, items);
+    connect(m_toolsTreeWidget, &QTreeWidget::currentItemChanged, [this](QTreeWidgetItem *current, QTreeWidgetItem *previous){
+        m_toolsPushButton->setText(QString(" %1").arg(current->text(0)));
+    });
+
+
     m_bottomLayout = new QHBoxLayout;
     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
     m_resultsTable->setColumnRatios(m_columnRatios);
@@ -328,18 +351,18 @@ void MainWindow::createStatusBar()
     m_statusBar = new QStatusBar;
     setStatusBar(m_statusBar);
 
-    auto toolsPushButton = new QPushButton(QIcon(":assets/icons/hammer.png"), "");
+    m_toolsPushButton = new QPushButton(QIcon(":assets/icons/hammer.png"), "");
     auto statusBarLabel = new QLabel;
     m_activeThreadsLabel = new QLabel(" Active threads: /");
 
-    connect(toolsPushButton, &QPushButton::clicked, [this]{
+    connect(m_toolsPushButton, &QPushButton::clicked, [this]{
         if (m_toolsTreeWidget->isVisible())
             m_toolsTreeWidget->setVisible(false);
         else
             m_toolsTreeWidget->setVisible(true);
     });
 
-    m_statusBar->addPermanentWidget(toolsPushButton);
+    m_statusBar->addPermanentWidget(m_toolsPushButton);
     m_statusBar->addPermanentWidget(statusBarLabel, 1);
     m_statusBar->addPermanentWidget(m_activeThreadsLabel);
 }
