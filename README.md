@@ -3,7 +3,7 @@
 
 ### Screenshot
 
-![Screenshot](_/Screenshot_2021-01-05_18-38-16.png)
+![Screenshot](_/screenshot.png)
 
 
 ### About
