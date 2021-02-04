@@ -284,26 +284,6 @@ void MainWindow::createWidgets()
     m_toolsWidget = new ToolsWidget;
     m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Check URL Status"));
     m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Check Alexa Rank"));
-//     m_toolsTreeWidget = new QTreeWidget;
-//     m_toolsTreeWidget->setFixedWidth(200);
-//     m_toolsTreeWidget->setColumnCount(1);
-//     m_toolsTreeWidget->setHeaderLabel("Tools");
-//     QList<QTreeWidgetItem *> items;
-//     QTreeWidgetItem *item = nullptr;
-//     item = new QTreeWidgetItem(QStringList(QString("Check URL Status")));
-//     item->setIcon(0, QIcon(":assets/icons/hammer.png"));
-//     items.append(item);
-//     item = new QTreeWidgetItem(QStringList(QString("Check Alexa Rank")));
-//     item->setIcon(0, QIcon(":assets/icons/hammer.png"));
-//     items.append(item);
-    //     for (int i = 0; i < 10; ++i)
-//     {
-//         auto item = new QTreeWidgetItem(QStringList(QString("item: %1").arg(i)));
-//         item->setIcon(0, QIcon(":assets/icons/hammer.png"));
-//         items.append(item);
-//     }
-// //         items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("item: %1").arg(i))));
-//     m_toolsTreeWidget->insertTopLevelItems(0, items);
     connect(m_toolsWidget, &ToolsWidget::toolSelected, [this](QString toolText){
         m_toolsPushButton->setText(QString(" %1").arg(toolText));
     });
