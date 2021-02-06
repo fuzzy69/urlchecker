@@ -43,14 +43,14 @@
 #include <QWidget>
 #include <QGridLayout>
 
-#include "applicationstate.h"
-#include "config.h"
-#include "file.h"
-#include "httpclient.h"
+#include "../common/applicationstate.h"
+#include "../config.h"
+#include "../utils/file.h"
+#include "../utils/httpclient.h"
 #include "mainwindow.h"
-#include "table.h"
-#include "version.h"
-#include "recentfiles.h"
+#include "../common/table.h"
+#include "../version.h"
+#include "../common/recentfiles.h"
 #include "sidebar.h"
 #include "proxieswidget.h"
 #include "toolswidget.h"

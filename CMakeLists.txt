@@ -13,16 +13,16 @@ find_package(Qt5Network REQUIRED)
 
 set(urlchecker_SRC
   src/main.cpp
-  src/application/mainwindow.cpp
-  src/application/table.cpp
-  src/application/file.cpp
-  src/application/httpclient.cpp
-  src/application/recentfiles.cpp
-  src/application/sidebar.cpp
-  src/application/useragents.cpp
-  src/application/proxieswidget.cpp
-  src/application/applicationstate.cpp
-  src/application/toolswidget.cpp
+  src/application/core/mainwindow.cpp
+  src/application/common/table.cpp
+  src/application/utils/file.cpp
+  src/application/utils/httpclient.cpp
+  src/application/common/recentfiles.cpp
+  src/application/core/sidebar.cpp
+  src/application/utils/useragents.cpp
+  src/application/core/proxieswidget.cpp
+  src/application/common/applicationstate.cpp
+  src/application/core/toolswidget.cpp
   assets.qrc
 )
 

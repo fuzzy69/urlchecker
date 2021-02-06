@@ -7,7 +7,7 @@
 
 #include "sidebar.h"
 
-#define ACTION_HEIGHT 80
+#define ACTION_HEIGHT 90
 #define ACTION_DEFAULT_COLOR QColor(100, 100, 100)
 #define ACTION_HOVER_COLOR QColor(150, 150, 150)
 #define ACTION_SELECTED_COLOR QColor(35, 35, 35)

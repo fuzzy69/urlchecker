@@ -3,9 +3,12 @@
 #include <QNetworkReply>
 #include <QTimer>
 
-#include "config.h"
+// #include "config.h"
 #include "httpclient.h"
 
+#ifndef USER_AGENT
+#define USER_AGENT "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0"
+#endif
 
 HttpClient::HttpClient(QObject* parent)
 {
