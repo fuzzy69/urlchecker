@@ -42,6 +42,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QGridLayout>
+#include <QThread>
 
 #include "../common/applicationstate.h"
 #include "../config.h"
@@ -54,6 +55,7 @@
 #include "sidebar.h"
 #include "proxieswidget.h"
 #include "toolswidget.h"
+#include "../workers/checkurlstatusworker.h"
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 {
@@ -70,6 +72,9 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_recentFiles = new RecentFiles(5, this);
     m_reply = nullptr;
     m_recentUrlFileActions = QList<QAction*>();
+    m_threads = QList<QThread*>();
+    m_workers = QList<CheckUrlStatusWorker*>();
+    m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
 
    m_applicationState = new ApplicationState(this);
    m_applicationState->start();
@@ -354,6 +359,10 @@ void MainWindow::createConnections()
     connect(m_testPushButton, &QPushButton::clicked, [this]{
         m_startPushButton->setEnabled(false);
     });
+    connect(m_testPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
+
+
+
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
 
     connect(m_projectAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
@@ -529,4 +538,68 @@ void MainWindow::onPulse()
 void MainWindow::onSelectedRecentUrlFile(const QString& filePath)
 {
     qDebug() << "open recent file" << filePath;
+}
+
+void MainWindow::startJob()
+{
+    m_threads.clear();
+    m_workers.clear();
+    for (int i = 0; i < m_resultsTable->rowCount(); ++i)
+    {
+        auto url = m_resultsTable->cell(i, 0).toString();
+        m_inputDataQueue.enqueue({
+            {QString("rowId"), QVariant(i)},
+            {QString("url"), QVariant(url)}
+        });
+    }
+
+//         auto thread = new QThread;
+//         auto worker = new CheckUrlStatusWorker;
+//         worker->moveToThread(thread);
+//         m_threads.append(thread);
+//         m_workers.append(worker);
+//         // Connections
+//         connect(thread, &QThread::started, worker, &CheckUrlStatusWorker::run);
+//         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+//         connect(worker, &CheckUrlStatusWorker::result, [](const QString &resultData){
+//             qDebug() << "Result: " << resultData;
+//         });
+//         connect(worker, &CheckUrlStatusWorker::finished, thread, &QThread::quit);
+//         connect(worker, &CheckUrlStatusWorker::finished, worker, &CheckUrlStatusWorker::deleteLater);
+//         connect(worker, &CheckUrlStatusWorker::finished, []{
+//             qDebug() << "Worker finished";
+//         });
+//         thread->start();
+//         qDebug() << "Start ...";
+
+//     int parallelTasks = m_threadsSpinBox->value();
+    int parallelTasks = 1;
+    for (int i = 0; i < parallelTasks;++i)
+    {
+        auto thread = new QThread;
+        auto worker = new CheckUrlStatusWorker(m_inputDataQueue);
+//         worker->moveToThread(thread);
+        m_threads.append(thread);
+        m_workers.append(worker);
+        m_workers[i]->moveToThread(m_threads[i]);
+        // Connections
+        connect(thread, &QThread::started, worker, &CheckUrlStatusWorker::run);
+        connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+        connect(worker, &CheckUrlStatusWorker::result, [](const QMap<QString, QVariant> &resultData){
+            qDebug() << "Result: " << resultData["rowId"].toInt();
+            qDebug() << "Result: " << resultData["status"].toInt();
+            qDebug() << "Result: " << resultData["message"].toString();
+            qDebug() << "Result: " << resultData["url"].toString();
+        });
+        connect(worker, &CheckUrlStatusWorker::finished, thread, &QThread::quit);
+        connect(worker, &CheckUrlStatusWorker::finished, worker, &CheckUrlStatusWorker::deleteLater);
+        connect(worker, &CheckUrlStatusWorker::finished, []{
+            qDebug() << "Worker finished";
+        });
+    }
+
+    for (int i = 0; i < parallelTasks; ++i)
+    {
+        m_threads[i]->start();
+    }
 }

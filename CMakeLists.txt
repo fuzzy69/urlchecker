@@ -23,6 +23,7 @@ set(urlchecker_SRC
   src/application/core/proxieswidget.cpp
   src/application/common/applicationstate.cpp
   src/application/core/toolswidget.cpp
+  src/application/workers/checkurlstatusworker.cpp
   assets.qrc
 )
 

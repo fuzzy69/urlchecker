@@ -33,6 +33,7 @@ class SideBar;
 class Table;
 class ApplicationState;
 class ToolsWidget;
+class CheckUrlStatusWorker;
 
 class MainWindow : public QMainWindow
 {
@@ -52,6 +53,8 @@ protected slots:
     void stopChecking();
     void urlChecked(int statusCode, const QString &statusText, const QString &text);
     void onSelectedRecentUrlFile(const QString &filePath);
+
+    void startJob();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -156,4 +159,8 @@ private:
     ApplicationState *m_applicationState;
 //     QTreeWidget *m_toolsTreeWidget;
     ToolsWidget *m_toolsWidget;
+
+    QList<QThread*> m_threads;
+    QList<CheckUrlStatusWorker*> m_workers;
+    QQueue<QMap<QString, QVariant>> m_inputDataQueue;
 };
