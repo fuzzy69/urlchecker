@@ -2,44 +2,42 @@
 #include <QDebug>
 #include <QThread>
 #include <QQueue>
+#include <QMutex>
 
 #include "checkurlstatusworker.h"
+#include "../config.h"
+#include "libs/cpr/include/cpr/cpr.h"
 
 CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
     QObject(parent), m_running(false), m_inputDataQueue(inputDataQueue)
 {
-    
 }
 
 void CheckUrlStatusWorker::run()
 {
-    m_running = true;
-    while (!m_inputDataQueue.empty())
+    while (true)
     {
+        m_mutex.lock();
+        if (m_inputDataQueue.empty())
+        {
+            m_mutex.unlock();
+            break;
+        }
         auto inputData = m_inputDataQueue.dequeue();
-        qDebug() << 1;
-        QThread::sleep(2);
+        m_mutex.unlock();
+
+        QString url = inputData["url"].toString();
+        auto headers = cpr::Header{
+            {"user-agent", USER_AGENT}
+        };
+        cpr::Response r = cpr::Head(cpr::Url{url.toStdString()}, cpr::Timeout{15 * 1000}, headers);
         auto data = QMap<QString, QVariant>{
             {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-            {QString("status"), QVariant(200)},
-            {QString("message"), QVariant("OK")},
-            {QString("url"), QVariant(inputData["url"].toString())}
+            {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
+            {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))}
         };
         emit result(data);
-        QThread::sleep(2);
-        qDebug() << 2;
     }
-//     qDebug() << 1;
-//     QThread::sleep(2);
-//     auto data = QMap<QString, QVariant>{
-//         {QString("rowId"), QVariant(1)},
-//         {QString("status"), QVariant(200)},
-//         {QString("message"), QVariant("OK")}
-//     };
-// //     emit result(QString("OK"));
-//     emit result(data);
-//     QThread::sleep(2);
-//     qDebug() << 2;
 
     emit finished();
 }

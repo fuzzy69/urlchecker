@@ -47,7 +47,7 @@
 #include "../common/applicationstate.h"
 #include "../config.h"
 #include "../utils/file.h"
-#include "../utils/httpclient.h"
+// #include "../utils/httpclient.h"
 #include "mainwindow.h"
 #include "../common/table.h"
 #include "../version.h"
@@ -67,7 +67,7 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
     m_lastDirectory = applicationDir.absolutePath(); 
     m_networkManager = new QNetworkAccessManager(this);
-    m_httpClient = new HttpClient(this);
+//     m_httpClient = new HttpClient(this);
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(5, this);
     m_reply = nullptr;
@@ -86,8 +86,8 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     createStatusBar();
     createConnections();
 
-    m_httpClient->setTimeout(m_timeoutSpinBox->value());
-    m_httpClient->setUserAgent(QString(USER_AGENT));
+//     m_httpClient->setTimeout(m_timeoutSpinBox->value());
+//     m_httpClient->setUserAgent(QString(USER_AGENT));
 
     if (QFile::exists(m_settingsFilePath))
         loadSettings();
@@ -356,10 +356,10 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createConnections()
 {
-    connect(m_testPushButton, &QPushButton::clicked, [this]{
-        m_startPushButton->setEnabled(false);
-    });
-    connect(m_testPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
+//     connect(m_testPushButton, &QPushButton::clicked, [this]{
+//         m_startPushButton->setEnabled(false);
+//     });
+//     connect(m_testPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
 
 
 
@@ -386,14 +386,14 @@ void MainWindow::createConnections()
     connect(m_invertSelectionAction, &QAction::triggered, [this] {m_resultsTable->invertSelection();});
     connect(m_removeDuplicatesAction, &QAction::triggered, this, &MainWindow::removeDuplicates);
     connect(m_removeSelectedAction, &QAction::triggered, this, &MainWindow::removeSelected);
-    connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startChecking);
-    connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopChecking);
+    connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
+    connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopJob);
     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
     });
     connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::onSelectedRecentUrlFile);
 
-    connect(m_httpClient, &HttpClient::replyFinished, this, &MainWindow::urlChecked);
+//     connect(m_httpClient, &HttpClient::replyFinished, this, &MainWindow::urlChecked);
 
     connect(m_applicationState, &ApplicationState::applicationStarted, [this]{
         m_statusBar->showMessage("Starting ...");
@@ -469,38 +469,38 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 }
 
 // Slots
-void MainWindow::startChecking()
-{
-    emit m_applicationState->jobStarting();
-    if (m_resultsTable->rowCount() > 0)
-    {
-        m_progressBar->setValue(0);
-        m_currentRowIndex = 0;
-        m_running = true;
-        m_httpClient->setTimeout(m_timeoutSpinBox->value());
-        m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
-    }
-}
-
-void MainWindow::stopChecking()
-{
-    emit m_applicationState->jobStopping();
-    m_running = false;
-}
-
-void MainWindow::urlChecked(int statusCode, const QString& statusText, const QString& text)
-{
-    updateResultsRow(m_currentRowIndex, statusCode, statusText);
-    int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
-    m_progressBar->setValue(currentProgress);
-    if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
-    {
-        emit m_applicationState->jobFinishing();
-        return;
-    }
-    ++m_currentRowIndex;
-    m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
-}
+// void MainWindow::startChecking()
+// {
+//     emit m_applicationState->jobStarting();
+//     if (m_resultsTable->rowCount() > 0)
+//     {
+//         m_progressBar->setValue(0);
+//         m_currentRowIndex = 0;
+//         m_running = true;
+//         m_httpClient->setTimeout(m_timeoutSpinBox->value());
+//         m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
+//     }
+// }
+// 
+// void MainWindow::stopChecking()
+// {
+//     emit m_applicationState->jobStopping();
+//     m_running = false;
+// }
+// 
+// void MainWindow::urlChecked(int statusCode, const QString& statusText, const QString& text)
+// {
+//     updateResultsRow(m_currentRowIndex, statusCode, statusText);
+//     int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
+//     m_progressBar->setValue(currentProgress);
+//     if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
+//     {
+//         emit m_applicationState->jobFinishing();
+//         return;
+//     }
+//     ++m_currentRowIndex;
+//     m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
+// }
 
 void MainWindow::initRecentUrlFiles()
 {
@@ -542,6 +542,9 @@ void MainWindow::onSelectedRecentUrlFile(const QString& filePath)
 
 void MainWindow::startJob()
 {
+    qDebug() << "Start";
+    m_itemsDone = 0;
+    m_totalItems = m_resultsTable->rowCount();
     m_threads.clear();
     m_workers.clear();
     for (int i = 0; i < m_resultsTable->rowCount(); ++i)
@@ -552,45 +555,18 @@ void MainWindow::startJob()
             {QString("url"), QVariant(url)}
         });
     }
-
-//         auto thread = new QThread;
-//         auto worker = new CheckUrlStatusWorker;
-//         worker->moveToThread(thread);
-//         m_threads.append(thread);
-//         m_workers.append(worker);
-//         // Connections
-//         connect(thread, &QThread::started, worker, &CheckUrlStatusWorker::run);
-//         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-//         connect(worker, &CheckUrlStatusWorker::result, [](const QString &resultData){
-//             qDebug() << "Result: " << resultData;
-//         });
-//         connect(worker, &CheckUrlStatusWorker::finished, thread, &QThread::quit);
-//         connect(worker, &CheckUrlStatusWorker::finished, worker, &CheckUrlStatusWorker::deleteLater);
-//         connect(worker, &CheckUrlStatusWorker::finished, []{
-//             qDebug() << "Worker finished";
-//         });
-//         thread->start();
-//         qDebug() << "Start ...";
-
-//     int parallelTasks = m_threadsSpinBox->value();
-    int parallelTasks = 1;
+    int parallelTasks = m_threadsSpinBox->value();
     for (int i = 0; i < parallelTasks;++i)
     {
         auto thread = new QThread;
         auto worker = new CheckUrlStatusWorker(m_inputDataQueue);
-//         worker->moveToThread(thread);
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
         // Connections
         connect(thread, &QThread::started, worker, &CheckUrlStatusWorker::run);
         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-        connect(worker, &CheckUrlStatusWorker::result, [](const QMap<QString, QVariant> &resultData){
-            qDebug() << "Result: " << resultData["rowId"].toInt();
-            qDebug() << "Result: " << resultData["status"].toInt();
-            qDebug() << "Result: " << resultData["message"].toString();
-            qDebug() << "Result: " << resultData["url"].toString();
-        });
+        connect(worker, &CheckUrlStatusWorker::result, this, &MainWindow::onResult);
         connect(worker, &CheckUrlStatusWorker::finished, thread, &QThread::quit);
         connect(worker, &CheckUrlStatusWorker::finished, worker, &CheckUrlStatusWorker::deleteLater);
         connect(worker, &CheckUrlStatusWorker::finished, []{
@@ -602,4 +578,17 @@ void MainWindow::startJob()
     {
         m_threads[i]->start();
     }
+}
+
+void MainWindow::stopJob()
+{
+    
+}
+
+void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
+{
+    ++m_itemsDone;
+    updateResultsRow(resultData["rowId"].toInt(), resultData["status"].toInt(), resultData["message"].toString());
+    int currentProgress = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
+    m_progressBar->setValue(currentProgress);
 }

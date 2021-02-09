@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QMap>
+#include <QMutex>
 
 class CheckUrlStatusWorker : public QObject
 {
@@ -21,5 +22,6 @@ public slots:
 private:
     bool m_running;
     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
+    QMutex m_mutex;
 };
 

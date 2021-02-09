@@ -26,7 +26,7 @@ class QWidget;
 class QNetworkReply;
 class QTreeWidget;
 
-class HttpClient;
+// class HttpClient;
 class RecentFiles;
 class ProxiesWidget;
 class SideBar;
@@ -49,12 +49,14 @@ protected slots:
     void removeDuplicates();
     void removeSelected();
 
-    void startChecking();
-    void stopChecking();
-    void urlChecked(int statusCode, const QString &statusText, const QString &text);
+//     void startChecking();
+//     void stopChecking();
+//     void urlChecked(int statusCode, const QString &statusText, const QString &text);
     void onSelectedRecentUrlFile(const QString &filePath);
 
     void startJob();
+    void stopJob();
+    void onResult(const QMap<QString, QVariant> &resultData);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -153,7 +155,7 @@ private:
     QStandardItemModel *m_resultsModel;
     QTimer *m_pulseTimer;
 
-    HttpClient *m_httpClient;
+//     HttpClient *m_httpClient;
     RecentFiles *m_recentFiles;
     SideBar *m_sideBar;
     ApplicationState *m_applicationState;
@@ -163,4 +165,6 @@ private:
     QList<QThread*> m_threads;
     QList<CheckUrlStatusWorker*> m_workers;
     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
+    int m_itemsDone;
+    int m_totalItems;
 };
