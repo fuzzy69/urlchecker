@@ -8,8 +8,9 @@
 #include "../config.h"
 #include "libs/cpr/include/cpr/cpr.h"
 
+
 CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
-    QObject(parent), m_running(false), m_inputDataQueue(inputDataQueue)
+    Worker(inputDataQueue, parent)
 {
 }
 
@@ -36,8 +37,10 @@ void CheckUrlStatusWorker::run()
             {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
             {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))}
         };
-        emit result(data);
+//         emit result(data);
+        emit Worker::result(data);
     }
 
-    emit finished();
+//     emit finished();
+    emit Worker::finished();
 }

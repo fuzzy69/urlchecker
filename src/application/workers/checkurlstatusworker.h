@@ -5,23 +5,26 @@
 #include <QMap>
 #include <QMutex>
 
-class CheckUrlStatusWorker : public QObject
+#include "worker.h"
+
+
+class CheckUrlStatusWorker : public Worker
 {
     Q_OBJECT
     
 public:
     explicit CheckUrlStatusWorker(QQueue<QMap<QString, QVariant>> &inputDataQueue, QObject *parent = nullptr);
 
-signals:
+Q_SIGNALS:
     void result(const QMap<QString, QVariant> &resultData);
     void finished();
 
-public slots:
-    void run();
+public Q_SLOTS:
+    void run() override;
 
 private:
-    bool m_running;
-    QQueue<QMap<QString, QVariant>> m_inputDataQueue;
+//     bool m_running;
+//     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
     QMutex m_mutex;
 };
 
