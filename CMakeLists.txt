@@ -28,7 +28,9 @@ set(urlchecker_SRC
   src/application/core/proxieswidget.cpp
   src/application/common/applicationstate.cpp
   src/application/core/toolswidget.cpp
+  src/application/workers/worker.cpp
   src/application/workers/checkurlstatusworker.cpp
+  src/application/workers/checkalexarank.cpp
   assets.qrc
 )
 

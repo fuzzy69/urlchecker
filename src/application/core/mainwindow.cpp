@@ -43,6 +43,7 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <QThread>
+#include <QRegExp>
 
 #include "../common/applicationstate.h"
 #include "../config.h"
@@ -55,7 +56,9 @@
 #include "sidebar.h"
 #include "proxieswidget.h"
 #include "toolswidget.h"
+#include "../workers/worker.h"
 #include "../workers/checkurlstatusworker.h"
+#include "../workers/checkalexarank.h"
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 {
@@ -73,7 +76,7 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_reply = nullptr;
     m_recentUrlFileActions = QList<QAction*>();
     m_threads = QList<QThread*>();
-    m_workers = QList<CheckUrlStatusWorker*>();
+    m_workers = QList<Worker*>();
     m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
 
    m_applicationState = new ApplicationState(this);
@@ -356,9 +359,26 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createConnections()
 {
-//     connect(m_testPushButton, &QPushButton::clicked, [this]{
-//         m_startPushButton->setEnabled(false);
-//     });
+    connect(m_testPushButton, &QPushButton::clicked, [this]{
+        QRegExp regex("RANK=\"(\\d+)\"");
+//         regex.indexIn(R"(
+//             <!-- Need more Alexa data? Find our APIs here: https://aws.amazon.com/alexa/ -->
+// <ALEXA VER="0.9" URL="landrumhr.com/" HOME="0" AID="=" IDN="landrumhr.com/">
+// <SD><POPULARITY URL="landrumhr.com/" TEXT="1424362" SOURCE="panel"/><REACH RANK="1192311"/><RANK DELTA="-851842"/></SD></ALEXA>
+// "www.climateprosinc.com"
+// 200
+//         )");
+
+    int pos = regex.indexIn(R"(
+            <!-- Need more Alexa data? Find our APIs here: https://aws.amazon.com/alexa/ -->
+<ALEXA VER="0.9" URL="landrumhr.com/" HOME="0" AID="=" IDN="landrumhr.com/">
+<SD><POPULARITY URL="landrumhr.com/" TEXT="1424362" SOURCE="panel"/><REACH RNK="1192311"/><RANK DELTA="-851842"/></SD></ALEXA>
+"www.climateprosinc.com"
+200
+        )");
+        qDebug() << pos;
+        qDebug() << regex.cap(1);
+    });
 //     connect(m_testPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
 
 
@@ -515,8 +535,9 @@ void MainWindow::addToRecentUrlFiles(const QString& filePath)
     m_recentUrlFileActions.append(new QAction(filePath, this));
 }
 
-void MainWindow::updateResultsRow(int rowIndex, const QVariant& statusCode, const QVariant& statusText)
+void MainWindow::updateResultsRow(int rowIndex, const QVariant& result, const QVariant& statusCode, const QVariant& statusText)
 {
+    m_resultsTable->setCell(rowIndex, 1, QVariant(result));
     m_resultsTable->setCell(rowIndex, 2, QVariant(statusCode));
     m_resultsTable->setCell(rowIndex, 3, QVariant(statusText));
     int _statusCode = statusCode.toInt();
@@ -542,7 +563,6 @@ void MainWindow::onSelectedRecentUrlFile(const QString& filePath)
 
 void MainWindow::startJob()
 {
-    qDebug() << "Start";
     m_itemsDone = 0;
     m_totalItems = m_resultsTable->rowCount();
     m_threads.clear();
@@ -559,17 +579,19 @@ void MainWindow::startJob()
     for (int i = 0; i < parallelTasks;++i)
     {
         auto thread = new QThread;
-        auto worker = new CheckUrlStatusWorker(m_inputDataQueue);
+//         auto worker = new CheckUrlStatusWorker(m_inputDataQueue);
+        auto worker = new CheckAlexaRankWorker(m_inputDataQueue);
+//         auto worker = new Worker(m_inputDataQueue);
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
         // Connections
-        connect(thread, &QThread::started, worker, &CheckUrlStatusWorker::run);
+        connect(thread, &QThread::started, worker, &Worker::run);
         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-        connect(worker, &CheckUrlStatusWorker::result, this, &MainWindow::onResult);
-        connect(worker, &CheckUrlStatusWorker::finished, thread, &QThread::quit);
-        connect(worker, &CheckUrlStatusWorker::finished, worker, &CheckUrlStatusWorker::deleteLater);
-        connect(worker, &CheckUrlStatusWorker::finished, []{
+        connect(worker, &Worker::result, this, &MainWindow::onResult);
+        connect(worker, &Worker::finished, thread, &QThread::quit);
+        connect(worker, &Worker::finished, worker, &Worker::deleteLater);
+        connect(worker, &Worker::finished, []{
             qDebug() << "Worker finished";
         });
     }
@@ -588,7 +610,7 @@ void MainWindow::stopJob()
 void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
 {
     ++m_itemsDone;
-    updateResultsRow(resultData["rowId"].toInt(), resultData["status"].toInt(), resultData["message"].toString());
+    updateResultsRow(resultData["rowId"].toInt(), resultData["result"].toString(), resultData["status"].toInt(), resultData["message"].toString());
     int currentProgress = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
     m_progressBar->setValue(currentProgress);
 }

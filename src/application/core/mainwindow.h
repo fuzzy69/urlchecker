@@ -33,7 +33,9 @@ class SideBar;
 class Table;
 class ApplicationState;
 class ToolsWidget;
-class CheckUrlStatusWorker;
+// class CheckUrlStatusWorker;
+class Worker;
+
 
 class MainWindow : public QMainWindow
 {
@@ -75,7 +77,7 @@ private:
     void saveSettings();
     void initRecentUrlFiles();
     void addToRecentUrlFiles(const QString &filePath);
-    void updateResultsRow(int rowIndex, const QVariant &statusCode, const QVariant &statusText);
+    void updateResultsRow(int rowIndex, const QVariant& result, const QVariant &statusCode, const QVariant &statusText);
     void onPulse();
 
     // Actions
@@ -163,7 +165,7 @@ private:
     ToolsWidget *m_toolsWidget;
 
     QList<QThread*> m_threads;
-    QList<CheckUrlStatusWorker*> m_workers;
+    QList<Worker*> m_workers;
     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
     int m_itemsDone;
     int m_totalItems;
