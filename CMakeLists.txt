@@ -31,6 +31,7 @@ set(urlchecker_SRC
   src/application/workers/worker.cpp
   src/application/workers/checkurlstatusworker.cpp
   src/application/workers/checkalexarank.cpp
+  src/application/workers/scrapeproxies.cpp
   assets.qrc
 )
 

@@ -59,6 +59,8 @@
 #include "../workers/worker.h"
 #include "../workers/checkurlstatusworker.h"
 #include "../workers/checkalexarank.h"
+#include "../workers/scrapeproxies.h"
+
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
 {
@@ -292,6 +294,7 @@ void MainWindow::createWidgets()
     m_toolsWidget = new ToolsWidget;
     m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Check URL Status"));
     m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Check Alexa Rank"));
+    m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Scrape Proxies"));
     connect(m_toolsWidget, &ToolsWidget::toolSelected, [this](QString toolText){
         m_toolsPushButton->setText(QString(" %1").arg(toolText));
     });
@@ -360,7 +363,8 @@ void MainWindow::createStatusBar()
 void MainWindow::createConnections()
 {
     connect(m_testPushButton, &QPushButton::clicked, [this]{
-        QRegExp regex("RANK=\"(\\d+)\"");
+//         QRegExp regex("RANK=\"(\\d+)\"");
+        QRegExp regex("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*:?\\s*(\\d{2,5})");
 //         regex.indexIn(R"(
 //             <!-- Need more Alexa data? Find our APIs here: https://aws.amazon.com/alexa/ -->
 // <ALEXA VER="0.9" URL="landrumhr.com/" HOME="0" AID="=" IDN="landrumhr.com/">
@@ -370,11 +374,25 @@ void MainWindow::createConnections()
 //         )");
 
     int pos = regex.indexIn(R"(
-            <!-- Need more Alexa data? Find our APIs here: https://aws.amazon.com/alexa/ -->
-<ALEXA VER="0.9" URL="landrumhr.com/" HOME="0" AID="=" IDN="landrumhr.com/">
-<SD><POPULARITY URL="landrumhr.com/" TEXT="1424362" SOURCE="panel"/><REACH RNK="1192311"/><RANK DELTA="-851842"/></SD></ALEXA>
-"www.climateprosinc.com"
-200
+
+142.93.87.85:8899
+46.21.153.16:3128
+208.80.28.208:8080
+45.76.13.127:80
+138.68.60.8:8080
+142.11.201.26:1080
+162.214.92.202:80
+104.198.108.238:8080
+34.203.142.175:80
+54.156.164.61:80
+209.97.150.167:8080
+191.96.42.80:8080
+198.199.86.11:3128
+104.238.81.186:56227
+12.186.206.85:80
+12.20.241.112:80
+167.172.203.244:8118
+167.99.146.95:8888
         )");
         qDebug() << pos;
         qDebug() << regex.cap(1);
@@ -580,7 +598,8 @@ void MainWindow::startJob()
     {
         auto thread = new QThread;
 //         auto worker = new CheckUrlStatusWorker(m_inputDataQueue);
-        auto worker = new CheckAlexaRankWorker(m_inputDataQueue);
+//         auto worker = new CheckAlexaRankWorker(m_inputDataQueue);
+        auto worker = new ScrapeProxiesWorker(m_inputDataQueue);
 //         auto worker = new Worker(m_inputDataQueue);
         m_threads.append(thread);
         m_workers.append(worker);
