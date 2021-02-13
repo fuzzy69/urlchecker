@@ -35,6 +35,7 @@ class ApplicationState;
 class ToolsWidget;
 // class CheckUrlStatusWorker;
 class Worker;
+class SettingsWidget;
 
 
 class MainWindow : public QMainWindow
@@ -116,6 +117,7 @@ private:
     QWidget *m_settingsPageWidget;
     QWidget *m_proxiesPageWidget;
     QWidget *m_helpPageWidget;
+    SettingsWidget *m_settingsWidget;
 
 //     QTextEdit *m_proxiesTextEdit;
     ProxiesWidget *m_proxiesTextEdit;

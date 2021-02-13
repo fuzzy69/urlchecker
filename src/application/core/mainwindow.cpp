@@ -60,6 +60,7 @@
 #include "../workers/checkurlstatusworker.h"
 #include "../workers/checkalexarank.h"
 #include "../workers/scrapeproxies.h"
+#include "settingswidget.h"
 
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
@@ -275,8 +276,9 @@ void MainWindow::createWidgets()
 
     m_projectPageWidget = new QWidget;
     m_projectPageLayout = new QVBoxLayout(m_projectPageWidget);
-    m_settingsPageWidget = new QWidget;
-    m_settingsPageLayout = new QVBoxLayout(m_settingsPageWidget);
+//     m_settingsPageWidget = new QWidget;
+//     m_settingsPageLayout = new QVBoxLayout(m_settingsPageWidget);
+    m_settingsWidget = new SettingsWidget;
     m_proxiesPageWidget = new QWidget;
     m_proxiesPageLayout = new QVBoxLayout(m_proxiesPageWidget);
     m_helpPageWidget = new QWidget;
@@ -287,7 +289,8 @@ void MainWindow::createWidgets()
 
 
     m_mainStackedWidget->addWidget(m_projectPageWidget);
-    m_mainStackedWidget->addWidget(m_settingsPageWidget);
+//     m_mainStackedWidget->addWidget(m_settingsPageWidget);
+    m_mainStackedWidget->addWidget(m_settingsWidget);
     m_mainStackedWidget->addWidget(m_proxiesPageWidget);
     m_mainStackedWidget->addWidget(m_helpPageWidget);
 
@@ -302,12 +305,12 @@ void MainWindow::createWidgets()
     m_bottomLayout = new QHBoxLayout;
     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
     m_resultsTable->setColumnRatios(m_columnRatios);
-    m_threadsLabel = new QLabel("Threads");
-    m_timeoutLabel = new QLabel("Timeout (secs)");
-    m_threadsSpinBox = new QSpinBox;
-    m_threadsSpinBox->setRange(1, 50);
-    m_timeoutSpinBox = new QSpinBox;
-    m_timeoutSpinBox->setRange(1, 120);
+//     m_threadsLabel = new QLabel("Threads");
+//     m_timeoutLabel = new QLabel("Timeout (secs)");
+//     m_threadsSpinBox = new QSpinBox;
+//     m_threadsSpinBox->setRange(1, 50);
+//     m_timeoutSpinBox = new QSpinBox;
+//     m_timeoutSpinBox->setRange(1, 120);
     m_startPushButton = new QPushButton(QIcon(":assets/icons/control.png"), "Start");
     m_stopPushButton = new QPushButton(QIcon(":assets/icons/control-stop-square.png"), "Stop");
     m_testPushButton = new QPushButton("Test");
@@ -328,11 +331,11 @@ void MainWindow::createWidgets()
     m_projectPageLayout->addLayout(m_bottomLayout);
     m_projectPageLayout->addWidget(m_progressBar);
 
-    m_settingsPageLayout->addWidget(m_threadsLabel);
-    m_settingsPageLayout->addWidget(m_threadsSpinBox);
-    m_settingsPageLayout->addWidget(m_timeoutLabel);
-    m_settingsPageLayout->addWidget(m_timeoutSpinBox);
-    m_settingsPageLayout->addStretch(0);
+//     m_settingsPageLayout->addWidget(m_threadsLabel);
+//     m_settingsPageLayout->addWidget(m_threadsSpinBox);
+//     m_settingsPageLayout->addWidget(m_timeoutLabel);
+//     m_settingsPageLayout->addWidget(m_timeoutSpinBox);
+//     m_settingsPageLayout->addStretch(0);
 
     m_proxiesPageLayout->addWidget(m_proxiesTextEdit);
 
@@ -474,8 +477,8 @@ void MainWindow::saveSettings()
     QSettings settings(m_settingsFilePath, QSettings::IniFormat);
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
-    settings.setValue("threadsCount", m_threadsSpinBox->value());
-    settings.setValue("timeout", m_timeoutSpinBox->value());
+//     settings.setValue("threadsCount", m_threadsSpinBox->value());
+//     settings.setValue("timeout", m_timeoutSpinBox->value());
     settings.setValue("lastDirectory", m_lastDirectory);
 }
 
@@ -486,8 +489,8 @@ void MainWindow::loadSettings()
         QSettings settings(m_settingsFilePath, QSettings::IniFormat);
         restoreGeometry(settings.value("geometry").toByteArray());
         restoreState(settings.value("windowState").toByteArray());
-        m_threadsSpinBox->setValue(settings.value("threadsCount", 1).toInt());
-        m_timeoutSpinBox->setValue(settings.value("timeout", 20).toInt());
+//         m_threadsSpinBox->setValue(settings.value("threadsCount", 1).toInt());
+//         m_timeoutSpinBox->setValue(settings.value("timeout", 20).toInt());
         m_lastDirectory = settings.value("lastDirectory", m_lastDirectory).toString();
     }
 }
