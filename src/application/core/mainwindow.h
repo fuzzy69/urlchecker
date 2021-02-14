@@ -9,8 +9,6 @@
 class QAction;
 class QLabel;
 class QMenu;
-class QNetworkAccessManager;
-class QNetworkReply;
 class QProgressBar;
 class QPushButton;
 class QSpinBox;
@@ -23,17 +21,14 @@ class QToolBar;
 class QHBoxLayout;
 class QVBoxLayout;
 class QWidget;
-class QNetworkReply;
 class QTreeWidget;
 
-// class HttpClient;
 class RecentFiles;
 class ProxiesWidget;
 class SideBar;
 class Table;
 class ApplicationState;
 class ToolsWidget;
-// class CheckUrlStatusWorker;
 class Worker;
 class SettingsWidget;
 
@@ -52,10 +47,7 @@ protected slots:
     void removeDuplicates();
     void removeSelected();
 
-//     void startChecking();
-//     void stopChecking();
-//     void urlChecked(int statusCode, const QString &statusText, const QString &text);
-    void onSelectedRecentUrlFile(const QString &filePath);
+    void importRecentFileUrls(const QString &filePath);
 
     void startJob();
     void stopJob();
@@ -76,8 +68,6 @@ private:
     void createConnections();
     void loadSettings();
     void saveSettings();
-    void initRecentUrlFiles();
-    void addToRecentUrlFiles(const QString &filePath);
     void updateResultsRow(int rowIndex, const QVariant& result, const QVariant &statusCode, const QVariant &statusText);
     void onPulse();
 
@@ -111,7 +101,6 @@ private:
     QToolBar *m_toolBar;
 
     QWidget *m_centralWidget;
-//     QWidget *m_mainWidget;
     QStackedWidget *m_mainStackedWidget;
     QWidget *m_projectPageWidget;
     QWidget *m_settingsPageWidget;
@@ -119,7 +108,6 @@ private:
     QWidget *m_helpPageWidget;
     SettingsWidget *m_settingsWidget;
 
-//     QTextEdit *m_proxiesTextEdit;
     ProxiesWidget *m_proxiesTextEdit;
 
     QVBoxLayout *m_projectPageLayout;
@@ -130,7 +118,6 @@ private:
     QHBoxLayout *m_centralLayout;
     QVBoxLayout *m_mainLayout;
     QHBoxLayout *m_bottomLayout;
-//     QTableView *m_resultsTableView;
     Table *m_resultsTable;
     QList<float> m_columnRatios;
     QLabel *m_threadsLabel;
@@ -146,24 +133,17 @@ private:
     QLabel *m_activeThreadsLabel;
     QString m_settingsFilePath;
     QString m_lastDirectory;
-//    QQueue<QPair<int, QUrl>> m_dataQueue;
-    QList<QNetworkReply*> m_replies;
-    QNetworkReply *m_reply;
 
-    QNetworkAccessManager *m_networkManager;
     int m_currentRowIndex = 0;
     bool m_running = false;
-    int m_maxRecentFiles = 5;
     QList<QAction*> m_recentUrlFileActions;
 
     QStandardItemModel *m_resultsModel;
     QTimer *m_pulseTimer;
 
-//     HttpClient *m_httpClient;
     RecentFiles *m_recentFiles;
     SideBar *m_sideBar;
     ApplicationState *m_applicationState;
-//     QTreeWidget *m_toolsTreeWidget;
     ToolsWidget *m_toolsWidget;
 
     QList<QThread*> m_threads;

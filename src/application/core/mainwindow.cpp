@@ -11,14 +11,10 @@
 #include <QIODevice>
 #include <QHeaderView>
 #include <QLabel>
-// #include <QList>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QModelIndex>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
 #include <QPair>
 #include <QPoint>
 #include <QProgressBar>
@@ -48,7 +44,6 @@
 #include "../common/applicationstate.h"
 #include "../config.h"
 #include "../utils/file.h"
-// #include "../utils/httpclient.h"
 #include "mainwindow.h"
 #include "../common/table.h"
 #include "../version.h"
@@ -72,18 +67,14 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     QDir applicationDir(QApplication::applicationDirPath());
     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
     m_lastDirectory = applicationDir.absolutePath(); 
-    m_networkManager = new QNetworkAccessManager(this);
-//     m_httpClient = new HttpClient(this);
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(5, this);
-    m_reply = nullptr;
-    m_recentUrlFileActions = QList<QAction*>();
     m_threads = QList<QThread*>();
     m_workers = QList<Worker*>();
     m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
 
-   m_applicationState = new ApplicationState(this);
-   m_applicationState->start();
+    m_applicationState = new ApplicationState(this);
+    m_applicationState->start();
 
     createActions();
     createMenuBar();
@@ -92,22 +83,25 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     createStatusBar();
     createConnections();
 
-//     m_httpClient->setTimeout(m_timeoutSpinBox->value());
-//     m_httpClient->setUserAgent(QString(USER_AGENT));
-
     if (QFile::exists(m_settingsFilePath))
         loadSettings();
     else
         centerWindow();
-    initRecentUrlFiles();
-
-    for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
+    // Init recent files
+    for (QAction *action : m_recentFiles->actions())
     {
-        line = line.trimmed();
-        // TODO: validate URL
-        if (line.length() > 0)
-            m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+        m_recentUrlFilesMenu->addAction(action);
     }
+
+    // TODO: Remove this
+//     for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
+//     {
+//         line = line.trimmed();
+//         // TODO: validate URL
+//         if (line.length() > 0)
+//             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+//     }
+
     m_pulseTimer->start(1 * 1000);
     emit m_applicationState->applicationReady();
 }
@@ -129,7 +123,6 @@ void MainWindow::importUrls()
             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
-//     addToRecentUrlFiles(filePath);
     m_recentFiles->addFile(filePath);
 }
 
@@ -277,8 +270,6 @@ void MainWindow::createWidgets()
 
     m_projectPageWidget = new QWidget;
     m_projectPageLayout = new QVBoxLayout(m_projectPageWidget);
-//     m_settingsPageWidget = new QWidget;
-//     m_settingsPageLayout = new QVBoxLayout(m_settingsPageWidget);
     m_settingsWidget = new SettingsWidget;
     m_proxiesPageWidget = new QWidget;
     m_proxiesPageLayout = new QVBoxLayout(m_proxiesPageWidget);
@@ -290,7 +281,6 @@ void MainWindow::createWidgets()
 
 
     m_mainStackedWidget->addWidget(m_projectPageWidget);
-//     m_mainStackedWidget->addWidget(m_settingsPageWidget);
     m_mainStackedWidget->addWidget(m_settingsWidget);
     m_mainStackedWidget->addWidget(m_proxiesPageWidget);
     m_mainStackedWidget->addWidget(m_helpPageWidget);
@@ -306,12 +296,6 @@ void MainWindow::createWidgets()
     m_bottomLayout = new QHBoxLayout;
     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
     m_resultsTable->setColumnRatios(m_columnRatios);
-//     m_threadsLabel = new QLabel("Threads");
-//     m_timeoutLabel = new QLabel("Timeout (secs)");
-//     m_threadsSpinBox = new QSpinBox;
-//     m_threadsSpinBox->setRange(1, 50);
-//     m_timeoutSpinBox = new QSpinBox;
-//     m_timeoutSpinBox->setRange(1, 120);
     m_startPushButton = new QPushButton(QIcon(":assets/icons/control.png"), "Start");
     m_stopPushButton = new QPushButton(QIcon(":assets/icons/control-stop-square.png"), "Stop");
     m_testPushButton = new QPushButton("Test");
@@ -331,12 +315,6 @@ void MainWindow::createWidgets()
     m_bottomLayout->addWidget(m_testPushButton);
     m_projectPageLayout->addLayout(m_bottomLayout);
     m_projectPageLayout->addWidget(m_progressBar);
-
-//     m_settingsPageLayout->addWidget(m_threadsLabel);
-//     m_settingsPageLayout->addWidget(m_threadsSpinBox);
-//     m_settingsPageLayout->addWidget(m_timeoutLabel);
-//     m_settingsPageLayout->addWidget(m_timeoutSpinBox);
-//     m_settingsPageLayout->addStretch(0);
 
     m_proxiesPageLayout->addWidget(m_proxiesTextEdit);
 
@@ -367,43 +345,8 @@ void MainWindow::createStatusBar()
 void MainWindow::createConnections()
 {
     connect(m_testPushButton, &QPushButton::clicked, [this]{
-//         QRegExp regex("RANK=\"(\\d+)\"");
-        QRegExp regex("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*:?\\s*(\\d{2,5})");
-//         regex.indexIn(R"(
-//             <!-- Need more Alexa data? Find our APIs here: https://aws.amazon.com/alexa/ -->
-// <ALEXA VER="0.9" URL="landrumhr.com/" HOME="0" AID="=" IDN="landrumhr.com/">
-// <SD><POPULARITY URL="landrumhr.com/" TEXT="1424362" SOURCE="panel"/><REACH RANK="1192311"/><RANK DELTA="-851842"/></SD></ALEXA>
-// "www.climateprosinc.com"
-// 200
-//         )");
-
-    int pos = regex.indexIn(R"(
-
-142.93.87.85:8899
-46.21.153.16:3128
-208.80.28.208:8080
-45.76.13.127:80
-138.68.60.8:8080
-142.11.201.26:1080
-162.214.92.202:80
-104.198.108.238:8080
-34.203.142.175:80
-54.156.164.61:80
-209.97.150.167:8080
-191.96.42.80:8080
-198.199.86.11:3128
-104.238.81.186:56227
-12.186.206.85:80
-12.20.241.112:80
-167.172.203.244:8118
-167.99.146.95:8888
-        )");
-        qDebug() << pos;
-        qDebug() << regex.cap(1);
+        qDebug() << "OK";
     });
-//     connect(m_testPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
-
-
 
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
 
@@ -433,9 +376,7 @@ void MainWindow::createConnections()
     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
     });
-    connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::onSelectedRecentUrlFile);
-
-//     connect(m_httpClient, &HttpClient::replyFinished, this, &MainWindow::urlChecked);
+    connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
 
     connect(m_applicationState, &ApplicationState::applicationStarted, [this]{
         m_statusBar->showMessage("Starting ...");
@@ -511,52 +452,6 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 }
 
 // Slots
-// void MainWindow::startChecking()
-// {
-//     emit m_applicationState->jobStarting();
-//     if (m_resultsTable->rowCount() > 0)
-//     {
-//         m_progressBar->setValue(0);
-//         m_currentRowIndex = 0;
-//         m_running = true;
-//         m_httpClient->setTimeout(m_timeoutSpinBox->value());
-//         m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
-//     }
-// }
-// 
-// void MainWindow::stopChecking()
-// {
-//     emit m_applicationState->jobStopping();
-//     m_running = false;
-// }
-// 
-// void MainWindow::urlChecked(int statusCode, const QString& statusText, const QString& text)
-// {
-//     updateResultsRow(m_currentRowIndex, statusCode, statusText);
-//     int currentProgress = static_cast<int>(static_cast<double>(m_currentRowIndex) / m_resultsTable->rowCount() * 100);
-//     m_progressBar->setValue(currentProgress);
-//     if (!m_running || m_currentRowIndex >= m_resultsTable->rowCount())
-//     {
-//         emit m_applicationState->jobFinishing();
-//         return;
-//     }
-//     ++m_currentRowIndex;
-//     m_httpClient->head(m_resultsTable->cell(m_currentRowIndex, 0).toString());
-// }
-
-void MainWindow::initRecentUrlFiles()
-{
-    for (QAction *action : m_recentFiles->actions())
-    {
-        m_recentUrlFilesMenu->addAction(action);
-    }
-}
-
-void MainWindow::addToRecentUrlFiles(const QString& filePath)
-{
-    m_recentUrlFileActions.append(new QAction(filePath, this));
-}
-
 void MainWindow::updateResultsRow(int rowIndex, const QVariant& result, const QVariant& statusCode, const QVariant& statusText)
 {
     m_resultsTable->setCell(rowIndex, 1, QVariant(result));
@@ -578,7 +473,7 @@ void MainWindow::onPulse()
     //
 }
 
-void MainWindow::onSelectedRecentUrlFile(const QString& filePath)
+void MainWindow::importRecentFileUrls(const QString& filePath)
 {
     if (!QFile::exists(filePath))
         return;
@@ -613,7 +508,6 @@ void MainWindow::startJob()
 //         auto worker = new CheckUrlStatusWorker(m_inputDataQueue);
 //         auto worker = new CheckAlexaRankWorker(m_inputDataQueue);
         auto worker = new ScrapeProxiesWorker(m_inputDataQueue);
-//         auto worker = new Worker(m_inputDataQueue);
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
