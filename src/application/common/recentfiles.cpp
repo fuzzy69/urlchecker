@@ -26,6 +26,8 @@ RecentFiles::RecentFiles(int maxRecentFiles, QObject* parent) : QObject(parent),
 
 void RecentFiles::addFile(const QString& filePath)
 {
+    if (m_recentFiles.contains(filePath))
+        return;
     if (m_recentFilesCount == m_maxRecentFiles)
     {
         m_recentFiles.removeLast();
