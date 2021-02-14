@@ -129,7 +129,8 @@ void MainWindow::importUrls()
             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
-    addToRecentUrlFiles(filePath);
+//     addToRecentUrlFiles(filePath);
+    m_recentFiles->addFile(filePath);
 }
 
 void MainWindow::exportResults()
@@ -579,7 +580,16 @@ void MainWindow::onPulse()
 
 void MainWindow::onSelectedRecentUrlFile(const QString& filePath)
 {
-    qDebug() << "open recent file" << filePath;
+    if (!QFile::exists(filePath))
+        return;
+    for (auto& line : File::readTextLines(filePath))
+    {
+        line = line.trimmed();
+        // TODO: validate URL
+        if (line.length() > 0)
+            m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+    }
+    m_lastDirectory = QDir(filePath).absolutePath();
 }
 
 void MainWindow::startJob()
