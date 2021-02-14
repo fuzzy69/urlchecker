@@ -19,6 +19,8 @@ public:
     int rowCount() const;
     bool removeRow(int rowIndex);
     void removeAllRows();
+    void removeDuplicates();
+    void removeSelected();
     void row(int rowIndex) const;
     void appendRow(QStringList cells);
     QVariant cell(int rowIndex, int colIndex) const;

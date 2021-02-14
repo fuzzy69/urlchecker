@@ -44,8 +44,8 @@ public:
 protected slots:
     void importUrls();
     void exportResults();
-    void removeDuplicates();
-    void removeSelected();
+//     void removeDuplicates();
+//     void removeSelected();
 
     void importRecentFileUrls(const QString &filePath);
 

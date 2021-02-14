@@ -94,13 +94,13 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     }
 
     // TODO: Remove this
-//     for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
-//     {
-//         line = line.trimmed();
-//         // TODO: validate URL
-//         if (line.length() > 0)
-//             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
-//     }
+    for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
+    {
+        line = line.trimmed();
+        // TODO: validate URL
+        if (line.length() > 0)
+            m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+    }
 
     m_pulseTimer->start(1 * 1000);
     emit m_applicationState->applicationReady();
@@ -146,35 +146,35 @@ void MainWindow::exportResults()
     m_lastDirectory = QDir(filePath).absolutePath();
 }
 
-void MainWindow::removeDuplicates()
-{
-    QSet<QString> urls;
-    QSet<int> duplicateIndexes;
-    QString url;
-    for (int i = 0; i < m_resultsTable->rowCount(); ++i)
-    {
-        url = m_resultsTable->cell(i, 0).toString();
-        if (urls.contains(url))
-            duplicateIndexes.insert(i);
-        else
-            urls.insert(url);
-    }
-    for (int i = m_resultsTable->rowCount() - 1; i >= 0; --i)
-    {
-        if (duplicateIndexes.contains(i))
-            m_resultsTable->removeRow(i);
-    }
-}
-
-void MainWindow::removeSelected()
-{
-    QSet<int> selectedIndexes = m_resultsTable->selectedRows();
-    for (int i = m_resultsTable->rowCount() - 1; i >= 0; --i)
-    {
-        if (selectedIndexes.contains(i))
-            m_resultsTable->removeRow(i);
-    }
-}
+// void MainWindow::removeDuplicates()
+// {
+//     QSet<QString> urls;
+//     QSet<int> duplicateIndexes;
+//     QString url;
+//     for (int i = 0; i < m_resultsTable->rowCount(); ++i)
+//     {
+//         url = m_resultsTable->cell(i, 0).toString();
+//         if (urls.contains(url))
+//             duplicateIndexes.insert(i);
+//         else
+//             urls.insert(url);
+//     }
+//     for (int i = m_resultsTable->rowCount() - 1; i >= 0; --i)
+//     {
+//         if (duplicateIndexes.contains(i))
+//             m_resultsTable->removeRow(i);
+//     }
+// }
+// 
+// void MainWindow::removeSelected()
+// {
+//     QSet<int> selectedIndexes = m_resultsTable->selectedRows();
+//     for (int i = m_resultsTable->rowCount() - 1; i >= 0; --i)
+//     {
+//         if (selectedIndexes.contains(i))
+//             m_resultsTable->removeRow(i);
+//     }
+// }
 
 void MainWindow::centerWindow()
 {
@@ -344,7 +344,7 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createConnections()
 {
-    connect(m_testPushButton, &QPushButton::clicked, [this]{
+    connect(m_testPushButton, &QPushButton::clicked, []{
         qDebug() << "OK";
     });
 
@@ -354,7 +354,6 @@ void MainWindow::createConnections()
     connect(m_settingsAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
     connect(m_proxiesAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
     connect(m_helpAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
-
 
     connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
     connect(m_quitAction, &QAction::triggered, this, &MainWindow::close);
@@ -366,11 +365,13 @@ void MainWindow::createConnections()
     );});
     connect(m_importUrlsAction, &QAction::triggered, this, &MainWindow::importUrls);
     connect(m_exportResultsAction, &QAction::triggered, this, &MainWindow::exportResults);
-    connect(m_clearTableAction, &QAction::triggered, [this] {m_resultsTable->removeAllRows();});
-    connect(m_selectAllAction, &QAction::triggered, [this] {m_resultsTable->selectAll();});
-    connect(m_invertSelectionAction, &QAction::triggered, [this] {m_resultsTable->invertSelection();});
-    connect(m_removeDuplicatesAction, &QAction::triggered, this, &MainWindow::removeDuplicates);
-    connect(m_removeSelectedAction, &QAction::triggered, this, &MainWindow::removeSelected);
+
+    connect(m_clearTableAction, &QAction::triggered, m_resultsTable, &Table::removeAllRows);
+    connect(m_selectAllAction, &QAction::triggered, m_resultsTable, &Table::selectAll);
+    connect(m_invertSelectionAction, &QAction::triggered, m_resultsTable, &Table::invertSelection);
+    connect(m_removeDuplicatesAction, &QAction::triggered, m_resultsTable, &Table::removeDuplicates);
+    connect(m_removeSelectedAction, &QAction::triggered, m_resultsTable, &Table::removeSelected);
+
     connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
     connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopJob);
     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {

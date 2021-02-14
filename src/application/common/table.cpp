@@ -182,3 +182,33 @@ void Table::setRowColor(int rowIndex, const QColor& textColor, const QColor &bac
         m_tableModel->setData(m_tableModel->index(rowIndex, columnIndex), QBrush(backgroundColor), Qt::BackgroundColorRole);
     }
 }
+
+void Table::removeDuplicates()
+{
+    QSet<QString> urls;
+    QSet<int> duplicateIndexes;
+    QString url;
+    for (int i = 0; i < rowCount(); ++i)
+    {
+        url = cell(i, 0).toString();
+        if (urls.contains(url))
+            duplicateIndexes.insert(i);
+        else
+            urls.insert(url);
+    }
+    for (int i = rowCount() - 1; i >= 0; --i)
+    {
+        if (duplicateIndexes.contains(i))
+            removeRow(i);
+    }
+}
+
+void Table::removeSelected()
+{
+    QSet<int> selectedIndexes = selectedRows();
+    for (int i = rowCount() - 1; i >= 0; --i)
+    {
+        if (selectedIndexes.contains(i))
+            removeRow(i);
+    }
+}
