@@ -7,6 +7,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QRegularExpressionMatchIterator>
+#include <QApplication>
 
 #include "scrapeproxies.h"
 #include "../config.h"
@@ -20,10 +21,11 @@ ScrapeProxiesWorker::ScrapeProxiesWorker(QQueue<QMap<QString, QVariant> >& input
 
 void ScrapeProxiesWorker::run()
 {
+    m_running = true;
     QRegularExpression regex("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*:?\\s*(\\d{2,5})");
     cpr::Session session;
     session.SetVerifySsl(false);
-    while (true)
+    while (m_running)
     {
         m_mutex.lock();
         if (m_inputDataQueue.empty())
@@ -33,6 +35,7 @@ void ScrapeProxiesWorker::run()
         }
         auto inputData = m_inputDataQueue.dequeue();
         m_mutex.unlock();
+        QApplication::processEvents();
 
         QUrl url(inputData["url"].toString());
         session.SetUserAgent(USER_AGENT);

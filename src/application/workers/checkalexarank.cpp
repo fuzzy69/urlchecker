@@ -5,6 +5,7 @@
 #include <QMutex>
 #include <QUrl>
 #include <QRegExp>
+#include <QApplication>
 
 #include "checkalexarank.h"
 #include "../config.h"
@@ -18,8 +19,9 @@ CheckAlexaRankWorker::CheckAlexaRankWorker(QQueue<QMap<QString, QVariant> >& inp
 
 void CheckAlexaRankWorker::run()
 {
+    m_running = true;
     QRegExp regex("RANK=\"(\\d+)\"");
-    while (true)
+    while (m_running)
     {
         m_mutex.lock();
         if (m_inputDataQueue.empty())
@@ -29,6 +31,7 @@ void CheckAlexaRankWorker::run()
         }
         auto inputData = m_inputDataQueue.dequeue();
         m_mutex.unlock();
+        QApplication::processEvents();
 
 //         QString url = inputData["url"].toString();
         QUrl url(inputData["url"].toString());

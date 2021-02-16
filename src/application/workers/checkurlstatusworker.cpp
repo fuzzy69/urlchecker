@@ -3,10 +3,12 @@
 #include <QThread>
 #include <QQueue>
 #include <QMutex>
+#include <QApplication>
 
-#include "checkurlstatusworker.h"
-#include "../config.h"
 #include "libs/cpr/include/cpr/cpr.h"
+
+#include "../config.h"
+#include "checkurlstatusworker.h"
 
 
 CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
@@ -16,7 +18,8 @@ CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue<QMap<QString, QVariant> >& inp
 
 void CheckUrlStatusWorker::run()
 {
-    while (true)
+    m_running = true;
+    while (m_running)
     {
         m_mutex.lock();
         if (m_inputDataQueue.empty())
@@ -26,6 +29,7 @@ void CheckUrlStatusWorker::run()
         }
         auto inputData = m_inputDataQueue.dequeue();
         m_mutex.unlock();
+        QApplication::processEvents();
 
         QString url = inputData["url"].toString();
         auto headers = cpr::Header{
@@ -37,10 +41,8 @@ void CheckUrlStatusWorker::run()
             {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
             {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))}
         };
-//         emit result(data);
         emit Worker::result(data);
     }
 
-//     emit finished();
     emit Worker::finished();
 }

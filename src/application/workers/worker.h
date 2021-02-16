@@ -4,7 +4,7 @@
 #include <QVariant>
 #include <QMap>
 #include <QQueue>
-// #include <QMutex>
+
 
 class Worker : public QObject
 {
@@ -16,13 +16,14 @@ public:
 signals:
     void result(const QMap<QString, QVariant> &resultData);
     void finished();
+    void requestStop();
 
 public slots:
     virtual void run();
+    void stop();
 
 protected:
     bool m_running;
     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
-//     QMutex m_mutex;
 };
 

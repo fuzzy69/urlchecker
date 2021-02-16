@@ -1,10 +1,9 @@
 #include <QObject>
-// #include <QDebug>
-// #include <QThread>
 #include <QQueue>
-// #include <QMutex>
+#include <QDebug>
 
 #include "worker.h"
+
 
 Worker::Worker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
     QObject(parent), m_running(false), m_inputDataQueue(inputDataQueue)
@@ -13,4 +12,9 @@ Worker::Worker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent
 
 void Worker::run()
 {
+}
+
+void Worker::stop()
+{
+    m_running = false;
 }
