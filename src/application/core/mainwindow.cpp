@@ -55,6 +55,7 @@
 #include "../workers/checkurlstatusworker.h"
 #include "../workers/checkalexarank.h"
 #include "../workers/scrapeproxies.h"
+#include "../workers/dummyworker.h"
 #include "settingswidget.h"
 
 
@@ -145,36 +146,6 @@ void MainWindow::exportResults()
     File::writeTextFile(filePath, urls);
     m_lastDirectory = QDir(filePath).absolutePath();
 }
-
-// void MainWindow::removeDuplicates()
-// {
-//     QSet<QString> urls;
-//     QSet<int> duplicateIndexes;
-//     QString url;
-//     for (int i = 0; i < m_resultsTable->rowCount(); ++i)
-//     {
-//         url = m_resultsTable->cell(i, 0).toString();
-//         if (urls.contains(url))
-//             duplicateIndexes.insert(i);
-//         else
-//             urls.insert(url);
-//     }
-//     for (int i = m_resultsTable->rowCount() - 1; i >= 0; --i)
-//     {
-//         if (duplicateIndexes.contains(i))
-//             m_resultsTable->removeRow(i);
-//     }
-// }
-// 
-// void MainWindow::removeSelected()
-// {
-//     QSet<int> selectedIndexes = m_resultsTable->selectedRows();
-//     for (int i = m_resultsTable->rowCount() - 1; i >= 0; --i)
-//     {
-//         if (selectedIndexes.contains(i))
-//             m_resultsTable->removeRow(i);
-//     }
-// }
 
 void MainWindow::centerWindow()
 {
@@ -345,6 +316,7 @@ void MainWindow::createStatusBar()
 void MainWindow::createConnections()
 {
     connect(m_testPushButton, &QPushButton::clicked, []{
+        
         qDebug() << "OK";
     });
 
@@ -385,31 +357,31 @@ void MainWindow::createConnections()
     });
     connect(m_applicationState, &ApplicationState::applicationReady, [this]{
         m_statusBar->showMessage("Ready.");
-        m_startPushButton->setEnabled(true);
-        m_stopPushButton->setEnabled(false);
+//         m_startPushButton->setEnabled(true);
+//         m_stopPushButton->setEnabled(false);
         qDebug() << "Application idling ...";
     });
     connect(m_applicationState, &ApplicationState::applicationExit, [this]{
         m_statusBar->showMessage("Exiting ...");
-        m_startPushButton->setEnabled(false);
+//         m_startPushButton->setEnabled(false);
         qDebug() << "Application exiting ...";
     });
     connect(m_applicationState, &ApplicationState::jobStarted, [this]{
         m_statusBar->showMessage("Working ...");
-        m_startPushButton->setEnabled(false);
-        m_stopPushButton->setEnabled(true);
+//         m_startPushButton->setEnabled(false);
+//         m_stopPushButton->setEnabled(true);
         qDebug() << "Job started";
     });
     connect(m_applicationState, &ApplicationState::jobStopped, [this]{
         m_statusBar->showMessage("Stopping ...");
-        m_startPushButton->setEnabled(false);
-        m_stopPushButton->setEnabled(false);
+//         m_startPushButton->setEnabled(false);
+//         m_stopPushButton->setEnabled(false);
         qDebug() << "Job stopped";
     });
     connect(m_applicationState, &ApplicationState::jobFinished, [this]{
 //         m_statusBar->showMessage("Stopping ...");
-        m_startPushButton->setEnabled(false);
-        m_stopPushButton->setEnabled(false);
+//         m_startPushButton->setEnabled(false);
+//         m_stopPushButton->setEnabled(false);
         qDebug() << "Job finished";
     });
     
@@ -502,13 +474,21 @@ void MainWindow::startJob()
             {QString("url"), QVariant(url)}
         });
     }
-    int parallelTasks = m_threadsSpinBox->value();
+//     int parallelTasks = m_threadsSpinBox->value();
+    int parallelTasks = 1;
     for (int i = 0; i < parallelTasks;++i)
     {
         auto thread = new QThread;
-//         auto worker = new CheckUrlStatusWorker(m_inputDataQueue);
-//         auto worker = new CheckAlexaRankWorker(m_inputDataQueue);
-        auto worker = new ScrapeProxiesWorker(m_inputDataQueue);
+        Worker *worker;
+        // TODO: Improve tool switching logic
+        if (m_toolsPushButton->text() == " Check URL Status")
+            worker = new CheckUrlStatusWorker(m_inputDataQueue);
+        else if (m_toolsPushButton->text() == " Check Alexa Rank")
+            worker = new CheckAlexaRankWorker(m_inputDataQueue);
+        else if (m_toolsPushButton->text() == " Scrape Proxies")
+            worker = new ScrapeProxiesWorker(m_inputDataQueue);
+        else
+            worker = new DummyWorker(m_inputDataQueue);
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
@@ -521,6 +501,7 @@ void MainWindow::startJob()
         connect(worker, &Worker::finished, []{
             qDebug() << "Worker finished";
         });
+        connect(worker, &Worker::requestStop, worker, &Worker::stop);
     }
 
     for (int i = 0; i < parallelTasks; ++i)
@@ -531,7 +512,18 @@ void MainWindow::startJob()
 
 void MainWindow::stopJob()
 {
-    
+    for (Worker *worker: m_workers)
+    {
+//         qDebug() << "Stop";
+        if (worker)
+        {
+//             qDebug() << "Stop worker";
+            emit worker->requestStop();
+//             worker->stop();
+//             emit workerStop();
+//             worker->test();
+        }
+    }
 }
 
 void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
