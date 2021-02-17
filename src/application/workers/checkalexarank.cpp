@@ -33,17 +33,13 @@ void CheckAlexaRankWorker::run()
         m_mutex.unlock();
         QApplication::processEvents();
 
-//         QString url = inputData["url"].toString();
         QUrl url(inputData["url"].toString());
         QString alexaUrl("http://data.alexa.com/data?cli=10&url=" + url.host());
-        qDebug() << url.host();
         auto headers = cpr::Header{
             {"user-agent", USER_AGENT}
         };
         QString rank("");
         cpr::Response r = cpr::Get(cpr::Url{alexaUrl.toStdString()}, cpr::Timeout{15 * 1000}, headers);
-//         qDebug() << r.status_code;
-//         qDebug() << r.text.c_str();
         int pos = regex.indexIn(QString(r.text.c_str()));
         if (pos > -1)
         {
@@ -55,11 +51,8 @@ void CheckAlexaRankWorker::run()
             {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
             {QString("result"), QVariant(rank)}
         };
-//         emit result(data);
         emit Worker::result(data);
     }
 
-//     emit finished();
     emit Worker::finished();
 }
-

@@ -49,7 +49,6 @@ void ScrapeProxiesWorker::run()
             QRegularExpressionMatch match = regexIter.next();
             if (match.hasMatch())
             {
-                qDebug() << match.captured(0);
                 auto data = QMap<QString, QVariant>{
                     {QString("rowId"), QVariant(inputData["rowId"].toInt())},
                     {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},

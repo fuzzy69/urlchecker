@@ -514,14 +514,9 @@ void MainWindow::stopJob()
 {
     for (Worker *worker: m_workers)
     {
-//         qDebug() << "Stop";
         if (worker)
         {
-//             qDebug() << "Stop worker";
             emit worker->requestStop();
-//             worker->stop();
-//             emit workerStop();
-//             worker->test();
         }
     }
 }
