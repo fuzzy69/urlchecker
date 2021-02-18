@@ -27,7 +27,7 @@ class RecentFiles;
 class ProxiesWidget;
 class SideBar;
 class Table;
-class ApplicationState;
+class ApplicationStateMachine;
 class ToolsWidget;
 class Worker;
 class SettingsWidget;
@@ -40,6 +40,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+Q_SIGNALS:
+    void workerStop();
 
 protected slots:
     void importUrls();
@@ -70,6 +73,12 @@ private:
     void saveSettings();
     void updateResultsRow(int rowIndex, const QVariant& result, const QVariant &statusCode, const QVariant &statusText);
     void onPulse();
+    void onApplicationStart();
+    void onApplicationReady();
+    void onApplicationExit();
+    void onJobStart();
+    void onJobStop();
+    void onJobDone();
 
     // Actions
     QAction *m_projectAction;
@@ -143,7 +152,7 @@ private:
 
     RecentFiles *m_recentFiles;
     SideBar *m_sideBar;
-    ApplicationState *m_applicationState;
+    ApplicationStateMachine *m_applicationStateMachine;
     ToolsWidget *m_toolsWidget;
 
     QList<QThread*> m_threads;

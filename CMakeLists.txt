@@ -26,13 +26,14 @@ set(urlchecker_SRC
   src/application/core/sidebar.cpp
   src/application/utils/useragents.cpp
   src/application/core/proxieswidget.cpp
-  src/application/common/applicationstate.cpp
+  src/application/common/applicationstatemachine.cpp
   src/application/core/toolswidget.cpp
   src/application/workers/worker.cpp
   src/application/workers/checkurlstatusworker.cpp
   src/application/workers/checkalexarank.cpp
   src/application/workers/scrapeproxies.cpp
   src/application/core/settingswidget.cpp
+  src/application/workers/dummyworker.cpp
   assets.qrc
 )
 

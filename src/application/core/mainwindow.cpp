@@ -41,7 +41,7 @@
 #include <QThread>
 #include <QRegExp>
 
-#include "../common/applicationstate.h"
+#include "../common/applicationstatemachine.h"
 #include "../config.h"
 #include "../utils/file.h"
 #include "mainwindow.h"
@@ -74,8 +74,8 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_workers = QList<Worker*>();
     m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
 
-    m_applicationState = new ApplicationState(this);
-    m_applicationState->start();
+    m_applicationStateMachine = new ApplicationStateMachine(this);
+    m_applicationStateMachine->start();
 
     createActions();
     createMenuBar();
@@ -104,7 +104,10 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     }
 
     m_pulseTimer->start(1 * 1000);
-    emit m_applicationState->applicationReady();
+//     emit m_applicationState->applicationReady();
+    QTimer::singleShot(5000, [this]{
+        emit m_applicationStateMachine->applicationReady();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -351,39 +354,48 @@ void MainWindow::createConnections()
     });
     connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
 
-    connect(m_applicationState, &ApplicationState::applicationStarted, [this]{
-        m_statusBar->showMessage("Starting ...");
-        qDebug() << "Application starting ...";
-    });
-    connect(m_applicationState, &ApplicationState::applicationReady, [this]{
-        m_statusBar->showMessage("Ready.");
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationStarted, this, &MainWindow::onApplicationStart);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationIdling, this, &MainWindow::onApplicationReady);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationExiting, this, &MainWindow::onApplicationExit);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStarted, this, &MainWindow::onJobStart);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStopping, this, &MainWindow::onJobStop);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobFinished, this, &MainWindow::onJobDone);
+//     connect(m_applicationState, &ApplicationState::applicationStarted, [this]{
+//         m_statusBar->showMessage("Starting ...");
+//         m_startPushButton->setEnabled(false);
+//         m_stopPushButton->setEnabled(false);
+//         qDebug() << "Application starting ...";
+//     });
+//     connect(m_applicationState, &ApplicationState::applicationReady, [this]{
+//         m_statusBar->showMessage("Ready.");
 //         m_startPushButton->setEnabled(true);
-//         m_stopPushButton->setEnabled(false);
-        qDebug() << "Application idling ...";
-    });
-    connect(m_applicationState, &ApplicationState::applicationExit, [this]{
-        m_statusBar->showMessage("Exiting ...");
-//         m_startPushButton->setEnabled(false);
-        qDebug() << "Application exiting ...";
-    });
-    connect(m_applicationState, &ApplicationState::jobStarted, [this]{
-        m_statusBar->showMessage("Working ...");
-//         m_startPushButton->setEnabled(false);
-//         m_stopPushButton->setEnabled(true);
-        qDebug() << "Job started";
-    });
-    connect(m_applicationState, &ApplicationState::jobStopped, [this]{
-        m_statusBar->showMessage("Stopping ...");
+// //         m_stopPushButton->setEnabled(false);
+//         qDebug() << "Application idling ...";
+//     });
+//     connect(m_applicationState, &ApplicationState::applicationExit, [this]{
+//         m_statusBar->showMessage("Exiting ...");
 //         m_startPushButton->setEnabled(false);
 //         m_stopPushButton->setEnabled(false);
-        qDebug() << "Job stopped";
-    });
-    connect(m_applicationState, &ApplicationState::jobFinished, [this]{
+//         qDebug() << "Application exiting ...";
+//     });
+//     connect(m_applicationState, &ApplicationState::jobStarted, [this]{
+//         m_statusBar->showMessage("Working ...");
+// //         m_startPushButton->setEnabled(false);
+// //         m_stopPushButton->setEnabled(true);
+//         qDebug() << "Job started";
+//     });
+//     connect(m_applicationState, &ApplicationState::jobStopped, [this]{
 //         m_statusBar->showMessage("Stopping ...");
-//         m_startPushButton->setEnabled(false);
-//         m_stopPushButton->setEnabled(false);
-        qDebug() << "Job finished";
-    });
+// //         m_startPushButton->setEnabled(false);
+// //         m_stopPushButton->setEnabled(false);
+//         qDebug() << "Job stopped";
+//     });
+//     connect(m_applicationState, &ApplicationState::jobFinished, [this]{
+// //         m_statusBar->showMessage("Stopping ...");
+// //         m_startPushButton->setEnabled(false);
+// //         m_stopPushButton->setEnabled(false);
+//         qDebug() << "Job finished";
+//     });
     
 }
 
@@ -413,7 +425,7 @@ void MainWindow::loadSettings()
 // Events
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-   emit m_applicationState->applicationExiting();
+//    emit m_applicationState->applicationExiting();
     saveSettings();
     QMainWindow::closeEvent(event);
 }
@@ -443,7 +455,8 @@ void MainWindow::updateResultsRow(int rowIndex, const QVariant& result, const QV
 
 void MainWindow::onPulse()
 {
-    //
+//     qDebug() << "OK";
+    qDebug() << m_applicationStateMachine->currentState();
 }
 
 void MainWindow::importRecentFileUrls(const QString& filePath)
@@ -481,14 +494,15 @@ void MainWindow::startJob()
         auto thread = new QThread;
         Worker *worker;
         // TODO: Improve tool switching logic
-        if (m_toolsPushButton->text() == " Check URL Status")
-            worker = new CheckUrlStatusWorker(m_inputDataQueue);
-        else if (m_toolsPushButton->text() == " Check Alexa Rank")
-            worker = new CheckAlexaRankWorker(m_inputDataQueue);
-        else if (m_toolsPushButton->text() == " Scrape Proxies")
-            worker = new ScrapeProxiesWorker(m_inputDataQueue);
-        else
-            worker = new DummyWorker(m_inputDataQueue);
+//         if (m_toolsPushButton->text() == " Check URL Status")
+//             worker = new CheckUrlStatusWorker(m_inputDataQueue);
+//         else if (m_toolsPushButton->text() == " Check Alexa Rank")
+//             worker = new CheckAlexaRankWorker(m_inputDataQueue);
+//         else if (m_toolsPushButton->text() == " Scrape Proxies")
+//             worker = new ScrapeProxiesWorker(m_inputDataQueue);
+//         else
+//             worker = new DummyWorker(m_inputDataQueue);
+        worker = new DummyWorker(m_inputDataQueue);
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
@@ -504,6 +518,7 @@ void MainWindow::startJob()
         connect(worker, &Worker::requestStop, worker, &Worker::stop);
     }
 
+    emit m_applicationStateMachine->jobStart();
     for (int i = 0; i < parallelTasks; ++i)
     {
         m_threads[i]->start();
@@ -519,6 +534,7 @@ void MainWindow::stopJob()
             emit worker->requestStop();
         }
     }
+    emit m_applicationStateMachine->jobStop();
 }
 
 void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
@@ -527,4 +543,40 @@ void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
     updateResultsRow(resultData["rowId"].toInt(), resultData["result"].toString(), resultData["status"].toInt(), resultData["message"].toString());
     int currentProgress = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
     m_progressBar->setValue(currentProgress);
+}
+
+void MainWindow::onApplicationStart()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(false);
+}
+
+void MainWindow::onApplicationReady()
+{
+    m_startPushButton->setEnabled(true);
+    m_stopPushButton->setEnabled(false);
+}
+
+void MainWindow::onApplicationExit()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(false);
+}
+
+void MainWindow::onJobStart()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(true);
+}
+
+void MainWindow::onJobStop()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(false);
+}
+
+void MainWindow::onJobDone()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(false);
 }
