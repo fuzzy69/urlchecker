@@ -23,8 +23,6 @@ public Q_SLOTS:
     void run() override;
 
 private:
-//     bool m_running;
-//     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
     QMutex m_mutex;
 };
 
