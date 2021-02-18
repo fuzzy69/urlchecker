@@ -11,7 +11,7 @@ ToolsWidget::ToolsWidget(QWidget* parent) : QTreeWidget(parent)
     setHeaderLabel("Tools");
     connect(this, &QTreeWidget::currentItemChanged, [this](QTreeWidgetItem *current, QTreeWidgetItem *previous){
         Q_UNUSED(previous);
-        emit toolSelected(QString(" %1").arg(current->text(0)));
+        emit toolSelected(current->text(0));
     });
 }
 
