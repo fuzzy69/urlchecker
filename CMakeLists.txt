@@ -34,6 +34,7 @@ set(urlchecker_SRC
   src/application/workers/scrapeproxies.cpp
   src/application/core/settingswidget.cpp
   src/application/workers/dummyworker.cpp
+  src/application/common/thread.cpp
   assets.qrc
 )
 

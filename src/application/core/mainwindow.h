@@ -31,6 +31,7 @@ class ApplicationStateMachine;
 class ToolsWidget;
 class Worker;
 class SettingsWidget;
+class Thread;
 
 
 class MainWindow : public QMainWindow
@@ -155,7 +156,8 @@ private:
     ApplicationStateMachine *m_applicationStateMachine;
     ToolsWidget *m_toolsWidget;
 
-    QList<QThread*> m_threads;
+//     QList<QThread*> m_threads;
+    QList<Thread*> m_threads;
     QList<Worker*> m_workers;
     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
     int m_itemsDone;

@@ -57,6 +57,7 @@
 #include "../workers/scrapeproxies.h"
 #include "../workers/dummyworker.h"
 #include "settingswidget.h"
+#include "../common/thread.h"
 
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
@@ -70,7 +71,8 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_lastDirectory = applicationDir.absolutePath(); 
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(5, this);
-    m_threads = QList<QThread*>();
+//     m_threads = QList<QThread*>();
+    m_threads = QList<Thread*>();
     m_workers = QList<Worker*>();
     m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
 
@@ -457,6 +459,8 @@ void MainWindow::onPulse()
 {
 //     qDebug() << "OK";
 //     qDebug() << m_applicationStateMachine->currentState();
+//     m_activeThreadsLabel = new QLabel(" Active threads: /");
+    m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
 }
 
 void MainWindow::importRecentFileUrls(const QString& filePath)
@@ -491,7 +495,8 @@ void MainWindow::startJob()
     int parallelTasks = 1;
     for (int i = 0; i < parallelTasks;++i)
     {
-        auto thread = new QThread;
+//         auto thread = new QThread;
+        auto thread = new Thread;
         Worker *worker;
         // TODO: Improve tool switching logic
 //         if (m_toolsPushButton->text() == " Check URL Status")
@@ -507,10 +512,10 @@ void MainWindow::startJob()
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
         // Connections
-        connect(thread, &QThread::started, worker, &Worker::run);
-        connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+        connect(thread, &Thread::started, worker, &Worker::run);
+        connect(thread, &Thread::finished, thread, &Thread::deleteLater);
         connect(worker, &Worker::result, this, &MainWindow::onResult);
-        connect(worker, &Worker::finished, thread, &QThread::quit);
+        connect(worker, &Worker::finished, thread, &Thread::quit);
         connect(worker, &Worker::finished, worker, &Worker::deleteLater);
         connect(worker, &Worker::finished, []{
             qDebug() << "Worker finished";
