@@ -16,5 +16,7 @@
         <file>assets/icons/control.png</file>
         <file>assets/icons/control-stop-square.png</file>
         <file>assets/icons/hammer.png</file>
+        <file>assets/icons/chain.png</file>
+        <file>assets/icons/alexa.png</file>
     </qresource>
 </RCC>

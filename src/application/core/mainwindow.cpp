@@ -262,9 +262,9 @@ void MainWindow::createWidgets()
     m_mainStackedWidget->addWidget(m_helpPageWidget);
 
     m_toolsWidget = new ToolsWidget;
-    m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Check URL Status"));
-    m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Check Alexa Rank"));
-    m_toolsWidget->addTool(QIcon(":assets/icons/hammer.png"), QString("Scrape Proxies"));
+    m_toolsWidget->addTool(QIcon(":assets/icons/chain.png"), QString("Check URL Status"));
+    m_toolsWidget->addTool(QIcon(":assets/icons/alexa.png"), QString("Check Alexa Rank"));
+    m_toolsWidget->addTool(QIcon(":assets/icons/mask.png"), QString("Scrape Proxies"));
     connect(m_toolsWidget, &ToolsWidget::toolSelected, [this](QString toolText){
         m_toolsPushButton->setText(QString(" %1").arg(toolText));
     });
