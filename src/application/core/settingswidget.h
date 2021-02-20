@@ -7,6 +7,7 @@ class QSpinBox;
 class QLabel;
 class QGroupBox;
 class QGridLayout;
+class QCheckBox;
 
 
 class SettingsWidget : public QWidget
@@ -15,13 +16,20 @@ class SettingsWidget : public QWidget
 public:
     explicit SettingsWidget(QWidget *parent = nullptr);
 
+protected:
+    void hideEvent(QHideEvent *event) override;
+
 private:
     QVBoxLayout *m_mainLayout;
     QLabel *m_threadsLabel;
     QLabel *m_timeoutLabel;
-    QGroupBox *m_groupBox1;
-    QGroupBox *m_groupBox2;
+    QLabel *m_useProxiesLabel;
+    QGroupBox *m_connectionGroupBox;
+    QGroupBox *m_proxiesGroupBox;
     QSpinBox *m_threadsSpinBox;
     QSpinBox *m_timeoutSpinBox;
-    QGridLayout *m_groupBox1Layout;
+    QGridLayout *m_connectionLayout;
+    QGridLayout *m_proxiesLayout;
+    QCheckBox *m_useProxiesCheckBox;
+    QString m_settingsFilePath;
 };

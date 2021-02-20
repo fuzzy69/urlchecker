@@ -456,7 +456,7 @@ void MainWindow::updateResultsRow(int rowIndex, const QVariant& result, const QV
 void MainWindow::onPulse()
 {
 //     qDebug() << "OK";
-    qDebug() << m_applicationStateMachine->currentState();
+//     qDebug() << m_applicationStateMachine->currentState();
 }
 
 void MainWindow::importRecentFileUrls(const QString& filePath)
