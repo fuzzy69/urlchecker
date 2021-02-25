@@ -1,27 +1,39 @@
 # URL Checker
 
 
+### About
+
+C++ Qt5 multi-threaded application for checking HTTP response status of urls (**Work in progress**).
+
 ### Screenshot
 
 ![Screenshot](_/screenshot.png)
 
 
-### About
-
-C++ Qt5 multithreaded application for checking http response status of urls. Ported from previous old "Site Alive Checker" PyQt application.
-
-
 ### Requirements
 
-You need C++ 11 compiler, Qt5 and CMake 2.8.11 or higher.
+You'll need a C++ 11 compiler, Qt5 library and CMake 2.8.11 (or higher).
 
 
 ### Build instructions
 
+Navigate to project directory:
 ```
-cd /your/project/build
+cd /urlchecker
+```
+Download dependencies to libs directory:
+```
+cd libs/
+git clone https://github.com/whoshuu/cpr.git
+git clone https://github.com/effolkronium/random.git
+```
+Go back to project directory in order to complete the project building.
+```
+cd ..
 cmake ../
 make
-
+```
+Run executable with:
+```
 ./urlchecker
 ```
