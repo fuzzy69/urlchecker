@@ -6,6 +6,8 @@
 #include <QUrl>
 #include <QList>
 
+#include "../utils/useragents.h"
+
 class QAction;
 class QLabel;
 class QMenu;
@@ -32,6 +34,7 @@ class ToolsWidget;
 class Worker;
 class SettingsWidget;
 class Thread;
+class UserAgents;
 
 
 class MainWindow : public QMainWindow
@@ -159,4 +162,5 @@ private:
     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
     int m_itemsDone;
     int m_totalItems;
+    UserAgents m_userAgents;
 };

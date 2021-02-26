@@ -60,6 +60,7 @@
 #include "../common/thread.h"
 #include "../core/tools.h"
 #include "../core/tool.h"
+// #include "../utils/useragents.h"
 
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
@@ -96,6 +97,12 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     {
         m_recentUrlFilesMenu->addAction(action);
     }
+    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"));;
+    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"));;
+    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36"));;
+    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"));;
+    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"));;
+//     m_userAgents.addag
 
     // TODO: Remove this
     for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
@@ -320,9 +327,9 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createConnections()
 {
-    connect(m_testPushButton, &QPushButton::clicked, []{
+    connect(m_testPushButton, &QPushButton::clicked, [this]{
         
-        qDebug() << "OK";
+        qDebug() << m_userAgents.get();
     });
 
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
