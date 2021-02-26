@@ -30,6 +30,14 @@ git clone https://github.com/effolkronium/random.git
 Go back to project directory in order to complete the project building.
 ```
 cd ..
+```
+Create a build directory and move to it:
+```
+mkdir build
+cd build/
+```
+Build project.
+```
 cmake ../
 make
 ```
