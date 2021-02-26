@@ -48,8 +48,6 @@ Q_SIGNALS:
 protected slots:
     void importUrls();
     void exportResults();
-//     void removeDuplicates();
-//     void removeSelected();
 
     void importRecentFileUrls(const QString &filePath);
 
@@ -156,7 +154,6 @@ private:
     ApplicationStateMachine *m_applicationStateMachine;
     ToolsWidget *m_toolsWidget;
 
-//     QList<QThread*> m_threads;
     QList<Thread*> m_threads;
     QList<Worker*> m_workers;
     QQueue<QMap<QString, QVariant>> m_inputDataQueue;

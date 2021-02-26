@@ -58,6 +58,8 @@
 #include "../workers/dummyworker.h"
 #include "settingswidget.h"
 #include "../common/thread.h"
+#include "../core/tools.h"
+#include "../core/tool.h"
 
 
 MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
@@ -71,7 +73,6 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     m_lastDirectory = applicationDir.absolutePath(); 
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(5, this);
-//     m_threads = QList<QThread*>();
     m_threads = QList<Thread*>();
     m_workers = QList<Worker*>();
     m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
@@ -106,7 +107,6 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
     }
 
     m_pulseTimer->start(1 * 1000);
-//     emit m_applicationState->applicationReady();
     QTimer::singleShot(5000, [this]{
         emit m_applicationStateMachine->applicationReady();
     });
@@ -261,12 +261,12 @@ void MainWindow::createWidgets()
     m_mainStackedWidget->addWidget(m_proxiesPageWidget);
     m_mainStackedWidget->addWidget(m_helpPageWidget);
 
-    m_toolsWidget = new ToolsWidget;
-    m_toolsWidget->addTool(QIcon(":assets/icons/chain.png"), QString("Check URL Status"));
-    m_toolsWidget->addTool(QIcon(":assets/icons/alexa.png"), QString("Check Alexa Rank"));
-    m_toolsWidget->addTool(QIcon(":assets/icons/mask.png"), QString("Scrape Proxies"));
-    connect(m_toolsWidget, &ToolsWidget::toolSelected, [this](QString toolText){
-        m_toolsPushButton->setText(QString(" %1").arg(toolText));
+    m_toolsWidget = new ToolsWidget(Tool(Tools::CHECK_URL_STATUS, QIcon(":assets/icons/chain.png"), QString("Check URL Status")));
+    m_toolsWidget->addTool(Tool(Tools::CHECK_ALEXA_RANK, QIcon(":assets/icons/alexa.png"), QString("Check Alexa Rank")));
+    m_toolsWidget->addTool(Tool(Tools::SCRAPE_PROXIES, QIcon(":assets/icons/mask.png"), QString("Scrape Proxies")));
+    connect(m_toolsWidget, &ToolsWidget::toolSelected, [this](const Tool &tool){
+        m_toolsPushButton->setIcon(tool.icon());
+        m_toolsPushButton->setText(tool.name());
     });
 
     m_bottomLayout = new QHBoxLayout;
@@ -362,43 +362,6 @@ void MainWindow::createConnections()
     connect(m_applicationStateMachine, &ApplicationStateMachine::jobStarted, this, &MainWindow::onJobStart);
     connect(m_applicationStateMachine, &ApplicationStateMachine::jobStopping, this, &MainWindow::onJobStop);
     connect(m_applicationStateMachine, &ApplicationStateMachine::jobFinished, this, &MainWindow::onJobDone);
-//     connect(m_applicationState, &ApplicationState::applicationStarted, [this]{
-//         m_statusBar->showMessage("Starting ...");
-//         m_startPushButton->setEnabled(false);
-//         m_stopPushButton->setEnabled(false);
-//         qDebug() << "Application starting ...";
-//     });
-//     connect(m_applicationState, &ApplicationState::applicationReady, [this]{
-//         m_statusBar->showMessage("Ready.");
-//         m_startPushButton->setEnabled(true);
-// //         m_stopPushButton->setEnabled(false);
-//         qDebug() << "Application idling ...";
-//     });
-//     connect(m_applicationState, &ApplicationState::applicationExit, [this]{
-//         m_statusBar->showMessage("Exiting ...");
-//         m_startPushButton->setEnabled(false);
-//         m_stopPushButton->setEnabled(false);
-//         qDebug() << "Application exiting ...";
-//     });
-//     connect(m_applicationState, &ApplicationState::jobStarted, [this]{
-//         m_statusBar->showMessage("Working ...");
-// //         m_startPushButton->setEnabled(false);
-// //         m_stopPushButton->setEnabled(true);
-//         qDebug() << "Job started";
-//     });
-//     connect(m_applicationState, &ApplicationState::jobStopped, [this]{
-//         m_statusBar->showMessage("Stopping ...");
-// //         m_startPushButton->setEnabled(false);
-// //         m_stopPushButton->setEnabled(false);
-//         qDebug() << "Job stopped";
-//     });
-//     connect(m_applicationState, &ApplicationState::jobFinished, [this]{
-// //         m_statusBar->showMessage("Stopping ...");
-// //         m_startPushButton->setEnabled(false);
-// //         m_stopPushButton->setEnabled(false);
-//         qDebug() << "Job finished";
-//     });
-    
 }
 
 void MainWindow::saveSettings()
@@ -406,8 +369,6 @@ void MainWindow::saveSettings()
     QSettings settings(m_settingsFilePath, QSettings::IniFormat);
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
-//     settings.setValue("threadsCount", m_threadsSpinBox->value());
-//     settings.setValue("timeout", m_timeoutSpinBox->value());
     settings.setValue("lastDirectory", m_lastDirectory);
 }
 
@@ -418,8 +379,6 @@ void MainWindow::loadSettings()
         QSettings settings(m_settingsFilePath, QSettings::IniFormat);
         restoreGeometry(settings.value("geometry").toByteArray());
         restoreState(settings.value("windowState").toByteArray());
-//         m_threadsSpinBox->setValue(settings.value("threadsCount", 1).toInt());
-//         m_timeoutSpinBox->setValue(settings.value("timeout", 20).toInt());
         m_lastDirectory = settings.value("lastDirectory", m_lastDirectory).toString();
     }
 }
@@ -457,9 +416,6 @@ void MainWindow::updateResultsRow(int rowIndex, const QVariant& result, const QV
 
 void MainWindow::onPulse()
 {
-//     qDebug() << "OK";
-//     qDebug() << m_applicationStateMachine->currentState();
-//     m_activeThreadsLabel = new QLabel(" Active threads: /");
     m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
 }
 
