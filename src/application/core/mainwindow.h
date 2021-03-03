@@ -24,6 +24,7 @@ class QHBoxLayout;
 class QVBoxLayout;
 class QWidget;
 class QTreeWidget;
+class QTabWidget;
 
 class RecentFiles;
 class ProxiesWidget;
@@ -35,6 +36,7 @@ class Worker;
 class SettingsWidget;
 class Thread;
 class UserAgents;
+class WorkspaceWidget;
 
 
 class MainWindow : public QMainWindow
@@ -117,8 +119,9 @@ private:
     QWidget *m_settingsPageWidget;
     QWidget *m_proxiesPageWidget;
     QWidget *m_helpPageWidget;
-    SettingsWidget *m_settingsWidget;
 
+    WorkspaceWidget *m_workspaceWidget;
+    SettingsWidget *m_settingsWidget;
     ProxiesWidget *m_proxiesTextEdit;
 
     QVBoxLayout *m_projectPageLayout;
@@ -129,6 +132,7 @@ private:
     QHBoxLayout *m_centralLayout;
     QVBoxLayout *m_mainLayout;
     QHBoxLayout *m_bottomLayout;
+    Table *m_inputTable;
     Table *m_resultsTable;
     QList<float> m_columnRatios;
     QLabel *m_threadsLabel;

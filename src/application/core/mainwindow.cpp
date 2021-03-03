@@ -40,6 +40,7 @@
 #include <QGridLayout>
 #include <QThread>
 #include <QRegExp>
+#include <QTabWidget>
 
 #include "../common/applicationstatemachine.h"
 #include "../config.h"
@@ -57,6 +58,7 @@
 #include "../workers/scrapeproxies.h"
 #include "../workers/dummyworker.h"
 #include "settingswidget.h"
+#include "workspacewidget.h"
 #include "../common/thread.h"
 #include "../core/tools.h"
 #include "../core/tool.h"
@@ -110,7 +112,8 @@ MainWindow::MainWindow ( QWidget* parent ) : QMainWindow(parent)
         line = line.trimmed();
         // TODO: validate URL
         if (line.length() > 0)
-            m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+            m_workspaceWidget->inputTable()->appendRow(QStringList() << line << "");
+//             m_workspaceWidget->resultsTable()->appendRow(QStringList() << line << "" << "" << "");
     }
 
     m_pulseTimer->start(1 * 1000);
@@ -251,9 +254,12 @@ void MainWindow::createWidgets()
     m_sideBar->addAction(m_proxiesAction);
     m_sideBar->addAction(m_helpAction);
 
-    m_projectPageWidget = new QWidget;
-    m_projectPageLayout = new QVBoxLayout(m_projectPageWidget);
+//     m_projectPageWidget = new QWidget;
+//     m_projectPageLayout = new QVBoxLayout(m_projectPageWidget);
+
+    m_workspaceWidget = new WorkspaceWidget;
     m_settingsWidget = new SettingsWidget;
+
     m_proxiesPageWidget = new QWidget;
     m_proxiesPageLayout = new QVBoxLayout(m_proxiesPageWidget);
     m_helpPageWidget = new QWidget;
@@ -263,41 +269,42 @@ void MainWindow::createWidgets()
     m_centralLayout->addWidget(m_mainStackedWidget);
 
 
-    m_mainStackedWidget->addWidget(m_projectPageWidget);
+//     m_mainStackedWidget->addWidget(m_projectPageWidget);
+    m_mainStackedWidget->addWidget(m_workspaceWidget);
     m_mainStackedWidget->addWidget(m_settingsWidget);
     m_mainStackedWidget->addWidget(m_proxiesPageWidget);
     m_mainStackedWidget->addWidget(m_helpPageWidget);
 
-    m_toolsWidget = new ToolsWidget(Tool(Tools::CHECK_URL_STATUS, QIcon(":assets/icons/chain.png"), QString("Check URL Status")));
-    m_toolsWidget->addTool(Tool(Tools::CHECK_ALEXA_RANK, QIcon(":assets/icons/alexa.png"), QString("Check Alexa Rank")));
-    m_toolsWidget->addTool(Tool(Tools::SCRAPE_PROXIES, QIcon(":assets/icons/mask.png"), QString("Scrape Proxies")));
-    connect(m_toolsWidget, &ToolsWidget::toolSelected, [this](const Tool &tool){
+//     m_toolsWidget = new ToolsWidget(Tool(Tools::CHECK_URL_STATUS, QIcon(":assets/icons/chain.png"), QString("Check URL Status")));
+//     m_toolsWidget->addTool(Tool(Tools::CHECK_ALEXA_RANK, QIcon(":assets/icons/alexa.png"), QString("Check Alexa Rank")));
+//     m_toolsWidget->addTool(Tool(Tools::SCRAPE_PROXIES, QIcon(":assets/icons/mask.png"), QString("Scrape Proxies")));
+    connect(m_workspaceWidget->toolsWidget(), &ToolsWidget::toolSelected, [this](const Tool &tool){
         m_toolsPushButton->setIcon(tool.icon());
         m_toolsPushButton->setText(tool.name());
     });
 
-    m_bottomLayout = new QHBoxLayout;
-    m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
-    m_resultsTable->setColumnRatios(m_columnRatios);
-    m_startPushButton = new QPushButton(QIcon(":assets/icons/control.png"), "Start");
-    m_stopPushButton = new QPushButton(QIcon(":assets/icons/control-stop-square.png"), "Stop");
-    m_testPushButton = new QPushButton("Test");
-    m_progressBar = new QProgressBar;
-    m_progressBar->setRange(0, 100);
+//     m_bottomLayout = new QHBoxLayout;
+//     m_resultsTable = new Table(QStringList() << "URL" << "Result" << "Code" << "Status", this);
+//     m_resultsTable->setColumnRatios(m_columnRatios);
+//     m_startPushButton = new QPushButton(QIcon(":assets/icons/control.png"), "Start");
+//     m_stopPushButton = new QPushButton(QIcon(":assets/icons/control-stop-square.png"), "Stop");
+//     m_testPushButton = new QPushButton("Test");
+//     m_progressBar = new QProgressBar;
+//     m_progressBar->setRange(0, 100);
 
     m_proxiesTextEdit = new ProxiesWidget;
     m_proxiesTextEdit->setReadOnly(true);
 
-    auto projectPageHLayout = new QHBoxLayout;
-    m_projectPageLayout->addLayout(projectPageHLayout);
-    projectPageHLayout->addWidget(m_toolsWidget);
-    projectPageHLayout->addWidget( m_resultsTable->tableView() );
-    m_bottomLayout->addStretch(0);
-    m_bottomLayout->addWidget(m_startPushButton);
-    m_bottomLayout->addWidget(m_stopPushButton);
-    m_bottomLayout->addWidget(m_testPushButton);
-    m_projectPageLayout->addLayout(m_bottomLayout);
-    m_projectPageLayout->addWidget(m_progressBar);
+//     auto projectPageHLayout = new QHBoxLayout;
+//     m_projectPageLayout->addLayout(projectPageHLayout);
+//     projectPageHLayout->addWidget(m_toolsWidget);
+//     projectPageHLayout->addWidget( m_resultsTable->tableView() );
+//     m_bottomLayout->addStretch(0);
+//     m_bottomLayout->addWidget(m_startPushButton);
+//     m_bottomLayout->addWidget(m_stopPushButton);
+//     m_bottomLayout->addWidget(m_testPushButton);
+//     m_projectPageLayout->addLayout(m_bottomLayout);
+//     m_projectPageLayout->addWidget(m_progressBar);
 
     m_proxiesPageLayout->addWidget(m_proxiesTextEdit);
 
@@ -313,12 +320,7 @@ void MainWindow::createStatusBar()
     auto statusBarLabel = new QLabel;
     m_activeThreadsLabel = new QLabel(" Active threads: /");
 
-    connect(m_toolsPushButton, &QPushButton::clicked, [this]{
-        if (m_toolsWidget->isVisible())
-            m_toolsWidget->setVisible(false);
-        else
-            m_toolsWidget->setVisible(true);
-    });
+    connect(m_toolsPushButton, &QPushButton::clicked, m_workspaceWidget, &WorkspaceWidget::toggleTools);
 
     m_statusBar->addPermanentWidget(m_toolsPushButton);
     m_statusBar->addPermanentWidget(statusBarLabel, 1);
@@ -350,17 +352,19 @@ void MainWindow::createConnections()
     connect(m_importUrlsAction, &QAction::triggered, this, &MainWindow::importUrls);
     connect(m_exportResultsAction, &QAction::triggered, this, &MainWindow::exportResults);
 
-    connect(m_clearTableAction, &QAction::triggered, m_resultsTable, &Table::removeAllRows);
-    connect(m_selectAllAction, &QAction::triggered, m_resultsTable, &Table::selectAll);
-    connect(m_invertSelectionAction, &QAction::triggered, m_resultsTable, &Table::invertSelection);
-    connect(m_removeDuplicatesAction, &QAction::triggered, m_resultsTable, &Table::removeDuplicates);
-    connect(m_removeSelectedAction, &QAction::triggered, m_resultsTable, &Table::removeSelected);
+//     connect(m_clearTableAction, &QAction::triggered, m_resultsTable, &Table::removeAllRows);
+//     connect(m_selectAllAction, &QAction::triggered, m_resultsTable, &Table::selectAll);
+//     connect(m_invertSelectionAction, &QAction::triggered, m_resultsTable, &Table::invertSelection);
+//     connect(m_removeDuplicatesAction, &QAction::triggered, m_resultsTable, &Table::removeDuplicates);
+//     connect(m_removeSelectedAction, &QAction::triggered, m_resultsTable, &Table::removeSelected);
 
-    connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
-    connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopJob);
-    connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
-        QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
-    });
+    connect(m_workspaceWidget, &WorkspaceWidget::startJob, this, &MainWindow::startJob);
+    connect(m_workspaceWidget, &WorkspaceWidget::stopJob, this, &MainWindow::stopJob);
+//     connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
+//     connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopJob);
+//     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
+//         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
+//     });
     connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
 
     connect(m_applicationStateMachine, &ApplicationStateMachine::applicationStarted, this, &MainWindow::onApplicationStart);
@@ -400,25 +404,25 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    m_resultsTable->resizeColumns();
+//     m_resultsTable->resizeColumns();
     QMainWindow::resizeEvent(event);
 }
 
 // Slots
 void MainWindow::updateResultsRow(int rowIndex, const QVariant& result, const QVariant& statusCode, const QVariant& statusText)
 {
-    m_resultsTable->setCell(rowIndex, 1, QVariant(result));
-    m_resultsTable->setCell(rowIndex, 2, QVariant(statusCode));
-    m_resultsTable->setCell(rowIndex, 3, QVariant(statusText));
-    int _statusCode = statusCode.toInt();
-    if (_statusCode >= 200 && _statusCode < 300)
-        m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkGreen));
-    else if (_statusCode >= 300 && _statusCode < 400)
-        m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkBlue));
-    else if (_statusCode >= 400)
-        m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkRed));
-    else
-        m_resultsTable->setRowColor(rowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
+//     m_resultsTable->setCell(rowIndex, 1, QVariant(result));
+//     m_resultsTable->setCell(rowIndex, 2, QVariant(statusCode));
+//     m_resultsTable->setCell(rowIndex, 3, QVariant(statusText));
+//     int _statusCode = statusCode.toInt();
+//     if (_statusCode >= 200 && _statusCode < 300)
+//         m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkGreen));
+//     else if (_statusCode >= 300 && _statusCode < 400)
+//         m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkBlue));
+//     else if (_statusCode >= 400)
+//         m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkRed));
+//     else
+//         m_resultsTable->setRowColor(rowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
 }
 
 void MainWindow::onPulse()
@@ -434,8 +438,8 @@ void MainWindow::importRecentFileUrls(const QString& filePath)
     {
         line = line.trimmed();
         // TODO: validate URL
-        if (line.length() > 0)
-            m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+//         if (line.length() > 0)
+//             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
 }
@@ -515,36 +519,36 @@ void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
 
 void MainWindow::onApplicationStart()
 {
-    m_startPushButton->setEnabled(false);
-    m_stopPushButton->setEnabled(false);
+//     m_startPushButton->setEnabled(false);
+//     m_stopPushButton->setEnabled(false);
 }
 
 void MainWindow::onApplicationReady()
 {
-    m_startPushButton->setEnabled(true);
-    m_stopPushButton->setEnabled(false);
+//     m_startPushButton->setEnabled(true);
+//     m_stopPushButton->setEnabled(false);
 }
 
 void MainWindow::onApplicationExit()
 {
-    m_startPushButton->setEnabled(false);
-    m_stopPushButton->setEnabled(false);
+//     m_startPushButton->setEnabled(false);
+//     m_stopPushButton->setEnabled(false);
 }
 
 void MainWindow::onJobStart()
 {
-    m_startPushButton->setEnabled(false);
-    m_stopPushButton->setEnabled(true);
+//     m_startPushButton->setEnabled(false);
+//     m_stopPushButton->setEnabled(true);
 }
 
 void MainWindow::onJobStop()
 {
-    m_startPushButton->setEnabled(false);
-    m_stopPushButton->setEnabled(false);
+//     m_startPushButton->setEnabled(false);
+//     m_stopPushButton->setEnabled(false);
 }
 
 void MainWindow::onJobDone()
 {
-    m_startPushButton->setEnabled(false);
-    m_stopPushButton->setEnabled(false);
+//     m_startPushButton->setEnabled(false);
+//     m_stopPushButton->setEnabled(false);
 }
