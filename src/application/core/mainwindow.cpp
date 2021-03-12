@@ -173,7 +173,7 @@ void MainWindow::centerWindow()
 void MainWindow::createActions()
 {
     // Sidebar
-    m_projectAction = new QAction(QIcon(":assets/icons/network-clouds.png"), "Workspace", this);
+    m_projectAction = new QAction(QIcon(":assets/icons/desktop.png"), "Workspace", this);
     m_settingsAction = new QAction(QIcon(":assets/icons/gear.png"), "Settings", this);
     m_proxiesAction = new QAction(QIcon(":assets/icons/mask.png"), "Proxies", this);
     m_helpAction = new QAction(QIcon(":assets/icons/question.png"), "Help", this);

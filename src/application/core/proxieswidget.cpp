@@ -23,8 +23,8 @@ void ProxiesWidget::showCustomContextMenu(const QPoint& point)
 {
     QPoint globalPoint= this->mapToGlobal(point);
     QMenu menu(this);
-    QAction *pasteProxiesAction = menu.addAction(QIcon(":assets/icons/control.png"), "Paste Proxies");
-    QAction *removeAllProxiesAction = menu.addAction(QIcon(":assets/icons/control.png"), "Remove All Proxies");
+    QAction *pasteProxiesAction = menu.addAction(QIcon(":assets/icons/clipboard-paste.png"), "Paste Proxies");
+    QAction *removeAllProxiesAction = menu.addAction(QIcon(":assets/icons/cross.png"), "Remove All Proxies");
     QAction *action = menu.exec(globalPoint);
     if (action == pasteProxiesAction)
     {
