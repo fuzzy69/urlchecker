@@ -44,16 +44,18 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     m_resultsTable->setColumnRatios(QList<float>() << 0.5 << 0.2 << 0.2);
     m_startPushButton = new QPushButton(QIcon(":assets/icons/control.png"), "Start");
     m_stopPushButton = new QPushButton(QIcon(":assets/icons/control-stop-square.png"), "Stop");
+    m_testPushButton = new QPushButton("Test");
     m_progressBar = new QProgressBar;
     m_progressBar->setRange(0, 100);
 
-    m_tabWidget->addTab(m_inputTable->tableView(), QString("Input Data"));
+    m_tabWidget->addTab(m_inputTable->tableView(), QString("Source URLs"));
     m_tabWidget->addTab(m_resultsTable->tableView(), QString("Results"));
     m_topLayout->addWidget(m_toolsWidget);
     m_topLayout->addWidget(m_tabWidget);
     m_bottomLayout->addStretch(0);
     m_bottomLayout->addWidget(m_startPushButton);
     m_bottomLayout->addWidget(m_stopPushButton);
+    m_bottomLayout->addWidget(m_testPushButton);
     m_mainLayout->addLayout(m_topLayout);
     m_mainLayout->addLayout(m_bottomLayout);
     m_mainLayout->addWidget(m_progressBar);
@@ -61,6 +63,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
     });
+    connect(m_testPushButton, &QPushButton::clicked, this, &WorkspaceWidget::test);
 }
 
 void WorkspaceWidget::toggleTools()

@@ -13,7 +13,7 @@ class SideBar : public QWidget
 public:
     explicit SideBar(QWidget *parent = nullptr);
     /// Adds an action to sidebar
-    void addAction(QAction* action);
+    void addAction(QAction* action, bool selected = false);
     /// Returns pointer to a created action from given text and icon
     QAction* addAction(const QString& text, const QIcon& icon);
     QSize minimumSizeHint() const;

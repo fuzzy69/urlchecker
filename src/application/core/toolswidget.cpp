@@ -20,14 +20,19 @@ ToolsWidget::ToolsWidget(const Tool &defaultTool, QWidget* parent) : QTreeWidget
         m_currentTool = tool;
         emit toolSelected(tool);
     });
-    addTool(defaultTool);
+    addTool(defaultTool, true);
 }
 
-void ToolsWidget::addTool(const Tool& tool)
+void ToolsWidget::addTool(const Tool& tool, bool current)
 {
     auto item = new QTreeWidgetItem(QStringList(tool.name()));
     item->setIcon(0, tool.icon());
     insertTopLevelItem(0, item);
+    if (current)
+    {
+        setCurrentItem(item);
+        m_currentTool = tool;
+    }
     m_tools.insert(tool.name(), tool);
 }
 

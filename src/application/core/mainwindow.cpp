@@ -249,7 +249,7 @@ void MainWindow::createWidgets()
     m_centralLayout = new QHBoxLayout(m_centralWidget);
     m_sideBar = new SideBar;
 
-    m_sideBar->addAction(m_projectAction);
+    m_sideBar->addAction(m_projectAction, true);
     m_sideBar->addAction(m_settingsAction);
     m_sideBar->addAction(m_proxiesAction);
     m_sideBar->addAction(m_helpAction);
@@ -329,10 +329,14 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createConnections()
 {
-    connect(m_testPushButton, &QPushButton::clicked, [this]{
-        
-        qDebug() << m_userAgents.get();
+    connect(m_workspaceWidget, &WorkspaceWidget::test, [this]{
+        qDebug() << "test";
+        qDebug() << m_workspaceWidget->toolsWidget()->currentTool().name();
     });
+//     connect(m_testPushButton, &QPushButton::clicked, [this]{
+//         
+//         qDebug() << m_userAgents.get();
+//     });
 
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
 
@@ -521,12 +525,21 @@ void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
 
 void MainWindow::onApplicationStart()
 {
+    auto currentTool = m_workspaceWidget->toolsWidget()->currentTool();
+    qDebug() << currentTool.name();
+    m_toolsPushButton->setIcon(currentTool.icon());
+    m_toolsPushButton->setText(currentTool.name());
+    //     m_toolsPushButton
 //     m_startPushButton->setEnabled(false);
 //     m_stopPushButton->setEnabled(false);
 }
 
 void MainWindow::onApplicationReady()
 {
+    auto currentTool = m_workspaceWidget->toolsWidget()->currentTool();
+    qDebug() << currentTool.name();
+    m_toolsPushButton->setIcon(currentTool.icon());
+    m_toolsPushButton->setText(currentTool.name());
 //     m_startPushButton->setEnabled(true);
 //     m_stopPushButton->setEnabled(false);
 }

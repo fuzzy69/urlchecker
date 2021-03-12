@@ -29,6 +29,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void startJob();
     void stopJob();
+    void test();
 
 protected:
 //     void hideEvent(QHideEvent *event) override;
@@ -42,6 +43,7 @@ private:
     Table *m_resultsTable;
     QPushButton *m_startPushButton;
     QPushButton *m_stopPushButton;
+    QPushButton *m_testPushButton;
     QProgressBar *m_progressBar;
     QTableView *m_tableView;
     QTabWidget *m_tabWidget;

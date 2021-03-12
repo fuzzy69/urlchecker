@@ -20,9 +20,11 @@ SideBar::SideBar(QWidget *parent) : QWidget(parent),
     setMouseTracking(true);
 }
 
-void SideBar::addAction(QAction *action)
+void SideBar::addAction(QAction *action, bool selected)
 {
     _actions.push_back(action);
+    if (selected)
+        _checkedAction = action;
     update();
 }
 
