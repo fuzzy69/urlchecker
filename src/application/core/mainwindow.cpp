@@ -381,6 +381,7 @@ void MainWindow::saveSettings()
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
     settings.setValue("lastDirectory", m_lastDirectory);
+    settings.setValue("proxies", m_proxiesTextEdit->toPlainText());
 }
 
 void MainWindow::loadSettings()
@@ -391,6 +392,7 @@ void MainWindow::loadSettings()
         restoreGeometry(settings.value("geometry").toByteArray());
         restoreState(settings.value("windowState").toByteArray());
         m_lastDirectory = settings.value("lastDirectory", m_lastDirectory).toString();
+        m_proxiesTextEdit->setPlainText(settings.value("proxies").toString());
     }
 }
 

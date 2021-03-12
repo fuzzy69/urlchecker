@@ -17,6 +17,7 @@ ProxiesWidget::ProxiesWidget(QTextEdit* parent) : QTextEdit(parent)
     setReadOnly(true);
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QTextEdit::customContextMenuRequested, this, &ProxiesWidget::showCustomContextMenu);
+    setPlaceholderText("Paste proxies here, one proxy per line in format HOST:PORT:USERNAME:PASSWORD or just HOST:PORT");
 }
 
 void ProxiesWidget::showCustomContextMenu(const QPoint& point)
@@ -30,7 +31,9 @@ void ProxiesWidget::showCustomContextMenu(const QPoint& point)
     {
         for (auto &line : QApplication::clipboard()->text().trimmed().split(QRegularExpression("\n|\r\n|\r"), QString::SkipEmptyParts))
         {
-            append(line);
+            QStringList chunks = line.split(":");
+            if (chunks.length() == 2 || chunks.length() == 4)
+                append(line);
         }
     }
     else if (action == removeAllProxiesAction)
