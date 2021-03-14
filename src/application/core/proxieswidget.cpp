@@ -10,6 +10,7 @@
 #include <QTextEdit>
 
 #include "proxieswidget.h"
+#include "../icons.h"
 
 
 ProxiesWidget::ProxiesWidget(QTextEdit* parent) : QTextEdit(parent)
@@ -24,8 +25,8 @@ void ProxiesWidget::showCustomContextMenu(const QPoint& point)
 {
     QPoint globalPoint= this->mapToGlobal(point);
     QMenu menu(this);
-    QAction *pasteProxiesAction = menu.addAction(QIcon(":assets/icons/clipboard-paste.png"), "Paste Proxies");
-    QAction *removeAllProxiesAction = menu.addAction(QIcon(":assets/icons/cross.png"), "Remove All Proxies");
+    QAction *pasteProxiesAction = menu.addAction(QIcon(ICON_CLIPBOARD_PASTE), "Paste Proxies");
+    QAction *removeAllProxiesAction = menu.addAction(QIcon(ICON_CROSS), "Remove All Proxies");
     QAction *action = menu.exec(globalPoint);
     if (action == pasteProxiesAction)
     {

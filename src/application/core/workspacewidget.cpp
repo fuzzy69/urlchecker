@@ -88,3 +88,27 @@ ToolsWidget * WorkspaceWidget::toolsWidget()
 {
     return m_toolsWidget;
 }
+
+void WorkspaceWidget::setCurrentProgress(int value)
+{
+    m_progressBar->setValue(value);
+}
+
+void WorkspaceWidget::updateResultsRow(const QMap<QString, QVariant>& resultData)
+{
+    int rowIndex = resultData["rowId"].toInt();
+    QString result = resultData["result"].toString();
+    //     updateResultsRow(resultData["rowId"].toInt(), resultData["result"].toString(), resultData["status"].toInt(), resultData["message"].toString());
+    m_resultsTable->setCell(rowIndex, 1, QVariant(result));
+    m_resultsTable->setCell(rowIndex, 2, QVariant(result));
+// //     m_resultsTable->setCell(rowIndex, 3, QVariant(statusText));
+// //     int _statusCode = statusCode.toInt();
+// //     if (_statusCode >= 200 && _statusCode < 300)
+// //         m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkGreen));
+// //     else if (_statusCode >= 300 && _statusCode < 400)
+// //         m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkBlue));
+// //     else if (_statusCode >= 400)
+// //         m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkRed));
+// //     else
+// //         m_resultsTable->setRowColor(rowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
+}

@@ -1,0 +1,18 @@
+#pragma once
+
+#define ICON_DESKTOP ":assets/icons/desktop.png"
+#define ICON_GEAR ":assets/icons/gear.png"
+#define ICON_MASK ":assets/icons/mask.png"
+#define ICON_QUESTION ":assets/icons/question.png"
+#define ICON_INFORMATION ":assets/icons/information.png"
+#define ICON_TABLE ":assets/icons/table.png"
+#define ICON_TABLE_IMPORT ":assets/icons/table-import.png"
+#define ICON_TABLE_EXPORT ":assets/icons/table-export.png"
+#define ICON_TABLE_DELETE_ROW ":assets/icons/table-delete-row.png"
+#define ICON_TABLE_SELECT_ALL ":assets/icons/table-select-all.png"
+#define ICON_BROOM ":assets/icons/broom.png"
+#define ICON_CROSS ":assets/icons/cross.png"
+#define ICON_CROSS_CIRCLE ":assets/icons/cross-circle.png"
+#define ICON_RESIZE ":assets/icons/zone-resize-actual.png"
+#define ICON_HAMMER ":assets/icons/hammer.png"
+#define ICON_CLIPBOARD_PASTE ":assets/icons/clipboard-paste.png"

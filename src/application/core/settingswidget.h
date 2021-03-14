@@ -16,6 +16,8 @@ class SettingsWidget : public QWidget
 public:
     explicit SettingsWidget(QWidget *parent = nullptr);
 
+    int threadCount() const;
+
 protected:
     void hideEvent(QHideEvent *event) override;
 

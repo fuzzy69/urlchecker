@@ -18,27 +18,33 @@ cpr_option(BUILD_CPR_TESTS "Set to ON to build cpr tests." OFF)
 add_subdirectory(libs/random)
 
 set(urlchecker_SRC
+  assets.qrc
+
   src/main.cpp
-  src/application/core/mainwindow.cpp
-  src/application/common/table.cpp
-  src/application/utils/file.cpp
-  src/application/utils/httpclient.cpp
-  src/application/common/recentfiles.cpp
-  src/application/core/sidebar.cpp
-  src/application/utils/useragents.cpp
-  src/application/core/proxieswidget.cpp
+
   src/application/common/applicationstatemachine.cpp
+  src/application/common/basemainwindow.cpp
+  src/application/common/recentfiles.cpp
+  src/application/common/table.cpp
+  src/application/common/thread.cpp
+
+  src/application/core/helpwidget.cpp
+  src/application/core/mainwindow.cpp
+  src/application/core/proxieswidget.cpp
+  src/application/core/settingswidget.cpp
+  src/application/core/sidebar.cpp
+  src/application/core/tool.cpp
   src/application/core/toolswidget.cpp
+  src/application/core/workspacewidget.cpp
+
+  src/application/utils/file.cpp
+  src/application/utils/useragents.cpp
+
   src/application/workers/worker.cpp
   src/application/workers/checkurlstatusworker.cpp
   src/application/workers/checkalexarank.cpp
-  src/application/workers/scrapeproxies.cpp
-  src/application/core/settingswidget.cpp
   src/application/workers/dummyworker.cpp
-  src/application/common/thread.cpp
-  src/application/core/tool.cpp
-  src/application/core/workspacewidget.cpp
-  assets.qrc
+  src/application/workers/scrapeproxies.cpp
 )
 
 add_executable(urlchecker ${urlchecker_SRC})

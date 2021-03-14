@@ -22,6 +22,8 @@ public:
     Table* inputTable();
     Table* resultsTable();
     ToolsWidget* toolsWidget();
+    void setCurrentProgress(int value);
+    void updateResultsRow(const QMap<QString, QVariant>& resultData);
 
 public Q_SLOTS:
     void toggleTools();

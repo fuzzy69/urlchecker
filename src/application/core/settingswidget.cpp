@@ -61,3 +61,8 @@ void SettingsWidget::hideEvent(QHideEvent* event)
     settings.setValue("timeout", m_timeoutSpinBox->value());
     settings.setValue("useProxies", m_useProxiesCheckBox->isChecked());
 }
+
+int SettingsWidget::threadCount() const
+{
+    return m_threadsSpinBox->value();
+}
