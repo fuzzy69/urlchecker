@@ -1,5 +1,3 @@
-#include "workspacewidget.h"
-
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -19,9 +17,11 @@
 #include <QUrl>
 #include <QDesktopServices>
 
+#include "../icons.h"
 #include "../common/table.h"
 #include "../core/toolswidget.h"
 #include "../core/tools.h"
+#include "workspacewidget.h"
 
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
@@ -30,9 +30,9 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     m_topLayout = new QHBoxLayout;
     m_bottomLayout = new QHBoxLayout;
 
-    m_toolsWidget = new ToolsWidget(Tool(Tools::CHECK_URL_STATUS, QIcon(":assets/icons/chain.png"), QString("Check URL Status")));
-    m_toolsWidget->addTool(Tool(Tools::CHECK_ALEXA_RANK, QIcon(":assets/icons/alexa.png"), QString("Check Alexa Rank")));
-    m_toolsWidget->addTool(Tool(Tools::SCRAPE_PROXIES, QIcon(":assets/icons/mask.png"), QString("Scrape Proxies")));
+    m_toolsWidget = new ToolsWidget(Tool(Tools::CHECK_URL_STATUS, QIcon(ICON_CHAIN), QString("Check URL Status")));
+    m_toolsWidget->addTool(Tool(Tools::CHECK_ALEXA_RANK, QIcon(ICON_ALEXA), QString("Check Alexa Rank")));
+    m_toolsWidget->addTool(Tool(Tools::SCRAPE_PROXIES, QIcon(ICON_MASK), QString("Scrape Proxies")));
 //     connect(m_toolsWidget, &ToolsWidget::toolSelected, [this](const Tool &tool){
 //         m_toolsPushButton->setIcon(tool.icon());
 //         m_toolsPushButton->setText(tool.name());
@@ -60,6 +60,9 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     m_mainLayout->addLayout(m_bottomLayout);
     m_mainLayout->addWidget(m_progressBar);
 
+    connect(m_inputTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
+        QDesktopServices::openUrl(QUrl(m_inputTable->cell(modelIndex.row(), 0).toString()));
+    });
     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
     });
@@ -111,4 +114,75 @@ void WorkspaceWidget::updateResultsRow(const QMap<QString, QVariant>& resultData
 // //         m_resultsTable->setRowColor(rowIndex, QColor(Qt::white), QColor(Qt::darkRed));
 // //     else
 // //         m_resultsTable->setRowColor(rowIndex, QColor(Qt::darkGray), QColor(Qt::darkYellow));
+}
+
+Table * WorkspaceWidget::focusedTable()
+{
+    return (m_tabWidget->currentIndex() == 0)? m_inputTable : m_resultsTable;
+}
+
+void WorkspaceWidget::invertSelectedRows()
+{
+    auto currentTable = focusedTable();
+    currentTable->invertSelection();
+}
+
+void WorkspaceWidget::removeAllRows()
+{
+    auto currentTable = focusedTable();
+    currentTable->removeAllRows();
+}
+
+void WorkspaceWidget::removeDuplicatedRows()
+{
+    auto currentTable = focusedTable();
+    currentTable->removeDuplicates();
+}
+
+void WorkspaceWidget::removeSelectedRows()
+{
+    auto currentTable = focusedTable();
+    currentTable->removeSelected();
+}
+
+void WorkspaceWidget::selectAllRows()
+{
+    auto currentTable = focusedTable();
+    currentTable->selectAll();
+}
+
+void WorkspaceWidget::onApplicationStart()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(false);
+}
+
+void WorkspaceWidget::onApplicationReady()
+{
+    m_startPushButton->setEnabled(true);
+    m_stopPushButton->setEnabled(false);
+}
+
+void WorkspaceWidget::onApplicationExit()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(false);
+}
+
+void WorkspaceWidget::onJobStart()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(true);
+}
+
+void WorkspaceWidget::onJobStop()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(false);
+}
+
+void WorkspaceWidget::onJobDone()
+{
+    m_startPushButton->setEnabled(false);
+    m_stopPushButton->setEnabled(false);
 }

@@ -16,3 +16,5 @@
 #define ICON_RESIZE ":assets/icons/zone-resize-actual.png"
 #define ICON_HAMMER ":assets/icons/hammer.png"
 #define ICON_CLIPBOARD_PASTE ":assets/icons/clipboard-paste.png"
+#define ICON_ALEXA ":assets/icons/alexa.png"
+#define ICON_CHAIN ":assets/icons/chain.png"

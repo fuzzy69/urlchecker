@@ -74,6 +74,7 @@ private:
     void loadSettings() override;
     void saveSettings() override;
 
+    void setStatusMessage(const QString &message);
 //     void updateResultsRow(int rowIndex, const QVariant& result, const QVariant &statusCode, const QVariant &statusText);
     void onPulse();
     // Application states
@@ -94,7 +95,7 @@ private:
     QAction *m_clearRecentUrlFilesAction;
     QAction *m_exportResultsAction;
     QAction *m_quitAction;
-    QAction *m_clearTableAction;
+    QAction *m_removeAllAction;
     QAction *m_removeDuplicatesAction;
     QAction *m_selectAllAction;
     QAction *m_removeSelectedAction;

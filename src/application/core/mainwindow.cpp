@@ -124,7 +124,7 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"));;*/
 
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
-    QTimer::singleShot(5 * MILLIS_IN_SECOND, [this]{
+    QTimer::singleShot(3 * MILLIS_IN_SECOND, [this]{
         emit m_applicationStateMachine->applicationReady();
     });
 
@@ -150,7 +150,7 @@ void MainWindow::createActions()
     m_clearRecentUrlFilesAction = new QAction(QIcon(ICON_BROOM), "Clear List", this);
     m_exportResultsAction = new QAction(QIcon(ICON_TABLE_EXPORT), "Export Results", this);
     m_quitAction = new QAction(QIcon(ICON_CROSS_CIRCLE), "Quit", this);
-    m_clearTableAction = new QAction(QIcon(ICON_BROOM), "Clear Results Table", this);
+    m_removeAllAction = new QAction(QIcon(ICON_BROOM), "Remove All Rows", this);
     m_removeDuplicatesAction = new QAction(QIcon(ICON_TABLE_DELETE_ROW), "Remove Duplicates", this);
     m_selectAllAction = new QAction(QIcon(ICON_TABLE_SELECT_ALL), "Select All Rows", this);
     m_invertSelectionAction = new QAction(QIcon(ICON_TABLE), "Invert Selection", this);
@@ -181,7 +181,7 @@ void MainWindow::createMenuBar()
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_quitAction);
     // Edit menu
-    m_editMenu->addAction(m_clearTableAction);
+    m_editMenu->addAction( m_removeAllAction );
     m_editMenu->addAction(m_removeDuplicatesAction);
     // Seletion menu
     m_selectionMenu->addAction(m_removeSelectedAction);
@@ -204,7 +204,7 @@ void MainWindow::createToolBar()
     m_toolBar->addAction(m_importUrlsAction);
     m_toolBar->addAction(m_exportResultsAction);
     m_toolBar->addSeparator();
-    m_toolBar->addAction(m_clearTableAction);
+    m_toolBar->addAction( m_removeAllAction );
     m_toolBar->addAction(m_removeDuplicatesAction);
     m_toolBar->addSeparator();
     m_toolBar->addAction(m_selectAllAction);
@@ -251,8 +251,6 @@ void MainWindow::createStatusBar()
     m_statusBarLabel = new QLabel;
     m_activeThreadsLabel = new QLabel(" Active threads: /");
 
-//     connect(m_toolsPushButton, &QPushButton::clicked, m_workspaceWidget, &WorkspaceWidget::toggleTools);
-
     m_statusBar->addPermanentWidget(m_toolsPushButton);
     m_statusBar->addPermanentWidget(m_statusBarLabel, 1);
     m_statusBar->addPermanentWidget(m_activeThreadsLabel);
@@ -260,61 +258,59 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createConnections()
 {
+    // File menu
+    connect(m_importUrlsAction, &QAction::triggered, this, &MainWindow::importUrls);
+    connect(m_exportResultsAction, &QAction::triggered, this, &MainWindow::exportResults);
+    connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
     connect(m_quitAction, &QAction::triggered, this, &MainWindow::close);
+    // Help menu
     connect(m_aboutAction, &QAction::triggered, [&] {QMessageBox::about(this,
         "About " APP_TITLE,
 
         "<p>Fugue icons are provided by <a href='http://p.yusukekamiyamane.com/'>Yusuke"
         "Kamiyamane</a>"
     );});
+
     // Sidebar
     connect(m_workspaceAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
     connect(m_settingsAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
     connect(m_proxiesAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
     connect(m_helpAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
-    // File
-    connect(m_importUrlsAction, &QAction::triggered, this, &MainWindow::importUrls);
-    connect(m_exportResultsAction, &QAction::triggered, this, &MainWindow::exportResults);
-    
-    
-    
-    //     connect(m_workspaceWidget, &WorkspaceWidget::test, [this]{
-//         qDebug() << "test";
-//         qDebug() << m_workspaceWidget->toolsWidget()->currentTool().name();
-//     });
-// //     connect(m_testPushButton, &QPushButton::clicked, [this]{
-// //         
-// //         qDebug() << m_userAgents.get();
-// //     });
 
+    // Workspace
+    connect(m_removeAllAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeAllRows);
+    connect(m_selectAllAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::selectAllRows);
+    connect(m_invertSelectionAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::invertSelectedRows);
+    connect(m_removeDuplicatesAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeDuplicatedRows);
+    connect(m_removeSelectedAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeSelectedRows);
+
+    connect(m_workspaceWidget, &WorkspaceWidget::startJob, this, &MainWindow::startJob);
+    connect(m_workspaceWidget, &WorkspaceWidget::stopJob, this, &MainWindow::stopJob);
+
+    // Statusbar
+    connect(m_toolsPushButton, &QPushButton::clicked, m_workspaceWidget, &WorkspaceWidget::toggleTools);
+    connect(m_workspaceWidget->toolsWidget(), &ToolsWidget::toolSelected, [this](const Tool &currentTool){
+        m_toolsPushButton->setIcon(currentTool.icon());
+        m_toolsPushButton->setText(currentTool.name());
+    });
+
+    // Application states
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationStarted, this, &MainWindow::onApplicationStart);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationIdling, this, &MainWindow::onApplicationReady);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationExiting, this, &MainWindow::onApplicationExit);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStarted, this, &MainWindow::onJobStart);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStopping, this, &MainWindow::onJobStop);
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobFinished, this, &MainWindow::onJobDone);
+
+    // Misc
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
 
-
-//     connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
-
-
-// 
-// //     connect(m_clearTableAction, &QAction::triggered, m_resultsTable, &Table::removeAllRows);
-// //     connect(m_selectAllAction, &QAction::triggered, m_resultsTable, &Table::selectAll);
-// //     connect(m_invertSelectionAction, &QAction::triggered, m_resultsTable, &Table::invertSelection);
-// //     connect(m_removeDuplicatesAction, &QAction::triggered, m_resultsTable, &Table::removeDuplicates);
-// //     connect(m_removeSelectedAction, &QAction::triggered, m_resultsTable, &Table::removeSelected);
-// 
-//     connect(m_workspaceWidget, &WorkspaceWidget::startJob, this, &MainWindow::startJob);
-//     connect(m_workspaceWidget, &WorkspaceWidget::stopJob, this, &MainWindow::stopJob);
-// //     connect(m_startPushButton, &QPushButton::clicked, this, &MainWindow::startJob);
-// //     connect(m_stopPushButton, &QPushButton::clicked, this, &MainWindow::stopJob);
-// //     connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
-// //         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
-// //     });
-//     connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
-// 
-//     connect(m_applicationStateMachine, &ApplicationStateMachine::applicationStarted, this, &MainWindow::onApplicationStart);
-//     connect(m_applicationStateMachine, &ApplicationStateMachine::applicationIdling, this, &MainWindow::onApplicationReady);
-//     connect(m_applicationStateMachine, &ApplicationStateMachine::applicationExiting, this, &MainWindow::onApplicationExit);
-//     connect(m_applicationStateMachine, &ApplicationStateMachine::jobStarted, this, &MainWindow::onJobStart);
-//     connect(m_applicationStateMachine, &ApplicationStateMachine::jobStopping, this, &MainWindow::onJobStop);
-//     connect(m_applicationStateMachine, &ApplicationStateMachine::jobFinished, this, &MainWindow::onJobDone);
+    // Test
+    connect(m_workspaceWidget, &WorkspaceWidget::test, [this]{
+//         qDebug() << m_userAgents.get();
+        setStatusMessage("Test 1");
+//         qDebug() << "Test";
+    });
 }
 
 void MainWindow::loadSettings()
@@ -355,11 +351,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
 
 void MainWindow::onApplicationStart()
 {
-//     auto currentTool = m_workspaceWidget->toolsWidget()->currentTool();
-//     m_toolsPushButton->setIcon(currentTool.icon());
-//     m_toolsPushButton->setText(currentTool.name());
-//     m_startPushButton->setEnabled(false);
-//     m_stopPushButton->setEnabled(false);
+    m_workspaceWidget->onApplicationReady();
 }
 
 void MainWindow::onApplicationReady()
@@ -367,32 +359,28 @@ void MainWindow::onApplicationReady()
     auto currentTool = m_workspaceWidget->toolsWidget()->currentTool();
     m_toolsPushButton->setIcon(currentTool.icon());
     m_toolsPushButton->setText(currentTool.name());
-//     m_startPushButton->setEnabled(true);
-//     m_stopPushButton->setEnabled(false);
+    m_workspaceWidget->onApplicationReady();
+    setStatusMessage("Ready");
 }
 
 void MainWindow::onApplicationExit()
 {
-//     m_startPushButton->setEnabled(false);
-//     m_stopPushButton->setEnabled(false);
+    m_workspaceWidget->onApplicationExit();
 }
 
 void MainWindow::onJobStart()
 {
-//     m_startPushButton->setEnabled(false);
-//     m_stopPushButton->setEnabled(true);
+    m_workspaceWidget->onJobStart();
 }
 
 void MainWindow::onJobStop()
 {
-//     m_startPushButton->setEnabled(false);
-//     m_stopPushButton->setEnabled(false);
+    m_workspaceWidget->onJobStop();
 }
 
 void MainWindow::onJobDone()
 {
-//     m_startPushButton->setEnabled(false);
-//     m_stopPushButton->setEnabled(false);
+    m_workspaceWidget->onJobDone();
 }
 
 // Slots
@@ -406,12 +394,13 @@ void MainWindow::importUrls()
     QString filePath = QFileDialog::getOpenFileName(this, "Import URLs", m_lastDirectory, "Text files (*.txt);;All files (*.*)");
     if (!QFile::exists(filePath))
         return;
+    Table* resultsTable = m_workspaceWidget->resultsTable();
     for (auto& line : File::readTextLines(filePath))
     {
         line = line.trimmed();
         // TODO: validate URL
-//         if (line.length() > 0)
-//             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+        if (line.length() > 0)
+            resultsTable->appendRow(QStringList() << line << "" << "" << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
     m_recentFiles->addFile(filePath);
@@ -422,7 +411,6 @@ void MainWindow::exportResults()
     QString filePath(QDir(m_lastDirectory).absoluteFilePath("results.txt"));
     filePath = QFileDialog::getSaveFileName(this, "Export Results", filePath, "Text files (*.txt)");
     QStringList urls;
-//     int columnCount = 4;
     Table* resultsTable = m_workspaceWidget->resultsTable();
     int rowCount = resultsTable->rowCount();
     for (int i = 0; i < rowCount; ++i)
@@ -442,12 +430,13 @@ void MainWindow::importRecentFileUrls(const QString& filePath)
 {
     if (!QFile::exists(filePath))
         return;
+    Table* resultsTable = m_workspaceWidget->resultsTable();
     for (auto& line : File::readTextLines(filePath))
     {
         line = line.trimmed();
         // TODO: validate URL
-//         if (line.length() > 0)
-//             m_resultsTable->appendRow(QStringList() << line << "" << "" << "");
+        if (line.length() > 0)
+            resultsTable->appendRow(QStringList() << line << "" << "" << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
 }
@@ -524,4 +513,9 @@ void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
     m_workspaceWidget->updateResultsRow(resultData);
     int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
     m_workspaceWidget->setCurrentProgress(progresPercentage);
+}
+
+void MainWindow::setStatusMessage(const QString& message)
+{
+    m_statusBarLabel->setText(message);
 }

@@ -27,8 +27,21 @@ public:
 
 public Q_SLOTS:
     void toggleTools();
+    void removeAllRows();
+    void selectAllRows();
+    void invertSelectedRows();
+    void removeDuplicatedRows();
+    void removeSelectedRows();
+
+    void onApplicationStart();
+    void onApplicationReady();
+    void onApplicationExit();
+    void onJobStart();
+    void onJobStop();
+    void onJobDone();
 
 Q_SIGNALS:
+
     void startJob();
     void stopJob();
     void test();
@@ -37,6 +50,8 @@ protected:
 //     void hideEvent(QHideEvent *event) override;
 
 private:
+    Table* focusedTable();
+
     QVBoxLayout *m_mainLayout;
     QHBoxLayout *m_topLayout;
     QHBoxLayout *m_bottomLayout;
