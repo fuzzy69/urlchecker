@@ -7,9 +7,11 @@
 #include <QRegExp>
 #include <QApplication>
 
+#include "libs/cpr/include/cpr/cpr.h"
+
 #include "checkalexarank.h"
 #include "../config.h"
-#include "libs/cpr/include/cpr/cpr.h"
+#include "../core/tools.h"
 
 
 CheckAlexaRankWorker::CheckAlexaRankWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
@@ -46,10 +48,17 @@ void CheckAlexaRankWorker::run()
             rank = regex.cap(1);
         }
         auto data = QMap<QString, QVariant>{
+            {QString("toolId"), QVariant(Tools::CHECK_ALEXA_RANK)},
+            {QString("toolName"), QVariant("Check Alexa Rank")},
+
             {QString("rowId"), QVariant(inputData["rowId"].toInt())},
             {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
             {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
-            {QString("result"), QVariant(rank)}
+            {QString("result"), QVariant(rank)},
+
+            {QString("URL"), QVariant(url)},
+            {QString("Rank"), QVariant(rank)},
+            {QString("Status"), QVariant(QString::fromUtf8(r.status_line.c_str()))}
         };
         emit Worker::result(data);
     }

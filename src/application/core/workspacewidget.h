@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QQueue>
 #include <QWidget>
 
 
@@ -11,7 +12,9 @@ class QTableView;
 class QTabWidget;
 
 class Table;
+class Thread;
 class ToolsWidget;
+class Worker;
 
 class WorkspaceWidget : public QWidget
 {
@@ -24,6 +27,7 @@ public:
     ToolsWidget* toolsWidget();
     void setCurrentProgress(int value);
     void updateResultsRow(const QMap<QString, QVariant>& resultData);
+    void clearResultsTable();
 
 public Q_SLOTS:
     void toggleTools();
@@ -41,13 +45,17 @@ public Q_SLOTS:
     void onJobDone();
 
 Q_SIGNALS:
-
-    void startJob();
-    void stopJob();
+//     void startJob();
+//     void stopJob();
     void test();
 
 protected:
 //     void hideEvent(QHideEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+
+    void startJob();
+    void stopJob();
+    void onResult(const QMap<QString, QVariant> &resultData);
 
 private:
     Table* focusedTable();
@@ -65,4 +73,11 @@ private:
     QTableView *m_tableView;
     QTabWidget *m_tabWidget;
     ToolsWidget *m_toolsWidget;
+
+    QList<Thread*> m_threads;
+    QList<Worker*> m_workers;
+    QQueue<QMap<QString, QVariant>> m_inputDataQueue;
+
+    int m_itemsDone;
+    int m_totalItems;
 };

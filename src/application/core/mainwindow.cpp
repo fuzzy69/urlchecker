@@ -87,9 +87,9 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(5, this);
 
-    m_threads = QList<Thread*>();
-    m_workers = QList<Worker*>();
-    m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
+//     m_threads = QList<Thread*>();
+//     m_workers = QList<Worker*>();
+//     m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
 
     m_applicationStateMachine = new ApplicationStateMachine(this);
     m_applicationStateMachine->start();
@@ -130,7 +130,7 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
 
     // TODO: Remove this
     Table* inputTable = m_workspaceWidget->inputTable();
-    for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
+    for (auto& line : File::readTextLines("/mnt/ramdisk/proxy_sources.txt"))
     {
         line = line.trimmed();
         // TODO: validate URL
@@ -263,6 +263,8 @@ void MainWindow::createConnections()
     connect(m_exportResultsAction, &QAction::triggered, this, &MainWindow::exportResults);
     connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
     connect(m_quitAction, &QAction::triggered, this, &MainWindow::close);
+    // Window
+    connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
     // Help menu
     connect(m_aboutAction, &QAction::triggered, [&] {QMessageBox::about(this,
         "About " APP_TITLE,
@@ -284,8 +286,8 @@ void MainWindow::createConnections()
     connect(m_removeDuplicatesAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeDuplicatedRows);
     connect(m_removeSelectedAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeSelectedRows);
 
-    connect(m_workspaceWidget, &WorkspaceWidget::startJob, this, &MainWindow::startJob);
-    connect(m_workspaceWidget, &WorkspaceWidget::stopJob, this, &MainWindow::stopJob);
+//     connect(m_workspaceWidget, &WorkspaceWidget::startJob, this, &MainWindow::startJob);
+//     connect(m_workspaceWidget, &WorkspaceWidget::stopJob, this, &MainWindow::stopJob);
 
     // Statusbar
     connect(m_toolsPushButton, &QPushButton::clicked, m_workspaceWidget, &WorkspaceWidget::toggleTools);
@@ -394,126 +396,124 @@ void MainWindow::importUrls()
     QString filePath = QFileDialog::getOpenFileName(this, "Import URLs", m_lastDirectory, "Text files (*.txt);;All files (*.*)");
     if (!QFile::exists(filePath))
         return;
-    Table* resultsTable = m_workspaceWidget->resultsTable();
+    Table* inputTable = m_workspaceWidget->inputTable();
     for (auto& line : File::readTextLines(filePath))
     {
         line = line.trimmed();
         // TODO: validate URL
         if (line.length() > 0)
-            resultsTable->appendRow(QStringList() << line << "" << "" << "");
+            inputTable->appendRow(QStringList() << line << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
     m_recentFiles->addFile(filePath);
-}
-
-void MainWindow::exportResults()
-{
-    QString filePath(QDir(m_lastDirectory).absoluteFilePath("results.txt"));
-    filePath = QFileDialog::getSaveFileName(this, "Export Results", filePath, "Text files (*.txt)");
-    QStringList urls;
-    Table* resultsTable = m_workspaceWidget->resultsTable();
-    int rowCount = resultsTable->rowCount();
-    for (int i = 0; i < rowCount; ++i)
-    {
-        urls << resultsTable->cell(i, 0).toString();
-    }
-    if (urls.length() == 0)
-    {
-        QMessageBox::information(this, "Export Results", "Nothing to export!");
-        return;
-    }
-    File::writeTextFile(filePath, urls);
-    m_lastDirectory = QDir(filePath).absolutePath();
 }
 
 void MainWindow::importRecentFileUrls(const QString& filePath)
 {
     if (!QFile::exists(filePath))
         return;
-    Table* resultsTable = m_workspaceWidget->resultsTable();
+    Table* inputTable = m_workspaceWidget->inputTable();
     for (auto& line : File::readTextLines(filePath))
     {
         line = line.trimmed();
         // TODO: validate URL
         if (line.length() > 0)
-            resultsTable->appendRow(QStringList() << line << "" << "" << "");
+            inputTable->appendRow(QStringList() << line << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
 }
 
-void MainWindow::startJob()
+void MainWindow::exportResults()
 {
-    m_itemsDone = 0;
-//     m_totalItems = m_resultsTable->rowCount();
     Table* resultsTable = m_workspaceWidget->resultsTable();
-    m_totalItems = resultsTable->rowCount();
-    m_threads.clear();
-    m_workers.clear();
+    if (resultsTable->rowCount() == 0)
+    {
+        QMessageBox::information(this, "Export Results", "Nothing to export!");
+        return;
+    }
+    QString filePath(QDir(m_lastDirectory).absoluteFilePath("results.txt"));
+    filePath = QFileDialog::getSaveFileName(this, "Export Results", filePath, "Text files (*.txt)");
+    QStringList urls;
     for (int i = 0; i < resultsTable->rowCount(); ++i)
     {
-        auto url = resultsTable->cell(i, 0).toString();
-        m_inputDataQueue.enqueue({
-            {QString("rowId"), QVariant(i)},
-            {QString("url"), QVariant(url)}
-        });
+        urls << resultsTable->cell(i, 0).toString();
     }
-    int parallelTasks = m_settingsWidget->threadCount();
-    for (int i = 0; i < parallelTasks;++i)
-    {
-//         auto thread = new QThread;
-        auto thread = new Thread;
-        Worker *worker;
-        // TODO: Improve tool switching logic
-//         if (m_toolsPushButton->text() == " Check URL Status")
-//             worker = new CheckUrlStatusWorker(m_inputDataQueue);
-//         else if (m_toolsPushButton->text() == " Check Alexa Rank")
-//             worker = new CheckAlexaRankWorker(m_inputDataQueue);
-//         else if (m_toolsPushButton->text() == " Scrape Proxies")
-//             worker = new ScrapeProxiesWorker(m_inputDataQueue);
-//         else
-//             worker = new DummyWorker(m_inputDataQueue);
-        worker = new DummyWorker(m_inputDataQueue);
-        m_threads.append(thread);
-        m_workers.append(worker);
-        m_workers[i]->moveToThread(m_threads[i]);
-        // Connections
-        connect(thread, &Thread::started, worker, &Worker::run);
-        connect(thread, &Thread::finished, thread, &Thread::deleteLater);
-        connect(worker, &Worker::result, this, &MainWindow::onResult);
-        connect(worker, &Worker::finished, thread, &Thread::quit);
-        connect(worker, &Worker::finished, worker, &Worker::deleteLater);
-        connect(worker, &Worker::finished, []{
-            qDebug() << "Worker finished";
-        });
-        connect(worker, &Worker::requestStop, worker, &Worker::stop);
-    }
-
-    emit m_applicationStateMachine->jobStart();
-    for (int i = 0; i < parallelTasks; ++i)
-    {
-        m_threads[i]->start();
-    }
+    File::writeTextFile(filePath, urls);
+    m_lastDirectory = QDir(filePath).absolutePath();
 }
 
-void MainWindow::stopJob()
-{
-    for (Worker *worker: m_workers)
-    {
-        if (worker)
-        {
-            emit worker->requestStop();
-        }
-    }
-    emit m_applicationStateMachine->jobStop();
-}
-
-void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
-{
-    ++m_itemsDone;
-    m_workspaceWidget->updateResultsRow(resultData);
-    int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
-    m_workspaceWidget->setCurrentProgress(progresPercentage);
-}
+// void MainWindow::startJob()
+// {
+//     m_workspaceWidget->clearResultsTable();
+//     m_itemsDone = 0;
+//     Table* inputTable = m_workspaceWidget->inputTable();
+//     m_totalItems = inputTable->rowCount();
+//     m_threads.clear();
+//     m_workers.clear();
+//     for (int i = 0; i < inputTable->rowCount(); ++i)
+//     {
+//         auto url = inputTable->cell(i, 0).toString();
+//         m_inputDataQueue.enqueue({
+//             {QString("rowId"), QVariant(i)},
+//             {QString("url"), QVariant(url)}
+//         });
+//     }
+//     int parallelTasks = m_settingsWidget->threadCount();
+//     for (int i = 0; i < parallelTasks;++i)
+//     {
+//         auto thread = new Thread;
+//         Worker *worker;
+//         // TODO: Improve tool switching logic
+// //         if (m_toolsPushButton->text() == " Check URL Status")
+// //             worker = new CheckUrlStatusWorker(m_inputDataQueue);
+// //         else if (m_toolsPushButton->text() == " Check Alexa Rank")
+// //             worker = new CheckAlexaRankWorker(m_inputDataQueue);
+// //         else if (m_toolsPushButton->text() == " Scrape Proxies")
+// //             worker = new ScrapeProxiesWorker(m_inputDataQueue);
+// //         else
+// //             worker = new DummyWorker(m_inputDataQueue);
+//         worker = new DummyWorker(m_inputDataQueue);
+//         m_threads.append(thread);
+//         m_workers.append(worker);
+//         m_workers[i]->moveToThread(m_threads[i]);
+//         // Connections
+//         connect(thread, &Thread::started, worker, &Worker::run);
+//         connect(thread, &Thread::finished, thread, &Thread::deleteLater);
+//         connect(worker, &Worker::result, this, &MainWindow::onResult);
+//         connect(worker, &Worker::finished, thread, &Thread::quit);
+//         connect(worker, &Worker::finished, worker, &Worker::deleteLater);
+//         connect(worker, &Worker::finished, []{
+//             qDebug() << "Worker finished";
+//         });
+//         connect(worker, &Worker::requestStop, worker, &Worker::stop);
+//     }
+// 
+//     emit m_applicationStateMachine->jobStart();
+//     for (int i = 0; i < parallelTasks; ++i)
+//     {
+//         m_threads[i]->start();
+//     }
+// }
+// 
+// void MainWindow::stopJob()
+// {
+//     for (Worker *worker: m_workers)
+//     {
+//         if (worker)
+//         {
+//             emit worker->requestStop();
+//         }
+//     }
+//     emit m_applicationStateMachine->jobStop();
+// }
+// 
+// void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
+// {
+//     ++m_itemsDone;
+//     m_workspaceWidget->updateResultsRow(resultData);
+//     int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
+//     m_workspaceWidget->setCurrentProgress(progresPercentage);
+// }
 
 void MainWindow::setStatusMessage(const QString& message)
 {

@@ -9,9 +9,11 @@
 #include <QRegularExpressionMatchIterator>
 #include <QApplication>
 
+#include "libs/cpr/include/cpr/cpr.h"
+
 #include "scrapeproxies.h"
 #include "../config.h"
-#include "libs/cpr/include/cpr/cpr.h"
+#include "../core/tools.h"
 
 
 ScrapeProxiesWorker::ScrapeProxiesWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
@@ -50,10 +52,16 @@ void ScrapeProxiesWorker::run()
             if (match.hasMatch())
             {
                 auto data = QMap<QString, QVariant>{
+                    {QString("toolId"), QVariant(Tools::SCRAPE_PROXIES)},
+                    {QString("toolName"), QVariant("Scrape Proxies")},
+                    
                     {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-                    {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
-                    {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
-                    {QString("result"), QVariant(match.captured(0))}
+//                     {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
+//                     {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
+//                     {QString("result"), QVariant(match.captured(0))}
+                    {QString("Proxy"), QVariant(match.captured(0))},
+                    {QString("Source"), QVariant(url)},
+                    {QString("Status"), QVariant(QString::fromUtf8(r.status_line.c_str()))}
                 };
                 emit Worker::result(data);
             }

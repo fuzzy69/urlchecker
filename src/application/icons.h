@@ -18,3 +18,5 @@
 #define ICON_CLIPBOARD_PASTE ":assets/icons/clipboard-paste.png"
 #define ICON_ALEXA ":assets/icons/alexa.png"
 #define ICON_CHAIN ":assets/icons/chain.png"
+#define ICON_CONTROL ":assets/icons/control.png"
+#define ICON_CONTROL_STOP ":assets/icons/control-stop-square.png"

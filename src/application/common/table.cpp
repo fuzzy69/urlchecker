@@ -32,6 +32,14 @@ Table::~Table()
         delete m_tableView;
 }
 
+void Table::resetColumns(const QStringList &columns)
+{
+    m_columns = columns;
+    m_tableModel->clear();
+    m_tableModel->setHorizontalHeaderLabels(m_columns);
+    m_tableView->setModel(m_tableModel);
+}
+
 void Table::setColumnRatios(QList<float> columnRatios)
 {
     m_columnRatios = columnRatios;

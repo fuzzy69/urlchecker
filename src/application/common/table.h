@@ -34,6 +34,8 @@ public:
     QString name() const;
     QTableView* tableView() const;
     QStandardItemModel* tableModel() const;
+    void resetColumns(const QStringList &columns);
+
 signals:
     void doubleClicked(const QModelIndex &modelIndex);
 

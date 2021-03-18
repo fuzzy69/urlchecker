@@ -17,6 +17,7 @@ public:
 //     void addTool(const QIcon &icon, const QString &text);
     void addTool(const Tool &tool, bool current = false);
     Tool currentTool();
+    Tool getTool(const QString &toolName) const;
 
 signals:
 //     void toolSelected(const QString &toolText);

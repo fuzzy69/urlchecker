@@ -54,9 +54,9 @@ protected slots:
     void importUrls();
     void exportResults();
     void importRecentFileUrls(const QString &filePath);
-    void startJob();
-    void stopJob();
-    void onResult(const QMap<QString, QVariant> &resultData);
+//     void startJob();
+//     void stopJob();
+//     void onResult(const QMap<QString, QVariant> &resultData);
 
 protected:
 //     void resizeEvent(QResizeEvent *event) override;
@@ -165,9 +165,9 @@ private:
     QTimer *m_pulseTimer;
     RecentFiles *m_recentFiles;
 
-    QList<Thread*> m_threads;
-    QList<Worker*> m_workers;
-    QQueue<QMap<QString, QVariant>> m_inputDataQueue;
+//     QList<Thread*> m_threads;
+//     QList<Worker*> m_workers;
+//     QQueue<QMap<QString, QVariant>> m_inputDataQueue;
     ApplicationStateMachine *m_applicationStateMachine;
 
 //     ToolsWidget *m_toolsWidget;
@@ -179,6 +179,6 @@ private:
     QString m_settingsFilePath;
     QString m_lastDirectory;
 
-    int m_itemsDone;
-    int m_totalItems;
+//     int m_itemsDone;
+//     int m_totalItems;
 };

@@ -40,3 +40,9 @@ Tool ToolsWidget::currentTool()
 {
     return m_currentTool;
 }
+
+Tool ToolsWidget::getTool(const QString& toolName) const
+{
+//     qDebug() << m_tools;
+    return m_tools[toolName];
+}
