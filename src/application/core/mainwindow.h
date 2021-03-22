@@ -43,6 +43,8 @@ class WorkspaceWidget;
 
 class MainWindow : public BaseMainWindow
 {
+    Q_OBJECT
+
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();

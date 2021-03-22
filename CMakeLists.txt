@@ -25,6 +25,7 @@ set(urlchecker_SRC
   src/application/common/applicationstatemachine.cpp
   src/application/common/basemainwindow.cpp
   src/application/common/recentfiles.cpp
+  src/application/common/settings.cpp
   src/application/common/table.cpp
   src/application/common/thread.cpp
 

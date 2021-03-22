@@ -57,6 +57,7 @@
 #include "../common/applicationstatemachine.h"
 #include "../common/basemainwindow.h"
 #include "../common/recentfiles.h"
+#include "../common/settings.h"
 #include "../common/table.h"
 #include "../common/thread.h"
 // #include "../core/sidebar.h"
@@ -80,7 +81,9 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     setWindowTitle(QStringLiteral("%1 - %2").arg(APP_TITLE).arg(APP_VERSION));
 
     QDir applicationDir(QApplication::applicationDirPath());
-    m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
+//     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
+    m_settingsFilePath = "/mnt/ramdisk/settings.json";
+    Settings::instance().setFilePath(m_settingsFilePath);
     m_lastDirectory = applicationDir.absolutePath();
 
 //     m_columnRatios << 0.5 << 0.2 << 0.2;
@@ -310,8 +313,9 @@ void MainWindow::createConnections()
     // Test
     connect(m_workspaceWidget, &WorkspaceWidget::test, [this]{
 //         qDebug() << m_userAgents.get();
-        setStatusMessage("Test 1");
+//         setStatusMessage("Test 1");
 //         qDebug() << "Test";
+        restoreGeometry(QByteArray::fromHex("01d9d0cb00020000000000000000001f000002570000020c0000000100000037000002560000020b00000000000000000640"));
     });
 }
 
@@ -319,21 +323,21 @@ void MainWindow::loadSettings()
 {
     if (QFile::exists(m_settingsFilePath))
     {
-        QSettings settings(m_settingsFilePath, QSettings::IniFormat);
-        restoreGeometry(settings.value("geometry").toByteArray());
-        restoreState(settings.value("windowState").toByteArray());
-        m_lastDirectory = settings.value("lastDirectory", m_lastDirectory).toString();
-        m_proxiesWidget->setPlainText(settings.value("proxies").toString());
+        Settings::instance().load();
+        restoreGeometry(QByteArray::fromHex(Settings::instance().value("geometry").toByteArray()));
+        restoreState(QByteArray::fromHex(Settings::instance().value("windowState").toByteArray()));
+        m_lastDirectory = Settings::instance().value("lastDirectory").toString();
+        m_proxiesWidget->setPlainText(Settings::instance().value("proxies").toString());
     }
 }
 
 void MainWindow::saveSettings()
 {
-    QSettings settings(m_settingsFilePath, QSettings::IniFormat);
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
-    settings.setValue("lastDirectory", m_lastDirectory);
-    settings.setValue("proxies", m_proxiesWidget->toPlainText());
+    Settings::instance().setValue("geometry", saveGeometry().toHex());
+    Settings::instance().setValue("windowState", saveState().toHex());
+    Settings::instance().setValue("lastDirectory", m_lastDirectory);
+    Settings::instance().setValue("proxies", m_proxiesWidget->toPlainText());
+    Settings::instance().save();
 }
 
 // Events
