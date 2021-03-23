@@ -1,12 +1,14 @@
 #include <QApplication>
 
 #include "application/config.h"
+#include "application/icons.h"
 #include "application/core/mainwindow.h"
 
 
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+    application.setWindowIcon(QIcon(ICON_CHAIN));
     application.setApplicationName(APP_TITLE);
     application.setStyle(QStringLiteral("fusion"));
     application.setStyleSheet(R"("
