@@ -12,6 +12,8 @@
 #include <QSettings>
 #include <QDebug>
 
+#include "../common/settings.h"
+
 
 SettingsWidget::SettingsWidget ( QWidget* parent ) :
     QWidget(parent)
@@ -44,22 +46,28 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
     m_mainLayout->addWidget(m_proxiesGroupBox);
     m_mainLayout->addStretch(0);
 
-    if (QFile::exists(m_settingsFilePath))
-    {
-        QSettings settings(m_settingsFilePath, QSettings::IniFormat);
-        m_threadsSpinBox->setValue(settings.value("threadsCount", 1).toInt());
-        m_timeoutSpinBox->setValue(settings.value("timeout", 15).toInt());
-        m_useProxiesCheckBox->setChecked(settings.value("useProxies", false).toBool());
-    }
+    m_threadsSpinBox->setValue(Settings::instance().value("parallelTasks").toInt());
+    m_timeoutSpinBox->setValue(Settings::instance().value("timeout").toInt());
+    m_useProxiesCheckBox->setChecked(Settings::instance().value("useProxies").toBool());
+//     if (QFile::exists(m_settingsFilePath))
+//     {
+//         QSettings settings(m_settingsFilePath, QSettings::IniFormat);
+//         m_threadsSpinBox->setValue(settings.value("threadsCount", 1).toInt());
+//         m_timeoutSpinBox->setValue(settings.value("timeout", 15).toInt());
+//         m_useProxiesCheckBox->setChecked(settings.value("useProxies", false).toBool());
+//     }
 }
 
 void SettingsWidget::hideEvent(QHideEvent* event)
 {
     Q_UNUSED(event);
-    QSettings settings(m_settingsFilePath, QSettings::IniFormat);
-    settings.setValue("threadsCount", m_threadsSpinBox->value());
-    settings.setValue("timeout", m_timeoutSpinBox->value());
-    settings.setValue("useProxies", m_useProxiesCheckBox->isChecked());
+    Settings::instance().setValue("parallelTasks", QVariant(m_threadsSpinBox->value()));
+    Settings::instance().setValue("timeout", QVariant(m_timeoutSpinBox->value()));
+    Settings::instance().setValue("useProxies", QVariant(m_useProxiesCheckBox->isChecked()));
+//     QSettings settings(m_settingsFilePath, QSettings::IniFormat);
+//     settings.setValue("threadsCount", m_threadsSpinBox->value());
+//     settings.setValue("timeout", m_timeoutSpinBox->value());
+//     settings.setValue("useProxies", m_useProxiesCheckBox->isChecked());
 }
 
 int SettingsWidget::threadCount() const

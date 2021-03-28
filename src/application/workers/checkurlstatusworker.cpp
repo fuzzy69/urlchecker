@@ -9,17 +9,19 @@
 #include "libs/cpr/include/cpr/cpr.h"
 
 #include "checkurlstatusworker.h"
+#include "resultstatus.h"
 #include "../config.h"
+#include "../constants.h"
 #include "../core/tools.h"
 
 
-CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
-    Worker(inputDataQueue, parent)
+CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
 {
 }
 
 void CheckUrlStatusWorker::run()
 {
+    int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
     m_running = true;
     while (m_running)
     {
@@ -37,7 +39,7 @@ void CheckUrlStatusWorker::run()
         auto headers = cpr::Header{
             {"user-agent", USER_AGENT}
         };
-        cpr::Response r = cpr::Head(cpr::Url{url.toStdString()}, cpr::Timeout{15 * 1000}, headers);
+        cpr::Response r = cpr::Head(cpr::Url{url.toStdString()}, cpr::Timeout{timeout}, headers);
         auto data = QMap<QString, QVariant>{
             {QString("toolId"), QVariant(Tools::CHECK_URL_STATUS)},
             {QString("toolName"), QVariant("Check URL Status")},
@@ -48,7 +50,7 @@ void CheckUrlStatusWorker::run()
 
             {QString("URL"), QVariant(url)},
             {QString("Result"), QVariant(static_cast<qlonglong>(r.status_code))},
-            {QString("Status"), QVariant("status ...")}
+            {QString("Status"), QVariant(ResultStatus::OK)}
         };
         emit Worker::result(data);
     }

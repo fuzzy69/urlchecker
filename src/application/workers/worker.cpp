@@ -5,8 +5,8 @@
 #include "worker.h"
 
 
-Worker::Worker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
-    QObject(parent), m_running(false), m_inputDataQueue(inputDataQueue)
+Worker::Worker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) :
+m_inputDataQueue(inputDataQueue), m_settings(settings)
 {
 }
 

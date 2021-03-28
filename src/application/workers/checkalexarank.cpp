@@ -11,16 +11,17 @@
 
 #include "checkalexarank.h"
 #include "../config.h"
+#include "../constants.h"
 #include "../core/tools.h"
 
 
-CheckAlexaRankWorker::CheckAlexaRankWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
-    Worker(inputDataQueue, parent)
+CheckAlexaRankWorker::CheckAlexaRankWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
 {
 }
 
 void CheckAlexaRankWorker::run()
 {
+    int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
     m_running = true;
     QRegExp regex("RANK=\"(\\d+)\"");
     while (m_running)
@@ -41,7 +42,7 @@ void CheckAlexaRankWorker::run()
             {"user-agent", USER_AGENT}
         };
         QString rank("");
-        cpr::Response r = cpr::Get(cpr::Url{alexaUrl.toStdString()}, cpr::Timeout{15 * 1000}, headers);
+        cpr::Response r = cpr::Get(cpr::Url{alexaUrl.toStdString()}, cpr::Timeout{timeout}, headers);
         int pos = regex.indexIn(QString(r.text.c_str()));
         if (pos > -1)
         {

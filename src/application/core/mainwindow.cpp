@@ -1,46 +1,19 @@
-// #include <QAbstractItemView>
 #include <QAction>
 #include <QApplication>
 #include <QDebug>
-// #include <QDesktopServices>
-// // #include <QDesktopWidget>
 #include <QDir>
 #include <QHBoxLayout>
-// #include <QFile>
 #include <QFileDialog>
-// #include <QIcon>
-// #include <QIODevice>
-// #include <QHeaderView>
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
-// #include <QModelIndex>
-// #include <QPair>
-// #include <QPoint>
-// #include <QProgressBar>
 #include <QPushButton>
-// #include <QRect>
 #include <QSettings>
-// #include <QSpinBox>
-// #include <QStandardItem>
-// #include <QStandardItemModel>
 #include <QStackedWidget>
 #include <QStatusBar>
-// #include <QStringList>
-// #include <QTextStream>
-// #include <QTextEdit>
 #include <QTimer>
-// #include <QTreeWidget>
-// #include <QMainWindow>
-// #include <QTableView>
 #include <QToolBar>
-// #include <QVBoxLayout>
-// #include <QWidget>
-// #include <QGridLayout>
-// #include <QThread>
-// #include <QRegExp>
-// #include <QTabWidget>
 
 #include "mainwindow.h"
 #include "helpwidget.h"
@@ -53,26 +26,14 @@
 #include "../constants.h"
 #include "../icons.h"
 #include "../version.h"
-// #include "../common/table.h"
 #include "../common/applicationstatemachine.h"
 #include "../common/basemainwindow.h"
 #include "../common/recentfiles.h"
 #include "../common/settings.h"
 #include "../common/table.h"
 #include "../common/thread.h"
-// #include "../core/sidebar.h"
-// #include "proxieswidget.h"
-// #include "toolswidget.h"
 #include "../workers/worker.h"
-// #include "../workers/checkurlstatusworker.h"
-// #include "../workers/checkalexarank.h"
-// #include "../workers/scrapeproxies.h"
 #include "../workers/dummyworker.h"
-// #include "settingswidget.h"
-// #include "workspacewidget.h"
-// #include "../core/tools.h"
-// #include "../core/tool.h"
-// #include "../utils/useragents.h"
 #include "../utils/file.h"
 
 
@@ -81,18 +42,12 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     setWindowTitle(QStringLiteral("%1 - %2").arg(APP_TITLE).arg(APP_VERSION));
 
     QDir applicationDir(QApplication::applicationDirPath());
-//     m_settingsFilePath = applicationDir.absoluteFilePath("settings.ini");
     m_settingsFilePath = "/mnt/ramdisk/settings.json";
     Settings::instance().setFilePath(m_settingsFilePath);
     m_lastDirectory = applicationDir.absolutePath();
 
-//     m_columnRatios << 0.5 << 0.2 << 0.2;
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(5, this);
-
-//     m_threads = QList<Thread*>();
-//     m_workers = QList<Worker*>();
-//     m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
 
     m_applicationStateMachine = new ApplicationStateMachine(this);
     m_applicationStateMachine->start();
@@ -119,12 +74,6 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     {
         m_recentUrlFilesMenu->addAction(action);
     }
-/*
-    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36"));;
-    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:85.0) Gecko/20100101 Firefox/85.0"));;
-    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36"));;
-    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"));;
-    m_userAgents.addUserAgent(QString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"));;*/
 
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
     QTimer::singleShot(3 * MILLIS_IN_SECOND, [this]{
@@ -133,7 +82,7 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
 
     // TODO: Remove this
     Table* inputTable = m_workspaceWidget->inputTable();
-    for (auto& line : File::readTextLines("/mnt/ramdisk/proxy_sources.txt"))
+    for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
     {
         line = line.trimmed();
         // TODO: validate URL
@@ -288,9 +237,8 @@ void MainWindow::createConnections()
     connect(m_invertSelectionAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::invertSelectedRows);
     connect(m_removeDuplicatesAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeDuplicatedRows);
     connect(m_removeSelectedAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeSelectedRows);
-
-//     connect(m_workspaceWidget, &WorkspaceWidget::startJob, this, &MainWindow::startJob);
-//     connect(m_workspaceWidget, &WorkspaceWidget::stopJob, this, &MainWindow::stopJob);
+    connect(m_workspaceWidget, &WorkspaceWidget::jobStarted, m_applicationStateMachine, &ApplicationStateMachine::jobStarted);
+    connect(m_workspaceWidget, &WorkspaceWidget::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStopping);
 
     // Statusbar
     connect(m_toolsPushButton, &QPushButton::clicked, m_workspaceWidget, &WorkspaceWidget::toggleTools);
@@ -312,10 +260,7 @@ void MainWindow::createConnections()
 
     // Test
     connect(m_workspaceWidget, &WorkspaceWidget::test, [this]{
-//         qDebug() << m_userAgents.get();
-//         setStatusMessage("Test 1");
-//         qDebug() << "Test";
-        restoreGeometry(QByteArray::fromHex("01d9d0cb00020000000000000000001f000002570000020c0000000100000037000002560000020b00000000000000000640"));
+        qDebug() << "Test";
     });
 }
 
@@ -445,79 +390,6 @@ void MainWindow::exportResults()
     File::writeTextFile(filePath, urls);
     m_lastDirectory = QDir(filePath).absolutePath();
 }
-
-// void MainWindow::startJob()
-// {
-//     m_workspaceWidget->clearResultsTable();
-//     m_itemsDone = 0;
-//     Table* inputTable = m_workspaceWidget->inputTable();
-//     m_totalItems = inputTable->rowCount();
-//     m_threads.clear();
-//     m_workers.clear();
-//     for (int i = 0; i < inputTable->rowCount(); ++i)
-//     {
-//         auto url = inputTable->cell(i, 0).toString();
-//         m_inputDataQueue.enqueue({
-//             {QString("rowId"), QVariant(i)},
-//             {QString("url"), QVariant(url)}
-//         });
-//     }
-//     int parallelTasks = m_settingsWidget->threadCount();
-//     for (int i = 0; i < parallelTasks;++i)
-//     {
-//         auto thread = new Thread;
-//         Worker *worker;
-//         // TODO: Improve tool switching logic
-// //         if (m_toolsPushButton->text() == " Check URL Status")
-// //             worker = new CheckUrlStatusWorker(m_inputDataQueue);
-// //         else if (m_toolsPushButton->text() == " Check Alexa Rank")
-// //             worker = new CheckAlexaRankWorker(m_inputDataQueue);
-// //         else if (m_toolsPushButton->text() == " Scrape Proxies")
-// //             worker = new ScrapeProxiesWorker(m_inputDataQueue);
-// //         else
-// //             worker = new DummyWorker(m_inputDataQueue);
-//         worker = new DummyWorker(m_inputDataQueue);
-//         m_threads.append(thread);
-//         m_workers.append(worker);
-//         m_workers[i]->moveToThread(m_threads[i]);
-//         // Connections
-//         connect(thread, &Thread::started, worker, &Worker::run);
-//         connect(thread, &Thread::finished, thread, &Thread::deleteLater);
-//         connect(worker, &Worker::result, this, &MainWindow::onResult);
-//         connect(worker, &Worker::finished, thread, &Thread::quit);
-//         connect(worker, &Worker::finished, worker, &Worker::deleteLater);
-//         connect(worker, &Worker::finished, []{
-//             qDebug() << "Worker finished";
-//         });
-//         connect(worker, &Worker::requestStop, worker, &Worker::stop);
-//     }
-// 
-//     emit m_applicationStateMachine->jobStart();
-//     for (int i = 0; i < parallelTasks; ++i)
-//     {
-//         m_threads[i]->start();
-//     }
-// }
-// 
-// void MainWindow::stopJob()
-// {
-//     for (Worker *worker: m_workers)
-//     {
-//         if (worker)
-//         {
-//             emit worker->requestStop();
-//         }
-//     }
-//     emit m_applicationStateMachine->jobStop();
-// }
-// 
-// void MainWindow::onResult(const QMap<QString, QVariant>& resultData)
-// {
-//     ++m_itemsDone;
-//     m_workspaceWidget->updateResultsRow(resultData);
-//     int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
-//     m_workspaceWidget->setCurrentProgress(progresPercentage);
-// }
 
 void MainWindow::setStatusMessage(const QString& message)
 {

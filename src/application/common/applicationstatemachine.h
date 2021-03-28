@@ -13,12 +13,6 @@ public:
     ApplicationStateMachine(QObject *parent = nullptr);
 
     QString currentState() const;
-//     void startingStateAssignProperty(QObject *object, const char *name, const QVariant &value);
-//     void idleStateAssignProperty(QObject *object, const char *name, const QVariant &value);
-//     void exitingStateAssignProperty(QObject *object, const char *name, const QVariant &value);
-//     void jobStateAssignProperty(QObject *object, const char *name, const QVariant &value);
-//     void jobStoppingStateAssignProperty(QObject *object, const char *name, const QVariant &value);
-//     void jobFinishingStateAssignProperty(QObject *object, const char *name, const QVariant &value);
 
 Q_SIGNALS:
     void applicationStarted();

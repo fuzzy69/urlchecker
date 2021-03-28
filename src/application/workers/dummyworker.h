@@ -13,10 +13,10 @@ class DummyWorker : public Worker
     Q_OBJECT
     
 public:
-    explicit DummyWorker(QQueue<QMap<QString, QVariant>> &inputDataQueue, QObject *parent = nullptr);
+    explicit DummyWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent = nullptr);
 
 Q_SIGNALS:
-    void result(const QMap<QString, QVariant> &resultData);
+    void result(const QVariantMap &resultData);
     void finished();
 
 public Q_SLOTS:

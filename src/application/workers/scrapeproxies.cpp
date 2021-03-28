@@ -13,16 +13,17 @@
 
 #include "scrapeproxies.h"
 #include "../config.h"
+#include "../constants.h"
 #include "../core/tools.h"
 
 
-ScrapeProxiesWorker::ScrapeProxiesWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
-    Worker(inputDataQueue, parent)
+ScrapeProxiesWorker::ScrapeProxiesWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
 {
 }
 
 void ScrapeProxiesWorker::run()
 {
+    int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
     m_running = true;
     QRegularExpression regex("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s*:?\\s*(\\d{2,5})");
     cpr::Session session;
@@ -41,7 +42,7 @@ void ScrapeProxiesWorker::run()
 
         QUrl url(inputData["url"].toString());
         session.SetUserAgent(USER_AGENT);
-        session.SetTimeout(15 * 1000);
+        session.SetTimeout(timeout);
         session.SetUrl(cpr::Url(url.toString().toStdString()));
         auto r = session.Get();
 
@@ -56,9 +57,6 @@ void ScrapeProxiesWorker::run()
                     {QString("toolName"), QVariant("Scrape Proxies")},
                     
                     {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-//                     {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
-//                     {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
-//                     {QString("result"), QVariant(match.captured(0))}
                     {QString("Proxy"), QVariant(match.captured(0))},
                     {QString("Source"), QVariant(url)},
                     {QString("Status"), QVariant(QString::fromUtf8(r.status_line.c_str()))}

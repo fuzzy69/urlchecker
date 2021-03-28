@@ -13,10 +13,11 @@ class CheckAlexaRankWorker : public Worker
     Q_OBJECT
     
 public:
-    explicit CheckAlexaRankWorker(QQueue<QMap<QString, QVariant>> &inputDataQueue, QObject *parent = nullptr);
+    CheckAlexaRankWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent = nullptr)
+    ;
 
 Q_SIGNALS:
-    void result(const QMap<QString, QVariant> &resultData);
+    void result(const QVariantMap &resultData);
     void finished();
 
 public Q_SLOTS:

@@ -11,10 +11,10 @@ class Worker : public QObject
     Q_OBJECT
     
 public:
-    explicit Worker(QQueue<QMap<QString, QVariant>> &inputDataQueue, QObject *parent = nullptr);
+    explicit Worker(QQueue<QVariantMap> &inputDataQueue, const QVariantMap &settings, QObject *parent = nullptr);
 
 signals:
-    void result(const QMap<QString, QVariant> &resultData);
+    void result(const QVariantMap &resultData);
     void finished();
     void requestStop();
 
@@ -24,6 +24,7 @@ public slots:
 
 protected:
     bool m_running;
-    QQueue<QMap<QString, QVariant>> m_inputDataQueue;
+    QQueue<QVariantMap> m_inputDataQueue;
+    QVariantMap m_settings;
 };
 

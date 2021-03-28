@@ -26,7 +26,8 @@ public:
     Table* resultsTable();
     ToolsWidget* toolsWidget();
     void setCurrentProgress(int value);
-    void updateResultsRow(const QMap<QString, QVariant>& resultData);
+//     void updateResultsRow(const QMap<QString, QVariant>& resultData);
+    void updateResultsRow(const QVariantMap& resultData);
     void clearResultsTable();
 
 public Q_SLOTS:
@@ -45,8 +46,8 @@ public Q_SLOTS:
     void onJobDone();
 
 Q_SIGNALS:
-//     void startJob();
-//     void stopJob();
+    void jobStarted();
+    void jobStopped();
     void test();
 
 protected:
@@ -55,7 +56,7 @@ protected:
 
     void startJob();
     void stopJob();
-    void onResult(const QMap<QString, QVariant> &resultData);
+    void onResult(const QVariantMap &resultData);
 
 private:
     Table* focusedTable();
@@ -76,7 +77,7 @@ private:
 
     QList<Thread*> m_threads;
     QList<Worker*> m_workers;
-    QQueue<QMap<QString, QVariant>> m_inputDataQueue;
+    QQueue<QVariantMap> m_inputDataQueue;
 
     int m_itemsDone;
     int m_totalItems;

@@ -8,16 +8,17 @@
 #include "libs/cpr/include/cpr/cpr.h"
 
 #include "../config.h"
+#include "../constants.h"
 #include "dummyworker.h"
 
 
-DummyWorker::DummyWorker(QQueue<QMap<QString, QVariant> >& inputDataQueue, QObject* parent) :
-    Worker(inputDataQueue, parent)
+DummyWorker::DummyWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
 {
 }
 
 void DummyWorker::run()
 {
+    int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
     m_running = true;
     while (m_running)
     {
