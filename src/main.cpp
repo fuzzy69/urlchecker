@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     application.setWindowIcon(QIcon(ICON_CHAIN));
     application.setApplicationName(APP_TITLE);
     application.setStyle(QStringLiteral("fusion"));
-    application.setStyleSheet(R"("
+    application.setStyleSheet(R"(
 QStatusBar {
     padding: 5px;
 }
@@ -20,12 +20,11 @@ QStatusBar::item {
     padding: 5px;
     border-left: 1px solid #BFBFBF;
 }
-
-QStatusBar#activeToolLabel {
+    
+QStatusBar#m_activeThreadsLabel {
     font-style: italic;
 }
-"")");
-
+    )");
     MainWindow mainWindow;
     mainWindow.show();
 
