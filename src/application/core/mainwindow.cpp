@@ -130,6 +130,7 @@ void MainWindow::createMenuBar()
     m_fileMenu->addAction(m_importUrlsAction);
     m_fileMenu->addMenu(m_recentUrlFilesMenu);
     m_recentUrlFilesMenu->addAction(m_clearRecentUrlFilesAction);
+    m_recentUrlFilesMenu->addSeparator();
     m_fileMenu->addAction(m_exportResultsAction);
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_quitAction);
@@ -215,6 +216,9 @@ void MainWindow::createConnections()
     connect(m_importUrlsAction, &QAction::triggered, this, &MainWindow::importUrls);
     connect(m_exportResultsAction, &QAction::triggered, this, &MainWindow::exportResults);
     connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
+    connect(m_clearRecentUrlFilesAction, &QAction::triggered, [this]{
+        m_recentFiles->clear();
+    });
     connect(m_quitAction, &QAction::triggered, this, &MainWindow::close);
     // Window
     connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
@@ -343,11 +347,21 @@ void MainWindow::onPulse()
         emit m_applicationStateMachine->jobDone();
 }
 
-void MainWindow::importUrls()
+void MainWindow::importUrlFile(const QString &filePath)
 {
-    QString filePath = QFileDialog::getOpenFileName(this, "Import URLs", m_lastDirectory, "Text files (*.txt);;All files (*.*)");
     if (!QFile::exists(filePath))
         return;
+    if (m_workspaceWidget->inputTable()->rowCount() != 0)
+    {
+        QMessageBox messageBox(QMessageBox::Question, "Import URLs", "Input table not empty! Append to existing rows or replace current rows?", QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        messageBox.setButtonText(QMessageBox::Yes, "Append");
+        messageBox.setButtonText(QMessageBox::No, "Replace");
+        int pushedButton = messageBox.exec();
+        if (pushedButton == QMessageBox::Cancel)
+            return;
+        if (pushedButton == QMessageBox::No)
+            m_workspaceWidget->inputTable()->removeAllRows();
+    }
     Table* inputTable = m_workspaceWidget->inputTable();
     for (auto& line : File::readTextLines(filePath))
     {
@@ -357,22 +371,18 @@ void MainWindow::importUrls()
             inputTable->appendRow(QStringList() << line << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
+}
+
+void MainWindow::importUrls()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Import URLs", m_lastDirectory, "Text files (*.txt);;All files (*.*)");
+    importUrlFile(filePath);
     m_recentFiles->addFile(filePath);
 }
 
 void MainWindow::importRecentFileUrls(const QString& filePath)
 {
-    if (!QFile::exists(filePath))
-        return;
-    Table* inputTable = m_workspaceWidget->inputTable();
-    for (auto& line : File::readTextLines(filePath))
-    {
-        line = line.trimmed();
-        // TODO: validate URL
-        if (line.length() > 0)
-            inputTable->appendRow(QStringList() << line << "");
-    }
-    m_lastDirectory = QDir(filePath).absolutePath();
+    importUrlFile(filePath);
 }
 
 void MainWindow::exportResults()

@@ -58,6 +58,8 @@ private:
     void loadSettings() override;
     void saveSettings() override;
 
+    void importUrlFile(const QString &filePath);
+
     void setStatusMessage(const QString &message);
 //     void updateResultsRow(int rowIndex, const QVariant& result, const QVariant &statusCode, const QVariant &statusText);
     void onPulse();
