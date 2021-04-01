@@ -20,6 +20,8 @@ public:
     QList<QAction*> actions();
     /// Returns number of stored recent files
     int count() const;
+    /// Removes all recent files from internal storage
+    void clear();
 
 signals:
     /// Triggered when recent file action is clicked. Sends file path stored in clicked action instance

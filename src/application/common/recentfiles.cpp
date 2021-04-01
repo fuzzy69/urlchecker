@@ -30,10 +30,14 @@ void RecentFiles::addFile(const QString& filePath)
         return;
     if (m_recentFilesCount == m_maxRecentFiles)
     {
+        m_recentFiles.insert(0, filePath);
         m_recentFiles.removeLast();
     }
-    m_recentFiles[m_recentFilesCount] = filePath;
-    ++m_recentFilesCount;
+    else
+    {
+        m_recentFiles[m_recentFilesCount] = filePath;
+        ++m_recentFilesCount;
+    }
     updateActions();
 }
 
@@ -64,4 +68,16 @@ QList<QAction *> RecentFiles::actions()
 int RecentFiles::count() const
 {
     return m_recentFilesCount;
+}
+
+void RecentFiles::clear()
+{
+    for (int i = 0; i < m_recentFilesCount; ++i)
+    {
+        QAction *action = m_recentFilesActions[i];
+        action->setText("");
+        action->setVisible(false);
+    }
+    m_recentFiles.clear();
+    m_recentFilesCount = 0;
 }
