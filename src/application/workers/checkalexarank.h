@@ -8,17 +8,12 @@
 #include "worker.h"
 
 
-class CheckAlexaRankWorker : public Worker
+class CheckAlexaRankWorker final: public Worker
 {
     Q_OBJECT
-    
-public:
-    CheckAlexaRankWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent = nullptr)
-    ;
 
-Q_SIGNALS:
-    void result(const QVariantMap &resultData);
-    void finished();
+public:
+    CheckAlexaRankWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent = nullptr);
 
 public Q_SLOTS:
     void run() override;
@@ -26,5 +21,3 @@ public Q_SLOTS:
 private:
     QMutex m_mutex;
 };
-
-

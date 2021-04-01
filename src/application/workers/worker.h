@@ -19,7 +19,7 @@ signals:
     void requestStop();
 
 public slots:
-    virtual void run();
+    virtual void run() = 0;
     void stop();
 
 protected:

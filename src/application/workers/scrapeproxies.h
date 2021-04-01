@@ -8,16 +8,12 @@
 #include "worker.h"
 
 
-class ScrapeProxiesWorker : public Worker
+class ScrapeProxiesWorker final: public Worker
 {
     Q_OBJECT
-    
+
 public:
     explicit ScrapeProxiesWorker(QQueue<QVariantMap> &inputDataQueue, const QVariantMap &settings, QObject *parent = nullptr);
-
-Q_SIGNALS:
-    void result(const QVariantMap &resultData);
-    void finished();
 
 public Q_SLOTS:
     void run() override;

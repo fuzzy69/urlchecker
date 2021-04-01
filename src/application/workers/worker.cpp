@@ -10,10 +10,6 @@ m_inputDataQueue(inputDataQueue), m_settings(settings)
 {
 }
 
-void Worker::run()
-{
-}
-
 void Worker::stop()
 {
     m_running = false;
