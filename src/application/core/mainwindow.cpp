@@ -293,7 +293,17 @@ void MainWindow::saveSettings()
 // Events
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-//    emit m_applicationState->applicationExiting();
+    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING)
+    {
+        auto reply = QMessageBox::question(this, "Close Confirmation", "Some jobs are stil running, close anyway?", QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::No)
+        {
+            event->ignore();
+            return;
+        }
+    }
+    // TODO: Stop remaining running workers/threads
+    emit m_applicationStateMachine->applicationExiting();
     saveSettings();
     QMainWindow::closeEvent(event);
 }
