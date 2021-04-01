@@ -44,22 +44,46 @@ ApplicationStateMachine::ApplicationStateMachine(QObject *parent) : QStateMachin
     setInitialState(m_applicationStartingState);
 }
 
-QString ApplicationStateMachine::currentState() const
+// QString ApplicationStateMachine::currentState() const
+// {
+//     if (configuration().contains(m_applicationStartingState))
+//         return "Application started";
+//     else if (configuration().contains(m_applicationIdlingState))
+//         return "Application idling";
+//     else if (configuration().contains(m_applicationExitingState))
+//         return "Application exiting";
+//     else if (configuration().contains(m_jobStartingState))
+//         return "Job starting";
+//     else if (configuration().contains(m_jobStoppingState))
+//         return "Job stopping";
+//     else if (configuration().contains(m_jobFinishingState))
+//         return "Job finishing";
+//     else if (configuration().contains(m_jobRunningState))
+//         return "Job running";
+//     else if (configuration().contains(m_jobDoneState))
+//         return "Job done";
+//     else
+//         return "None";
+// }
+
+ApplicationState ApplicationStateMachine::currentState() const
 {
     if (configuration().contains(m_applicationStartingState))
-        return "Application started";
+        return ApplicationState::APPLICATION_STARTED;
     else if (configuration().contains(m_applicationIdlingState))
-        return "Application idling";
+        return ApplicationState::APPLICATION_IDLING;
     else if (configuration().contains(m_applicationExitingState))
-        return "Application exiting";
+        return ApplicationState::APPLICATION_EXITING;
     else if (configuration().contains(m_jobStartingState))
-        return "Job starting";
+        return ApplicationState::JOB_STARTING;
     else if (configuration().contains(m_jobStoppingState))
-        return "Job stopping";
+        return ApplicationState::JOB_STOPPING;
     else if (configuration().contains(m_jobFinishingState))
-        return "Job finishing";
+        return ApplicationState::JOB_FINISHING;
+    else if (configuration().contains(m_jobRunningState))
+        return ApplicationState::JOB_RUNNING;
     else if (configuration().contains(m_jobDoneState))
-        return "Job done";
+        return ApplicationState::JOB_DONE;
     else
-        return "None";
+        return ApplicationState::NONE;
 }

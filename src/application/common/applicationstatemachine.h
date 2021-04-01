@@ -5,6 +5,19 @@
 
 class QState;
 
+enum class ApplicationState
+{
+    NONE = 0,
+    APPLICATION_STARTED = 1 << 0,
+    APPLICATION_IDLING = 1 << 1,
+    APPLICATION_EXITING = 1 << 2,
+    JOB_STARTING = 1 << 3,
+    JOB_STOPPING = 1 << 4,
+    JOB_FINISHING = 1 << 5,
+    JOB_RUNNING= 1 << 6,
+    JOB_DONE = 1 << 7,
+};
+
 class ApplicationStateMachine : public QStateMachine
 {
     Q_OBJECT
@@ -12,7 +25,8 @@ class ApplicationStateMachine : public QStateMachine
 public:
     ApplicationStateMachine(QObject *parent = nullptr);
 
-    QString currentState() const;
+//     QString currentState() const;
+    ApplicationState currentState() const;
 
 Q_SIGNALS:
     void applicationStarted();

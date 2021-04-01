@@ -82,7 +82,8 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
 
     // TODO: Remove this
     Table* inputTable = m_workspaceWidget->inputTable();
-    for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
+//     for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
+    for (auto& line : File::readTextLines("/mnt/ramdisk/proxy_sources.txt"))
     {
         line = line.trimmed();
         // TODO: validate URL
@@ -237,8 +238,8 @@ void MainWindow::createConnections()
     connect(m_invertSelectionAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::invertSelectedRows);
     connect(m_removeDuplicatesAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeDuplicatedRows);
     connect(m_removeSelectedAction, &QAction::triggered, m_workspaceWidget, &WorkspaceWidget::removeSelectedRows);
-    connect(m_workspaceWidget, &WorkspaceWidget::jobStarted, m_applicationStateMachine, &ApplicationStateMachine::jobStarted);
-    connect(m_workspaceWidget, &WorkspaceWidget::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStopping);
+    connect(m_workspaceWidget, &WorkspaceWidget::jobStarted, m_applicationStateMachine, &ApplicationStateMachine::jobStart);
+    connect(m_workspaceWidget, &WorkspaceWidget::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStop);
 
     // Statusbar
     connect(m_toolsPushButton, &QPushButton::clicked, m_workspaceWidget, &WorkspaceWidget::toggleTools);
@@ -338,6 +339,8 @@ void MainWindow::onJobDone()
 void MainWindow::onPulse()
 {
     m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
+    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING && Thread::count() == 0)
+        emit m_applicationStateMachine->jobDone();
 }
 
 void MainWindow::importUrls()
