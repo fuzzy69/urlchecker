@@ -238,8 +238,7 @@ void WorkspaceWidget::startJob()
             {QString("url"), QVariant(url)}
         });
     }
-    qDebug() << m_inputDataQueue.size();
-    int parallelTasks = Settings::instance().value("parallelTasks").toInt();
+    const int parallelTasks = Settings::instance().value("parallelTasks").toInt();
     for (int i = 0; i < parallelTasks;++i)
     {
         auto thread = new Thread;
@@ -281,7 +280,6 @@ void WorkspaceWidget::startJob()
     emit jobStarted();
     for (int i = 0; i < parallelTasks; ++i)
     {
-        qDebug() << i;
         m_threads[i]->start();
     }
 }
