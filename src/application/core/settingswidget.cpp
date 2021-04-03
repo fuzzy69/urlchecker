@@ -13,6 +13,7 @@
 #include <QDebug>
 
 #include "../common/settings.h"
+#include "../config.h"
 
 
 SettingsWidget::SettingsWidget ( QWidget* parent ) :
@@ -26,6 +27,8 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
     m_proxiesGroupBox = new QGroupBox("Proxies");
     m_threadsLabel = new QLabel("Thread count");
     m_timeoutLabel = new QLabel("Timeout (seconds)");
+    m_verifySslLabel = new QLabel("Verify SSL");
+    m_verifySslCheckBox = new QCheckBox;
     m_useProxiesLabel = new QLabel("Use proxies");
     m_useProxiesCheckBox = new QCheckBox;
     m_threadsSpinBox = new QSpinBox;
@@ -37,6 +40,8 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
     m_connectionLayout->addWidget(m_threadsSpinBox, 0, 1);
     m_connectionLayout->addWidget(m_timeoutLabel, 1, 0);
     m_connectionLayout->addWidget(m_timeoutSpinBox, 1, 1);
+    m_connectionLayout->addWidget(m_verifySslLabel, 2, 0);
+    m_connectionLayout->addWidget(m_verifySslCheckBox, 2, 1);
 
     m_proxiesLayout = new QGridLayout(m_proxiesGroupBox);
     m_proxiesLayout->addWidget(m_useProxiesLabel, 0, 0);
@@ -48,6 +53,7 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
 
     m_threadsSpinBox->setValue(Settings::instance().value("parallelTasks").toInt());
     m_timeoutSpinBox->setValue(Settings::instance().value("timeout").toInt());
+    m_verifySslCheckBox->setChecked(Settings::instance().value("verifySsl").toBool());    
     m_useProxiesCheckBox->setChecked(Settings::instance().value("useProxies").toBool());
 //     if (QFile::exists(m_settingsFilePath))
 //     {
@@ -63,6 +69,7 @@ void SettingsWidget::hideEvent(QHideEvent* event)
     Q_UNUSED(event);
     Settings::instance().setValue("parallelTasks", QVariant(m_threadsSpinBox->value()));
     Settings::instance().setValue("timeout", QVariant(m_timeoutSpinBox->value()));
+    Settings::instance().setValue("verifySsl", QVariant(m_verifySslCheckBox->isChecked()));
     Settings::instance().setValue("useProxies", QVariant(m_useProxiesCheckBox->isChecked()));
 //     QSettings settings(m_settingsFilePath, QSettings::IniFormat);
 //     settings.setValue("threadsCount", m_threadsSpinBox->value());

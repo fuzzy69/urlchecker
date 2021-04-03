@@ -25,11 +25,13 @@ private:
     QVBoxLayout *m_mainLayout;
     QLabel *m_threadsLabel;
     QLabel *m_timeoutLabel;
+    QLabel *m_verifySslLabel;
     QLabel *m_useProxiesLabel;
     QGroupBox *m_connectionGroupBox;
     QGroupBox *m_proxiesGroupBox;
     QSpinBox *m_threadsSpinBox;
     QSpinBox *m_timeoutSpinBox;
+    QCheckBox *m_verifySslCheckBox;
     QGridLayout *m_connectionLayout;
     QGridLayout *m_proxiesLayout;
     QCheckBox *m_useProxiesCheckBox;
