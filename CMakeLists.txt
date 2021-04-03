@@ -46,6 +46,7 @@ set(urlchecker_SRC
   src/application/workers/checkalexarank.cpp
   src/application/workers/dummyworker.cpp
   src/application/workers/scrapeproxies.cpp
+  src/application/workers/testworker.cpp
 )
 
 add_executable(urlchecker ${urlchecker_SRC})

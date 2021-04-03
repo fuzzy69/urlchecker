@@ -21,6 +21,7 @@
 #include <QVariant>
 
 #include "workspacewidget.h"
+#include "../config.h"
 #include "../icons.h"
 #include "../common/settings.h"
 #include "../common/table.h"
@@ -32,7 +33,9 @@
 #include "../workers/scrapeproxies.h"
 #include "../workers/dummyworker.h"
 #include "../workers/resultstatus.h"
+#include "../workers/testworker.h"
 
+#include "libs/cpr/include/cpr/cpr.h"
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
 {
@@ -65,6 +68,22 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
         QStringList() << "Proxy" << "Source" << "Status",
         QList<float>() << 0.5 << 0.3
     ));
+    m_toolsWidget->addTool(Tool(
+        Tools::TEST, 
+        QIcon(ICON_HAMMER), 
+        QString("Test"),
+        QStringList() << "URL" << "Result" << "Status",
+        QList<float>() << 0.5 << 0.3
+    ));
+#if APP_DEBUG
+    m_toolsWidget->addTool(Tool(
+        Tools::DUMMY, 
+        QIcon(ICON_QUESTION), 
+        QString("Dummy"),
+        QStringList() << "URL" << "Result" << "Status",
+        QList<float>() << 0.5 << 0.3
+    ));
+#endif
     m_tabWidget = new QTabWidget;
     m_inputTable = new Table(QStringList() << "URL" << "Status", this);
     m_inputTable->setColumnRatios(QList<float>() << 0.8);
@@ -98,7 +117,16 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
     connect(m_testPushButton, &QPushButton::clicked, this, &WorkspaceWidget::test);
     connect(m_testPushButton, &QPushButton::clicked, [this]{
-        qDebug() << "Test";
+//         qDebug() << "Test";
+        std::string url = "https://httpbin.org/headers";
+        auto headers = cpr::Header{
+            {"user-agent", USER_AGENT}
+        };
+        cpr::Response r = cpr::Get(cpr::Url{url}, cpr::Timeout{15000}, headers, cpr::VerifySsl{0});
+        qDebug() << r.text.c_str();
+        qDebug() << r.status_code;
+        qDebug() << r.error.message.c_str();
+        qDebug() << "OK";
     });
 }
 
@@ -239,6 +267,9 @@ void WorkspaceWidget::startJob()
         });
     }
     const int parallelTasks = Settings::instance().value("parallelTasks").toInt();
+    assert(parallelTasks > 0);
+    qDebug() << Settings::instance().value("parallelTasks");
+    qDebug() << parallelTasks;
     for (int i = 0; i < parallelTasks;++i)
     {
         auto thread = new Thread;
@@ -258,9 +289,14 @@ void WorkspaceWidget::startJob()
             case Tools::SCRAPE_PROXIES:
                 worker = new ScrapeProxiesWorker(m_inputDataQueue, settings);
                 break;
+            case Tools::TEST:
+                qDebug() << 1;
+                worker = new TestWorker(m_inputDataQueue, settings);
+                break;
             default:
                 worker = new DummyWorker(m_inputDataQueue, settings);
         }
+        qDebug() << worker->objectName();
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
