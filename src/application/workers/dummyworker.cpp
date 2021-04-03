@@ -7,40 +7,32 @@
 
 #include "libs/cpr/include/cpr/cpr.h"
 
+#include "dummyworker.h"
+#include "resultstatus.h"
 #include "../config.h"
 #include "../constants.h"
-#include "dummyworker.h"
+#include "../core/tools.h"
 
 
 DummyWorker::DummyWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
 {
 }
 
-void DummyWorker::run()
+void DummyWorker::doWork(const QVariantMap& inputData)
 {
-    int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
-    m_running = true;
-    while (m_running)
+    static const int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
+    static const bool verifySsl = m_settings["verifySsl"].toBool();
+
+    QString url = inputData["url"].toString();
+    QThread::sleep(2);
+    auto data = QVariantMap
     {
-        qDebug() << m_running;
-        m_mutex.lock();
-        if (m_inputDataQueue.empty())
-        {
-            m_mutex.unlock();
-            break;
-        }
-        auto inputData = m_inputDataQueue.dequeue();
-        m_mutex.unlock();
-        QApplication::processEvents();
+        {QString("toolId"), QVariant(Tools::DUMMY)},
+        {QString("toolName"), QVariant("Dummy")},
+        {QString("URL"), QVariant(url)},
+        {QString("Result"), QVariant("OK")},
+        {QString("Status"), QVariant(ResultStatus::OK)}
+    };
 
-        QThread::sleep(2);
-        auto data = QMap<QString, QVariant>{
-            {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-            {QString("status"), QVariant(200)},
-            {QString("message"), QVariant("OK")}
-        };
-        emit Worker::result(data);
-    }
-
-    emit Worker::finished();
+    emit Worker::result(data);
 }

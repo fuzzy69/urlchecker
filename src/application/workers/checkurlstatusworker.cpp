@@ -19,41 +19,33 @@ CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue< QVariantMap >& inputDataQueue
 {
 }
 
-void CheckUrlStatusWorker::run()
+void CheckUrlStatusWorker::doWork(const QVariantMap& inputData)
 {
-    int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
-    m_running = true;
-    while (m_running)
+    static const int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
+    static const bool verifySsl = m_settings["verifySsl"].toBool();
+
+    QString url = inputData["url"].toString();
+    auto headers = cpr::Header{
+        {"user-agent", USER_AGENT}
+    };
+    cpr::Response r;
+    if (verifySsl)
+        r = cpr::Head(cpr::Url{url.toStdString()}, cpr::Timeout{timeout}, headers);
+    else
+        r = cpr::Head(cpr::Url{url.toStdString()}, cpr::Timeout{timeout}, headers, cpr::VerifySsl{0});            
+    auto data = QVariantMap
     {
-        m_mutex.lock();
-        if (m_inputDataQueue.empty())
-        {
-            m_mutex.unlock();
-            break;
-        }
-        auto inputData = m_inputDataQueue.dequeue();
-        m_mutex.unlock();
-        QApplication::processEvents();
+        {QString("toolId"), QVariant(Tools::CHECK_URL_STATUS)},
+        {QString("toolName"), QVariant("Check URL Status")},
 
-        QString url = inputData["url"].toString();
-        auto headers = cpr::Header{
-            {"user-agent", USER_AGENT}
-        };
-        cpr::Response r = cpr::Head(cpr::Url{url.toStdString()}, cpr::Timeout{timeout}, headers);
-        auto data = QMap<QString, QVariant>{
-            {QString("toolId"), QVariant(Tools::CHECK_URL_STATUS)},
-            {QString("toolName"), QVariant("Check URL Status")},
+        {QString("rowId"), QVariant(inputData["rowId"].toInt())},
+        {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
+        {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
 
-            {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-            {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
-            {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
+        {QString("URL"), QVariant(url)},
+        {QString("Result"), QVariant(static_cast<qlonglong>(r.status_code))},
+        {QString("Status"), QVariant(ResultStatus::OK)}
+    };
 
-            {QString("URL"), QVariant(url)},
-            {QString("Result"), QVariant(static_cast<qlonglong>(r.status_code))},
-            {QString("Status"), QVariant(ResultStatus::OK)}
-        };
-        emit Worker::result(data);
-    }
-
-    emit Worker::finished();
+    emit Worker::result(data);
 }

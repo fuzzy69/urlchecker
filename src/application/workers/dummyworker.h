@@ -15,13 +15,6 @@ class DummyWorker : public Worker
 public:
     explicit DummyWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent = nullptr);
 
-Q_SIGNALS:
-    void result(const QVariantMap &resultData);
-    void finished();
-
-public Q_SLOTS:
-    void run() override;
-
-private:
-    QMutex m_mutex;
+protected:
+    void doWork(const QVariantMap &inputData) override;
 };

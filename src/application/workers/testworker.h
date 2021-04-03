@@ -15,6 +15,6 @@ class TestWorker final: public Worker
 public:
     explicit TestWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent = nullptr);
 
-public Q_SLOTS:
-    void run() override;
+protected:
+    void doWork(const QVariantMap &inputData) override;
 };

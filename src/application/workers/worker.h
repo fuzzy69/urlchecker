@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QMap>
+#include <QMutex>
 #include <QQueue>
 
 
@@ -19,12 +20,15 @@ signals:
     void requestStop();
 
 public slots:
-    virtual void run() = 0;
+    void run();
     void stop();
 
 protected:
+    virtual void doWork(const QVariantMap& inputData) = 0;
+
     bool m_running;
     QQueue<QVariantMap> m_inputDataQueue;
     QVariantMap m_settings;
+    QMutex m_mutex;
 };
 

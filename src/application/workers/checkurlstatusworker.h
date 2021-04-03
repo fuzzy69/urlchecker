@@ -15,10 +15,7 @@ class CheckUrlStatusWorker final : public Worker
 public:
     explicit CheckUrlStatusWorker(QQueue<QVariantMap> &inputDataQueue, const QVariantMap &settings, QObject *parent = nullptr);
 
-public Q_SLOTS:
-    void run() override;
-
-private:
-    QMutex m_mutex;
+protected:
+    void doWork(const QVariantMap &inputData) override;
 };
 
