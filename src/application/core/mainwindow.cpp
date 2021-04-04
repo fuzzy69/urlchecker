@@ -35,6 +35,7 @@
 #include "../workers/worker.h"
 #include "../workers/dummyworker.h"
 #include "../utils/file.h"
+#include "../config.h"
 
 
 MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
@@ -42,9 +43,16 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     setWindowTitle(QStringLiteral("%1 - %2").arg(APP_TITLE).arg(APP_VERSION));
 
     QDir applicationDir(QApplication::applicationDirPath());
-    m_settingsFilePath = "/mnt/ramdisk/settings.json";
-    Settings::instance().setFilePath(m_settingsFilePath);
     m_lastDirectory = applicationDir.absolutePath();
+
+//     m_settingsFilePath = "/mnt/ramdisk/settings.json";
+    m_settingsFilePath = applicationDir.filePath("settings.json");
+    Settings::instance().setFilePath(m_settingsFilePath);
+    // Init settings
+    Settings::instance().setValue("parallelTasks", QVariant(PARALLEL_TASKS));
+    Settings::instance().setValue("timeout", QVariant(REQUEST_TIMEOUT));
+    Settings::instance().setValue("useProxies", QVariant(USE_PROXIES));
+    Settings::instance().setValue("lastDirectory", QVariant(m_lastDirectory));
 
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(5, this);
@@ -224,10 +232,13 @@ void MainWindow::createConnections()
     connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
     // Help menu
     connect(m_aboutAction, &QAction::triggered, [&] {QMessageBox::about(this,
-        "About " APP_TITLE,
-
-        "<p>Fugue icons are provided by <a href='http://p.yusukekamiyamane.com/'>Yusuke"
+        QString("About %1").arg(APP_TITLE),
+        QString(
+            "<h3>%1 %2</h3><br/>"
+            "%3<br/>"
+            "Fugue icons are provided by <a href='http://p.yusukekamiyamane.com/'>Yusuke"
         "Kamiyamane</a>"
+        ).arg(APP_TITLE, APP_VERSION, APP_DESCRIPTION)
     );});
 
     // Sidebar
@@ -265,7 +276,7 @@ void MainWindow::createConnections()
 
     // Test
     connect(m_workspaceWidget, &WorkspaceWidget::test, [this]{
-        qDebug() << "Test";
+        qDebug() << Settings::instance().value("parallelTasks");
     });
 }
 
