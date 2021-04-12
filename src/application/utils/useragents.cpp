@@ -3,12 +3,13 @@
 #include <QString>
 #include <QDebug>
 
-#include "libs/random/include/effolkronium/random.hpp"
+// #include "libs/random/include/effolkronium/random.hpp"
 #include "file.h"
 #include "useragents.h"
+#include "rand.h"
 
 
-using Random = effolkronium::random_static;
+// using Random = effolkronium::random_static;
 
 UserAgents::UserAgents()
 {
@@ -37,5 +38,6 @@ void UserAgents::addUserAgent(const QString& userAgent)
 
 QString UserAgents::get() const
 {
-    return m_userAgents.at(Random::get(0, m_userAgents.length() - 1));
+    return m_userAgents.at(Rand::instance().get(0, m_userAgents.length() - 1));
+//     return m_userAgents.at(Random::get(0, m_userAgents.length() - 1));
 }

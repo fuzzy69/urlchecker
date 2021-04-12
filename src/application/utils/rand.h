@@ -3,14 +3,20 @@
 #include <random>
 
 
-class Random
+class Rand final
 {
 public:
-    Random();
+    Rand(std::uint_least32_t seed);
+    Rand(const Rand &other) = delete;
+    void operator=(const Rand &other) = delete;
 
-    static int get(int low, int high);
+    static Rand& instance();
+
+    std::int32_t get();
+    std::int32_t get(std::int32_t minValue, std::int32_t maxValue);
 
 private:
-    std::random_device m_randomDevice;
-    std::mt19937 m_engine;
+    Rand();
+
+    std::mt19937 m_randomGenerator;
 };

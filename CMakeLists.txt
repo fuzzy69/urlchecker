@@ -15,7 +15,7 @@ find_package(Qt5Network REQUIRED)
 # FetchContent_MakeAvailable(cpr)
 add_subdirectory(libs/cpr)
 cpr_option(BUILD_CPR_TESTS "Set to ON to build cpr tests." OFF)
-add_subdirectory(libs/random)
+#add_subdirectory(libs/random)
 
 set(urlchecker_SRC
   assets.qrc
@@ -40,6 +40,7 @@ set(urlchecker_SRC
 
   src/application/utils/file.cpp
   src/application/utils/useragents.cpp
+  src/application/utils/rand.cpp
 
   src/application/workers/worker.cpp
   src/application/workers/checkurlstatusworker.cpp
@@ -54,4 +55,4 @@ add_executable(urlchecker ${urlchecker_SRC})
 target_link_libraries(urlchecker Qt5::Widgets)
 target_link_libraries(urlchecker Qt5::Network)
 target_link_libraries(urlchecker ${CPR_LIBRARIES})
-target_link_libraries(urlchecker effolkronium_random)
+#target_link_libraries(urlchecker effolkronium_random)
