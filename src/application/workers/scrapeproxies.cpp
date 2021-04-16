@@ -9,7 +9,7 @@
 #include <QRegularExpressionMatchIterator>
 #include <QApplication>
 
-#include "libs/cpr/include/cpr/cpr.h"
+#include "../libs/cpr/include/cpr/cpr.h"
 
 #include "scrapeproxies.h"
 #include "../config.h"

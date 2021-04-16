@@ -35,7 +35,7 @@
 #include "../workers/resultstatus.h"
 #include "../workers/testworker.h"
 
-#include "libs/cpr/include/cpr/cpr.h"
+#include "../libs/cpr/include/cpr/cpr.h"
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
 {
@@ -117,16 +117,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
     connect(m_testPushButton, &QPushButton::clicked, this, &WorkspaceWidget::test);
     connect(m_testPushButton, &QPushButton::clicked, [this]{
-//         qDebug() << "Test";
-        std::string url = "https://httpbin.org/headers";
-        auto headers = cpr::Header{
-            {"user-agent", USER_AGENT}
-        };
-        cpr::Response r = cpr::Get(cpr::Url{url}, cpr::Timeout{15000}, headers, cpr::VerifySsl{0});
-        qDebug() << r.text.c_str();
-        qDebug() << r.status_code;
-        qDebug() << r.error.message.c_str();
-        qDebug() << "OK";
+        qDebug() << "Test";
     });
 }
 

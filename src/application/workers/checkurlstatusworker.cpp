@@ -6,7 +6,7 @@
 #include <QApplication>
 #include <QDebug>
 
-#include "libs/cpr/include/cpr/cpr.h"
+#include "../libs/cpr/include/cpr/cpr.h"
 
 #include "checkurlstatusworker.h"
 #include "resultstatus.h"

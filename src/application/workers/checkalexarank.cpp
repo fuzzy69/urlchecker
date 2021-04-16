@@ -7,7 +7,7 @@
 #include <QRegExp>
 #include <QApplication>
 
-#include "libs/cpr/include/cpr/cpr.h"
+#include "../libs/cpr/include/cpr/cpr.h"
 
 #include "checkalexarank.h"
 #include "../config.h"
