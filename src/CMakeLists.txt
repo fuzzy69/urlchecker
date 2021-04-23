@@ -24,9 +24,9 @@ add_executable(
     application/core/workspacewidget.cpp
   
     application/utils/file.cpp
-    application/utils/useragents.cpp
-    application/utils/rand.cpp
     application/utils/httpproxy.cpp
+    application/utils/rand.cpp
+    application/utils/useragents.cpp
   
     application/workers/worker.cpp
     application/workers/checkurlstatusworker.cpp
