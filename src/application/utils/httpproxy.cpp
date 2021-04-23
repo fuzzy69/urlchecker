@@ -1,31 +1,36 @@
+#include <regex>
+#include <string>
+#include <vector>
+
 #include "httpproxy.h"
 
 
-// HttpProxy::HttpProxy ( char* ip, unsigned short port, char* username, char* password, bool ssl ) : m_ip(ip), m_port(port), m_username(username), m_password(password), m_type(ssl? HttpProxyType:HTTPS : HttpProxyType:HTTP)
-// {
-//     
-// }
-// 
-// HttpProxy HttpProxy::fromText ( char* text )
-// {
-//     return HttpProxy("127.0.0.1", 80);
-// }
 HttpProxy::HttpProxy(std::string ip, unsigned short port, std::string username, std::string password, bool ssl) : 
 m_ip(ip), m_port(port), m_username(username), m_password(password), m_type(ssl? HttpProxyType::HTTPS : HttpProxyType::HTTP)
 {
 }
 
-HttpProxy HttpProxy::fromText(std::string text)
+std::optional<HttpProxy> HttpProxy::from_text(std::string text)
 {
-    return HttpProxy("127.0.0.1", 80);
+    std::regex regex(R"(([^.]+.[^.]+.[^.]+.[^:]+):(\d{2,5})(?::(.*):(.*))?)");
+    std::smatch match;
+    if (std::regex_search(text, match, regex))
+    {
+        int port = std::stoi(match[2]);
+        return HttpProxy(match[1], port, match[3], match[4]);
+    }
+    else
+    {
+        return {};
+    }
 }
 
-std::string HttpProxy::ip() const
+std::ostream& operator<<(std::ostream& stream, const HttpProxy& httpProxy)
 {
-    return m_ip;
-}
+    if (httpProxy.is_public())
+        stream << "HttpProxy(\"" << httpProxy.ip() << "\", \"" << httpProxy.port() << "\")";
+    else
+        stream << "HttpProxy(\"" << httpProxy.ip() << "\", \"" << httpProxy.port() << "\", \"" << httpProxy.username() << "\", \"" << httpProxy.password() << "\")";
 
-unsigned short HttpProxy::port() const
-{
-    return m_port;
+    return stream;
 }
