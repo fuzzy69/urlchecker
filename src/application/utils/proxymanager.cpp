@@ -7,6 +7,13 @@ ProxyManager::ProxyManager()
 
 };
 
+ProxyManager & ProxyManager::instance()
+{
+    static ProxyManager proxyManager;
+
+    return proxyManager;
+}
+
 void ProxyManager::add_proxy(const HttpProxy &httpProxy)
 {
     m_proxies.push_back(httpProxy);
