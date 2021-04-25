@@ -25,6 +25,17 @@ std::optional<HttpProxy> HttpProxy::from_text(std::string text)
     }
 }
 
+HttpProxy::operator std::string()
+{
+    std::ostringstream stream;
+    if (is_public())
+        stream << ip() << ":" << port();
+    else
+        stream << ip() << ":" << port() << ":" << username() << ":" << password();
+
+    return stream.str();
+}
+
 std::ostream& operator<<(std::ostream& stream, const HttpProxy& httpProxy)
 {
     if (httpProxy.is_public())
@@ -33,4 +44,15 @@ std::ostream& operator<<(std::ostream& stream, const HttpProxy& httpProxy)
         stream << "HttpProxy(\"" << httpProxy.ip() << "\", \"" << httpProxy.port() << "\", \"" << httpProxy.username() << "\", \"" << httpProxy.password() << "\")";
 
     return stream;
+}
+
+std::string HttpProxy::to_text() const
+{
+    std::ostringstream stream;
+    if (is_public())
+        stream << ((m_type == HttpProxyType::HTTPS)? "https" : "http") << "://" << ip() << ":" << port();
+    else
+        stream << ((m_type == HttpProxyType::HTTPS)? "https" : "http") << "://" << username() << ":" << password() << "@" << ip() << ":" << port();
+
+    return stream.str();
 }

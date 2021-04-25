@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <optional>
+#include <sstream>
 #include <string>
 
 
@@ -23,8 +24,10 @@ struct HttpProxy final
     std::string password() const { return m_password; };
 
     bool is_public() const { return m_username.length() == 0 && m_password.length() == 0; };
+    std::string to_text() const;
 
     bool operator==(const HttpProxy& rhs) const { return m_ip == rhs.ip() && m_port == rhs.port() && m_username == rhs.username() && m_password == rhs.password(); };
+    operator std::string();
 
     friend std::ostream& operator<<(std::ostream& stream, const HttpProxy& httpProxy);
 
