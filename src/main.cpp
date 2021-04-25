@@ -1,8 +1,6 @@
 #include <QApplication>
 #include <QIcon>
 
-#include "../libs/cpr/include/cpr/cpr.h"
-
 #include "application/config.h"
 #include "application/icons.h"
 #include "application/core/mainwindow.h"
