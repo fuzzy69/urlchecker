@@ -9,6 +9,7 @@
 #include "../common/basemainwindow.h"
 #include "../utils/useragents.h"
 
+class QCloseEvent;
 class QHBoxLayout;
 class QLabel;
 class QPushButton;
@@ -127,6 +128,10 @@ private:
 
     ApplicationStateMachine *m_applicationStateMachine;
 
-    QString m_settingsFilePath;
+    // Dirs
     QString m_lastDirectory;
+    // Files
+    QString m_settingsFilePath;
+    QString m_proxiesFilePath;
+    QString m_userAgentsFilePath;
 };

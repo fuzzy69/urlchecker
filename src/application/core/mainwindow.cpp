@@ -1,5 +1,8 @@
+#include <string>
+
 #include <QAction>
 #include <QApplication>
+#include <QCloseEvent>
 #include <QDebug>
 #include <QDir>
 #include <QHBoxLayout>
@@ -35,6 +38,9 @@
 #include "../workers/worker.h"
 #include "../workers/dummyworker.h"
 #include "../utils/file.h"
+#include "../utils/misc.h"
+#include "../utils/proxymanager.h"
+#include "../utils/useragentsmanager.h"
 #include "../config.h"
 
 
@@ -45,8 +51,12 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     QDir applicationDir(QApplication::applicationDirPath());
     m_lastDirectory = applicationDir.absolutePath();
 
+    // Files
 //     m_settingsFilePath = "/mnt/ramdisk/settings.json";
     m_settingsFilePath = applicationDir.filePath("settings.json");
+    m_proxiesFilePath = applicationDir.filePath("proxies.txt");
+    m_userAgentsFilePath = applicationDir.filePath("user_agents.txt");
+
     Settings::instance().setFilePath(m_settingsFilePath);
     // Init settings
     Settings::instance().setValue("parallelTasks", QVariant(PARALLEL_TASKS));
@@ -88,9 +98,28 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
         emit m_applicationStateMachine->applicationReady();
     });
 
-    // TODO: Remove this
     Table* inputTable = m_workspaceWidget->inputTable();
+    // Load user agents
+    for (auto& line : File::readTextLines(m_userAgentsFilePath))
+    {
+        UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
+    }
+    // Load proxies
+    for (auto& proxy : loadProxiesFromFile(m_proxiesFilePath))
+    {
+        ProxyManager::instance().add_proxy(proxy);
+        m_proxiesWidget->append(QString::fromStdString(proxy));
+        // inputTable->appendRow(QStringList() << QString::fromStdString(proxy) << "");
+        // qDebug() << QString::fromStdString(proxy);
+    }
+    // TODO: Remove this
+    // Table* inputTable = m_workspaceWidget->inputTable();
 //     for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
+    // for (auto& proxy : loadProxiesFromFile("/mnt/ramdisk/proxy_sources.txt"))
+    // {
+    //     inputTable->appendRow(QStringList() << QString::fromStdString(proxy) << "");
+    //     qDebug() << QString::fromStdString(proxy);
+    // }
     for (auto& line : File::readTextLines("/mnt/ramdisk/proxy_sources.txt"))
     {
         line = line.trimmed();
@@ -288,7 +317,7 @@ void MainWindow::loadSettings()
         restoreGeometry(QByteArray::fromHex(Settings::instance().value("geometry").toByteArray()));
         restoreState(QByteArray::fromHex(Settings::instance().value("windowState").toByteArray()));
         m_lastDirectory = Settings::instance().value("lastDirectory").toString();
-        m_proxiesWidget->setPlainText(Settings::instance().value("proxies").toString());
+        // m_proxiesWidget->setPlainText(Settings::instance().value("proxies").toString());
     }
 }
 
@@ -297,7 +326,7 @@ void MainWindow::saveSettings()
     Settings::instance().setValue("geometry", saveGeometry().toHex());
     Settings::instance().setValue("windowState", saveState().toHex());
     Settings::instance().setValue("lastDirectory", m_lastDirectory);
-    Settings::instance().setValue("proxies", m_proxiesWidget->toPlainText());
+    // Settings::instance().setValue("proxies", m_proxiesWidget->toPlainText());
     Settings::instance().save();
 }
 
@@ -316,6 +345,9 @@ void MainWindow::closeEvent(QCloseEvent* event)
     // TODO: Stop remaining running workers/threads
     emit m_applicationStateMachine->applicationExiting();
     saveSettings();
+    // Save proxies to file
+    File::writeTextFile(m_proxiesFilePath, m_proxiesWidget->toPlainText());
+    // saveProxiesToFile(m_proxiesFilePath);
     QMainWindow::closeEvent(event);
 }
 
