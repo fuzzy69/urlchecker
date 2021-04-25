@@ -7,12 +7,11 @@
 #include <QRegExp>
 #include <QApplication>
 
-#include "../libs/cpr/include/cpr/cpr.h"
-
 #include "checkalexarank.h"
 #include "../config.h"
 #include "../constants.h"
 #include "../core/tools.h"
+#include "../utils/requests.h"
 
 
 CheckAlexaRankWorker::CheckAlexaRankWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
@@ -21,22 +20,16 @@ CheckAlexaRankWorker::CheckAlexaRankWorker(QQueue< QVariantMap >& inputDataQueue
 
 void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
 {
-    static const int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
-    static const bool verifySsl = m_settings["verifySsl"].toBool();
     static QRegExp regex("RANK=\"(\\d+)\"");
 
     QUrl url(inputData["url"].toString());
     QString alexaUrl("http://data.alexa.com/data?cli=10&url=" + url.host());
-    auto headers = cpr::Header{
-        {"user-agent", USER_AGENT}
-    };
     QString rank("");
-    cpr::Response r;
-    if (verifySsl)
-        r = cpr::Get(cpr::Url{alexaUrl.toStdString()}, cpr::Timeout{timeout}, headers);
-    else
-        r = cpr::Get(cpr::Url{alexaUrl.toStdString()}, cpr::Timeout{timeout}, headers, cpr::VerifySsl{0});            
-    int pos = regex.indexIn(QString(r.text.c_str()));
+
+    Requests requests(m_settings);
+    cpr::Response response = requests.get(alexaUrl.toStdString());
+
+    int pos = regex.indexIn(QString(response.text.c_str()));
     if (pos > -1)
     {
         rank = regex.cap(1);
@@ -47,13 +40,13 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
         {QString("toolName"), QVariant("Check Alexa Rank")},
 
         {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-        {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
-        {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
+        {QString("status"), QVariant(static_cast<qlonglong>(response.status_code))},
+        {QString("message"), QVariant(QString::fromUtf8(response.status_line.c_str()))},
         {QString("result"), QVariant(rank)},
 
         {QString("URL"), QVariant(url)},
         {QString("Rank"), QVariant(rank)},
-        {QString("Status"), QVariant(QString::fromUtf8(r.status_line.c_str()))}
+        {QString("Status"), QVariant(QString::fromUtf8(response.status_line.c_str()))}
     };
 
     emit Worker::result(data);

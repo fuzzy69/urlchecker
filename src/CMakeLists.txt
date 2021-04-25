@@ -25,7 +25,10 @@ add_executable(
   
     application/utils/file.cpp
     application/utils/httpproxy.cpp
+    application/utils/misc.cpp
+    application/utils/proxymanager.cpp
     application/utils/rand.cpp
+    application/utils/requests.cpp
     application/utils/useragents.cpp
   
     application/workers/worker.cpp

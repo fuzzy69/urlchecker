@@ -13,6 +13,7 @@
 #include "../config.h"
 #include "../constants.h"
 #include "../core/tools.h"
+#include "../utils/requests.h"
 
 
 CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
@@ -21,29 +22,22 @@ CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue< QVariantMap >& inputDataQueue
 
 void CheckUrlStatusWorker::doWork(const QVariantMap& inputData)
 {
-    static const int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
-    static const bool verifySsl = m_settings["verifySsl"].toBool();
-
     QString url = inputData["url"].toString();
-    auto headers = cpr::Header{
-        {"user-agent", USER_AGENT}
-    };
-    cpr::Response r;
-    if (verifySsl)
-        r = cpr::Head(cpr::Url{url.toStdString()}, cpr::Timeout{timeout}, headers);
-    else
-        r = cpr::Head(cpr::Url{url.toStdString()}, cpr::Timeout{timeout}, headers, cpr::VerifySsl{0});            
+
+    Requests requests(m_settings);
+    cpr::Response response = requests.head(url.toStdString());
+
     auto data = QVariantMap
     {
         {QString("toolId"), QVariant(Tools::CHECK_URL_STATUS)},
         {QString("toolName"), QVariant("Check URL Status")},
 
         {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-        {QString("status"), QVariant(static_cast<qlonglong>(r.status_code))},
-        {QString("message"), QVariant(QString::fromUtf8(r.status_line.c_str()))},
+        {QString("status"), QVariant(static_cast<qlonglong>(response.status_code))},
+        {QString("message"), QVariant(QString::fromUtf8(response.status_line.c_str()))},
 
         {QString("URL"), QVariant(url)},
-        {QString("Result"), QVariant(static_cast<qlonglong>(r.status_code))},
+        {QString("Result"), QVariant(static_cast<qlonglong>(response.status_code))},
         {QString("Status"), QVariant(ResultStatus::OK)}
     };
 
