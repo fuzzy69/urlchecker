@@ -37,6 +37,7 @@
 
 #include "../libs/cpr/include/cpr/cpr.h"
 
+
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
 {
     m_threads = QList<Thread*>();
@@ -115,7 +116,6 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     });
     connect(m_startPushButton, &QPushButton::clicked, this, &WorkspaceWidget::startJob);
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
-    connect(m_testPushButton, &QPushButton::clicked, this, &WorkspaceWidget::test);
     connect(m_testPushButton, &QPushButton::clicked, [this]{
         qDebug() << "Test";
     });
@@ -258,9 +258,7 @@ void WorkspaceWidget::startJob()
         });
     }
     const int parallelTasks = Settings::instance().value("parallelTasks").toInt();
-    assert(parallelTasks > 0);
-    qDebug() << Settings::instance().value("parallelTasks");
-    qDebug() << parallelTasks;
+    // assert(parallelTasks > 0);
     for (int i = 0; i < parallelTasks;++i)
     {
         auto thread = new Thread;
@@ -269,6 +267,7 @@ void WorkspaceWidget::startJob()
         // TODO: Improve tool switching logic
         QVariantMap settings;
         settings.insert(QString("timeout"), Settings::instance().value("timeout"));
+        settings.insert(QString("useProxies"), Settings::instance().value("useProxies"));
         switch (currentTool.id())
         {
             case Tools::CHECK_URL_STATUS:
@@ -281,13 +280,11 @@ void WorkspaceWidget::startJob()
                 worker = new ScrapeProxiesWorker(m_inputDataQueue, settings);
                 break;
             case Tools::TEST:
-                qDebug() << 1;
                 worker = new TestWorker(m_inputDataQueue, settings);
                 break;
             default:
                 worker = new DummyWorker(m_inputDataQueue, settings);
         }
-        qDebug() << worker->objectName();
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);

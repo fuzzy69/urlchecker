@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include <QVariant>
+#include <QVariantMap>
 
 
 /// Simple settings class for storing application settings into a JSON file
