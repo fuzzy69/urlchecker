@@ -35,6 +35,7 @@
 #include "../common/settings.h"
 #include "../common/table.h"
 #include "../common/thread.h"
+#include "../data/useragents.h"
 #include "../workers/worker.h"
 #include "../workers/dummyworker.h"
 #include "../utils/file.h"
@@ -52,7 +53,6 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     m_lastDirectory = applicationDir.absolutePath();
 
     // Files
-//     m_settingsFilePath = "/mnt/ramdisk/settings.json";
     m_settingsFilePath = applicationDir.filePath("settings.json");
     m_proxiesFilePath = applicationDir.filePath("proxies.txt");
     m_userAgentsFilePath = applicationDir.filePath("user_agents.txt");
@@ -99,33 +99,25 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
     });
 
     Table* inputTable = m_workspaceWidget->inputTable();
-    // Load user agents
+    // User agents
+    if (!QFile::exists(m_userAgentsFilePath))
+    {
+        File::writeTextFile(m_userAgentsFilePath, QString(USER_AGENTS_TEXT));
+    }
     for (auto& line : File::readTextLines(m_userAgentsFilePath))
     {
         UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
     }
-    // Load proxies
+    // Proxies
     for (auto& proxy : loadProxiesFromFile(m_proxiesFilePath))
     {
         ProxyManager::instance().add_proxy(proxy);
         m_proxiesWidget->append(QString::fromStdString(proxy));
-        // inputTable->appendRow(QStringList() << QString::fromStdString(proxy) << "");
-        // qDebug() << QString::fromStdString(proxy);
     }
     // TODO: Remove this
-    // Table* inputTable = m_workspaceWidget->inputTable();
-//     for (auto& line : File::readTextLines("/mnt/ramdisk/urls.txt"))
-    // for (auto& proxy : loadProxiesFromFile("/mnt/ramdisk/proxy_sources.txt"))
-    // {
-    //     inputTable->appendRow(QStringList() << QString::fromStdString(proxy) << "");
-    //     qDebug() << QString::fromStdString(proxy);
-    // }
-    for (auto& line : File::readTextLines("/mnt/ramdisk/proxy_sources.txt"))
+    for (const auto& url : loadUrlsFromFile("/mnt/ramdisk/proxy_sources.txt"))
     {
-        line = line.trimmed();
-        // TODO: validate URL
-        if (line.length() > 0)
-            inputTable->appendRow(QStringList() << line << "");
+        inputTable->appendRow(QStringList() << url.toString() << "");
     }
 }
 
