@@ -12,36 +12,40 @@ C++ Qt5 multi-threaded application for checking HTTP response status of urls (**
 
 ### Requirements
 
-You'll need a C++ 11 compiler, Qt5 library and CMake 2.8.11 (or higher).
+- C++ compiler (>=C++17)
+- CMake (>=3.15)
+- Qt (>=5.11 tested with this but probably should work with older minor releases)
 
 
 ### Build instructions
 
+Clone repository:
+```
+git clone https://github.com/fuzzy69/urlchecker.git
+```
 Navigate to project directory:
 ```
 cd /urlchecker
 ```
-Download dependencies to libs directory:
+Download dependencies:
 ```
-cd libs/
-git clone https://github.com/whoshuu/cpr.git
-git clone https://github.com/effolkronium/random.git
+git submodule update --init --recursive 
 ```
-Go back to project directory in order to complete the project building.
-```
-cd ..
-```
-Create a build directory and move to it:
+Create build directory somewhere (preferably out of project directory) and navigate into it:
 ```
 mkdir build
-cd build/
+cd build
 ```
-Build project.
+Build project by passing the full path to a cloned urlchecker project:
 ```
-cmake ../
+cmake <YOUR PATH>/urlchecker
 make
 ```
 Run executable with:
 ```
-./urlchecker
+src/urlchecker
+```
+Run tests with:
+```
+tests/tests
 ```
