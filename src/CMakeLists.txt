@@ -39,5 +39,5 @@ add_executable(
     application/workers/testworker.cpp
 )
 
-target_link_libraries(urlchecker Qt5::Widgets)
-target_link_libraries(urlchecker Qt5::Network)
+# target_link_libraries(urlchecker Qt5::Widgets)
+# target_link_libraries(urlchecker Qt5::Network)

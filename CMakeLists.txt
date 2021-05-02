@@ -11,11 +11,11 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Network REQUIRED)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/cpr)
-cpr_option(BUILD_CPR_TESTS "Set to ON to build cpr tests." OFF)
-
+add_subdirectory(libs)
 add_subdirectory(src)
 
+target_link_libraries(urlchecker Qt5::Widgets)
+target_link_libraries(urlchecker Qt5::Network)
 target_link_libraries(urlchecker ${CPR_LIBRARIES})
 
 # Tests
