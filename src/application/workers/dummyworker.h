@@ -13,7 +13,7 @@ class DummyWorker : public Worker
     Q_OBJECT
     
 public:
-    explicit DummyWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent = nullptr);
+    explicit DummyWorker(QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
 
 protected:
     void doWork(const QVariantMap &inputData) override;

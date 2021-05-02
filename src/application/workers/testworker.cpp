@@ -15,7 +15,7 @@
 #include "../utils/useragentsmanager.h"
 
 
-TestWorker::TestWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
+TestWorker::TestWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, mutex, settings, parent)
 {
 }
 

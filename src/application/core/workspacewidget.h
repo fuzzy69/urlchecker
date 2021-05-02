@@ -1,8 +1,9 @@
 #pragma once
 
+#include <QMutex>
 #include <QQueue>
 #include <QWidget>
-
+#include <QScopedPointer>
 
 class QHBoxLayout;
 class QVBoxLayout;
@@ -81,4 +82,6 @@ private:
 
     int m_itemsDone;
     int m_totalItems;
+    // QScopedPointer<QMutex> m_mutex;
+    QMutex m_mutex;
 };

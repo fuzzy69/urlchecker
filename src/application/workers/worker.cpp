@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QMutex>
 #include <QObject>
 #include <QQueue>
 #include <QDebug>
@@ -10,8 +11,8 @@
 #include "../core/tools.h"
 
 
-Worker::Worker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) :
-m_inputDataQueue(inputDataQueue), m_settings(settings)
+Worker::Worker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) :
+m_inputDataQueue(inputDataQueue), m_mutex(mutex), m_settings(settings)
 {
 }
 
@@ -20,14 +21,14 @@ void Worker::run()
     m_running = true;
     while (m_running)
     {
-        m_mutex.lock();
-        if (m_inputDataQueue.empty())
+        m_mutex->lock();
+        if (m_inputDataQueue->empty())
         {
-            m_mutex.unlock();
+            m_mutex->unlock();
             break;
         }
-        auto inputData = m_inputDataQueue.dequeue();
-        m_mutex.unlock();
+        auto inputData = m_inputDataQueue->dequeue();
+        m_mutex->unlock();
         QApplication::processEvents();
 
         doWork(inputData);

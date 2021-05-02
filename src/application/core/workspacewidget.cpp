@@ -43,6 +43,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     m_threads = QList<Thread*>();
     m_workers = QList<Worker*>();
     m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
+    // m_mutex = QMutex();
 
     m_mainLayout = new QVBoxLayout(this);
     m_topLayout = new QHBoxLayout;
@@ -271,19 +272,19 @@ void WorkspaceWidget::startJob()
         switch (currentTool.id())
         {
             case Tools::CHECK_URL_STATUS:
-                worker = new CheckUrlStatusWorker(m_inputDataQueue, settings);
+                worker = new CheckUrlStatusWorker(&m_inputDataQueue, &m_mutex, settings);
                 break;
             case Tools::CHECK_ALEXA_RANK:
-                worker = new CheckAlexaRankWorker(m_inputDataQueue, settings);
+                worker = new CheckAlexaRankWorker(&m_inputDataQueue, &m_mutex, settings);
                 break;
             case Tools::SCRAPE_PROXIES:
-                worker = new ScrapeProxiesWorker(m_inputDataQueue, settings);
+                worker = new ScrapeProxiesWorker(&m_inputDataQueue, &m_mutex, settings);
                 break;
             case Tools::TEST:
-                worker = new TestWorker(m_inputDataQueue, settings);
+                worker = new TestWorker(&m_inputDataQueue, &m_mutex, settings);
                 break;
             default:
-                worker = new DummyWorker(m_inputDataQueue, settings);
+                worker = new DummyWorker(&m_inputDataQueue, &m_mutex, settings);
         }
         m_threads.append(thread);
         m_workers.append(worker);

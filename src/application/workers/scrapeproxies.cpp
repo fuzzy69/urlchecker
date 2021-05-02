@@ -16,7 +16,7 @@
 #include "../utils/requests.h"
 
 
-ScrapeProxiesWorker::ScrapeProxiesWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
+ScrapeProxiesWorker::ScrapeProxiesWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, mutex, settings, parent)
 {
 }
 

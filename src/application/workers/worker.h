@@ -3,8 +3,11 @@
 #include <QObject>
 #include <QVariant>
 #include <QMap>
-#include <QMutex>
+// #include <QMutex>
 #include <QQueue>
+
+class QMutex;
+// class QQueue<QVariantMap>;
 
 
 class Worker : public QObject
@@ -12,7 +15,7 @@ class Worker : public QObject
     Q_OBJECT
     
 public:
-    explicit Worker(QQueue<QVariantMap> &inputDataQueue, const QVariantMap &settings, QObject *parent = nullptr);
+    explicit Worker(QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
 
 signals:
     void result(const QVariantMap &resultData);
@@ -27,8 +30,8 @@ protected:
     virtual void doWork(const QVariantMap& inputData) = 0;
 
     bool m_running;
-    QQueue<QVariantMap> m_inputDataQueue;
+    QQueue<QVariantMap>* m_inputDataQueue;
+    QMutex* m_mutex;
     QVariantMap m_settings;
-    QMutex m_mutex;
 };
 

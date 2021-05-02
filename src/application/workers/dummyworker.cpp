@@ -12,7 +12,7 @@
 #include "../core/tools.h"
 
 
-DummyWorker::DummyWorker(QQueue< QVariantMap >& inputDataQueue, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, settings, parent)
+DummyWorker::DummyWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, mutex, settings, parent)
 {
 }
 
