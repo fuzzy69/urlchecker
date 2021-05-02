@@ -416,6 +416,7 @@ void MainWindow::importUrlFile(const QString &filePath)
             inputTable->appendRow(QStringList() << line << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
+    m_workspaceWidget->switchToSourcesTab();
 }
 
 void MainWindow::importUrls()

@@ -30,6 +30,8 @@ public:
 //     void updateResultsRow(const QMap<QString, QVariant>& resultData);
     void updateResultsRow(const QVariantMap& resultData);
     void clearResultsTable();
+    void switchToResultsTab();
+    void switchToSourcesTab();
 
 public Q_SLOTS:
     void toggleTools();

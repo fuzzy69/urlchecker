@@ -241,6 +241,16 @@ void WorkspaceWidget::clearResultsTable()
     m_resultsTable->setColumnRatios(m_toolsWidget->currentTool().columnRatios());
 }
 
+void WorkspaceWidget::switchToResultsTab()
+{
+    m_tabWidget->setCurrentIndex(1);
+}
+
+void WorkspaceWidget::switchToSourcesTab()
+{
+    m_tabWidget->setCurrentIndex(0);
+}
+
 void WorkspaceWidget::startJob()
 {
     auto currentTool = toolsWidget()->currentTool();
@@ -303,6 +313,7 @@ void WorkspaceWidget::startJob()
     }
 
     emit jobStarted();
+    switchToResultsTab();
     for (int i = 0; i < parallelTasks; ++i)
     {
         m_threads[i]->start();
