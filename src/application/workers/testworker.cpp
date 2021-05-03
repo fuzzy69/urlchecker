@@ -5,14 +5,14 @@
 #include <QMutex>
 #include <QApplication>
 
+// #include "my/proxymanager.h"
+
 #include "testworker.h"
 #include "resultstatus.h"
 #include "../config.h"
 #include "../constants.h"
 #include "../core/tools.h"
-#include "../utils/proxymanager.h"
 #include "../utils/requests.h"
-#include "../utils/useragentsmanager.h"
 
 
 TestWorker::TestWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, mutex, settings, parent)

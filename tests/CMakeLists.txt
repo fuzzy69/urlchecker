@@ -1,5 +1,5 @@
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+﻿#set(CMAKE_CXX_STANDARD 17)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(catchmain STATIC catchmain.cpp)
 target_link_libraries(catchmain PUBLIC catch)
@@ -7,28 +7,20 @@ target_link_libraries(catchmain PUBLIC catch)
 add_library(
     urlcheckertests
     OBJECT
-    ${CMAKE_SOURCE_DIR}/src/application/utils/file.cpp
-    ${CMAKE_SOURCE_DIR}/src/application/utils/httpproxy.cpp
-    ${CMAKE_SOURCE_DIR}/src/application/utils/proxymanager.cpp
-    ${CMAKE_SOURCE_DIR}/src/application/utils/rand.cpp
     ${CMAKE_SOURCE_DIR}/src/application/utils/requests.cpp
-    ${CMAKE_SOURCE_DIR}/src/application/utils/text.cpp
-    ${CMAKE_SOURCE_DIR}/src/application/utils/misc.cpp
-    # ${CMAKE_SOURCE_DIR}/src/application/utils/useragentsmanager.cpp
 )
 target_include_directories(urlcheckertests INTERFACE ${CMAKE_SOURCE_DIR}/src)
 target_link_libraries(urlcheckertests PUBLIC Qt5::Core)
 target_link_libraries(urlcheckertests PUBLIC ${CPR_LIBRARIES})
+target_link_libraries(urlcheckertests PUBLIC ${MY_LIBRARIES})
 
 add_executable(
     tests
 
-    testproxy.cpp
-    testproxymanager.cpp
-    testrand.cpp
-    testrequests.cpp
-    testmisc.cpp
-    testuseragentsmanager.cpp
+   testproxy.cpp
+   testproxymanager.cpp
+   testrand.cpp
+   testuseragentsmanager.cpp
 )
 target_link_libraries(tests PRIVATE catchmain)
 target_link_libraries(tests PUBLIC urlcheckertests)

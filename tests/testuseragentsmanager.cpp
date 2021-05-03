@@ -4,8 +4,10 @@
 #include <QString>
 #include "catch.hpp"
 
-#include "application/utils/useragentsmanager.h"
+#include "my/browserutils.h"
 
+
+using my::browser::UserAgentsManager;
 
 TEST_CASE( "Test UserAgentsManager class", "[useragentsmanager]" )
 {

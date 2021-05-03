@@ -36,6 +36,8 @@
 #include "../workers/testworker.h"
 
 #include "../libs/cpr/include/cpr/cpr.h"
+// #include "../libs/my/include/my/file.h"
+// #include "../libs/my/include/my/random.h"
 
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)

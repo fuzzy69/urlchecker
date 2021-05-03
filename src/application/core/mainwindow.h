@@ -7,7 +7,7 @@
 #include <QList>
 
 #include "../common/basemainwindow.h"
-#include "../utils/useragents.h"
+
 
 class QCloseEvent;
 class QHBoxLayout;
@@ -25,7 +25,6 @@ class SettingsWidget;
 class Thread;
 class Worker;
 class WorkspaceWidget;
-
 
 class MainWindow : public BaseMainWindow
 {

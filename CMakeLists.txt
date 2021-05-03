@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.15)
+﻿cmake_minimum_required(VERSION 3.15)
 project(urlchecker)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
@@ -17,13 +18,20 @@ add_subdirectory(src)
 target_link_libraries(urlchecker Qt5::Widgets)
 target_link_libraries(urlchecker Qt5::Network)
 target_link_libraries(urlchecker ${CPR_LIBRARIES})
+target_link_libraries(urlchecker ${MY_LIBRARIES})
 
 # Tests
 option(ENABLE_TEST "Turn on to enable tests" ON)
 if (ENABLE_TEST)
     enable_testing()
+
     set(CATCH2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/catch2)  
     add_library(catch INTERFACE)
     target_include_directories(catch INTERFACE ${CATCH2_INCLUDE_DIR})
+
+#     set(MY_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/my)  
+#     add_library(my INTERFACE)
+#     target_include_directories(my INTERFACE ${MY_INCLUDE_DIR})
+
     add_subdirectory(tests)
 endif()

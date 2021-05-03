@@ -18,6 +18,14 @@
 #include <QTimer>
 #include <QToolBar>
 
+#include "my/browserutils.h"
+#include "my/file.h"
+#include "my/httpproxy.h"
+#include "my/proxymanager.h"
+#include "my/proxyutils.h"
+#include "my/urlutils.h"
+#include "my/useragents.h"
+
 #include "mainwindow.h"
 #include "helpwidget.h"
 #include "proxieswidget.h"
@@ -35,15 +43,15 @@
 #include "../common/settings.h"
 #include "../common/table.h"
 #include "../common/thread.h"
-#include "../data/useragents.h"
 #include "../workers/worker.h"
 #include "../workers/dummyworker.h"
-#include "../utils/file.h"
-#include "../utils/misc.h"
-#include "../utils/proxymanager.h"
-#include "../utils/useragentsmanager.h"
 #include "../config.h"
 
+using my::filesystem::File;
+using my::network::HttpProxy;
+using my::network::ProxyManager;
+using my::browser::UserAgentsManager;
+using my::data::USER_AGENTS_TEXT;
 
 MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
 {
@@ -109,13 +117,13 @@ MainWindow::MainWindow ( QWidget* parent ) : BaseMainWindow(parent)
         UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
     }
     // Proxies
-    for (auto& proxy : loadProxiesFromFile(m_proxiesFilePath))
+    for (auto& proxy : my::network::loadProxiesFromFile(m_proxiesFilePath))
     {
         ProxyManager::instance().add_proxy(proxy);
         m_proxiesWidget->append(QString::fromStdString(proxy));
     }
     // TODO: Remove this
-    for (const auto& url : loadUrlsFromFile("/mnt/ramdisk/proxy_sources.txt"))
+    for (const auto& url : my::url::loadUrlsFromFile("/mnt/ramdisk/proxy_sources.txt"))
     {
         inputTable->appendRow(QStringList() << url.toString() << "");
     }

@@ -3,8 +3,10 @@
 
 #include "catch.hpp"
 
-#include "application/utils/httpproxy.h"
+#include "my/httpproxy.h"
 
+
+using my::network::HttpProxy;
 
 TEST_CASE( "Test Public HttpProxy", "[httpproxy]" )
 {

@@ -22,15 +22,9 @@ add_executable(
     application/core/tool.cpp
     application/core/toolswidget.cpp
     application/core/workspacewidget.cpp
-  
-    application/utils/file.cpp
-    application/utils/httpproxy.cpp
-    application/utils/misc.cpp
-    application/utils/proxymanager.cpp
-    application/utils/rand.cpp
+
     application/utils/requests.cpp
-    application/utils/useragents.cpp
-  
+
     application/workers/worker.cpp
     application/workers/checkurlstatusworker.cpp
     application/workers/checkalexarank.cpp
@@ -38,6 +32,3 @@ add_executable(
     application/workers/scrapeproxies.cpp
     application/workers/testworker.cpp
 )
-
-# target_link_libraries(urlchecker Qt5::Widgets)
-# target_link_libraries(urlchecker Qt5::Network)

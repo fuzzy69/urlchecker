@@ -2,9 +2,17 @@
 
 #include "../config.h"
 #include "../constants.h"
-#include "../utils/proxymanager.h"
-#include "../utils/useragentsmanager.h"
 
+#include "my/httpproxy.h"
+#include "my/proxymanager.h"
+#include "my/browserutils.h"
+// #include "../utils/proxymanager.h"
+// #include "../utils/useragentsmanager.h"
+
+
+using my::network::HttpProxy;
+using my::network::ProxyManager;
+using my::browser::UserAgentsManager;
 
 Requests::Requests(const QVariantMap& settings) : m_settings(settings)
 {

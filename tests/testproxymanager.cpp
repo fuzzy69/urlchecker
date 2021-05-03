@@ -3,9 +3,12 @@
 
 #include "catch.hpp"
 
-#include "application/utils/proxymanager.h"
-#include "application/utils/httpproxy.h"
+#include "my/httpproxy.h"
+#include "my/proxymanager.h"
 
+
+using my::network::HttpProxy;
+using my::network::ProxyManager;
 
 TEST_CASE( "Test ProxyManager class", "[proxymanager]" )
 {
