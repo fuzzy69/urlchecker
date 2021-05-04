@@ -23,6 +23,9 @@ add_executable(
     application/core/toolswidget.cpp
     application/core/workspacewidget.cpp
 
+    application/tools/proxytools.cpp
+    application/tools/ranktools.cpp
+
     application/utils/requests.cpp
 
     application/workers/worker.cpp

@@ -29,9 +29,5 @@ if (ENABLE_TEST)
     add_library(catch INTERFACE)
     target_include_directories(catch INTERFACE ${CATCH2_INCLUDE_DIR})
 
-#     set(MY_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/my)  
-#     add_library(my INTERFACE)
-#     target_include_directories(my INTERFACE ${MY_INCLUDE_DIR})
-
     add_subdirectory(tests)
 endif()

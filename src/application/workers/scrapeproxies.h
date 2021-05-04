@@ -1,7 +1,8 @@
 #pragma once
 
 #include <QObject>
-#include <QVariant>
+#include <QVariantMap>
+#include <QQueue>
 #include <QMap>
 #include <QMutex>
 
