@@ -16,4 +16,4 @@ add_library(
 
 add_library(my::my ALIAS my)
 
-# install(TARGETS my)
+install(TARGETS my)

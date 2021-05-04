@@ -21,5 +21,5 @@ target_sources(
     my/useragents.h
 )
 
-# install(DIRECTORY my DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY my DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 

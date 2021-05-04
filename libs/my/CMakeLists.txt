@@ -14,7 +14,7 @@ project(my LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# set(MY_LIBRARIES my CACHE INTERNAL "")
+set(MY_LIBRARIES my CACHE INTERNAL "")
 
 option(BUILD_SHARED_LIBS "Build libraries as shared libraries" ON)
 
