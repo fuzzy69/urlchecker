@@ -9,7 +9,7 @@
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
-    application.setWindowIcon(QIcon(ICON_CHAIN));
+    application.setWindowIcon(QIcon(ICON_APPLICATION_LOGO));
     application.setApplicationName(APP_TITLE);
     application.setStyle(QStringLiteral("fusion"));
     application.setStyleSheet(R"(

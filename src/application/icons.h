@@ -1,5 +1,6 @@
 #pragma once
 
+#define ICON_APPLICATION_LOGO ":assets/icons/application-logo.png"
 #define ICON_DESKTOP ":assets/icons/desktop.png"
 #define ICON_GEAR ":assets/icons/gear.png"
 #define ICON_MASK ":assets/icons/mask.png"

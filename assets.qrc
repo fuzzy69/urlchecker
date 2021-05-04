@@ -1,5 +1,6 @@
 <RCC>
     <qresource>
+        <file>assets/icons/application-logo.png</file>
         <file>assets/icons/table-import.png</file>
         <file>assets/icons/table-export.png</file>
         <file>assets/icons/cross-circle.png</file>
