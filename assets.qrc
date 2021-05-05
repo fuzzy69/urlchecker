@@ -1,6 +1,10 @@
 <RCC>
     <qresource>
         <file>assets/icons/application-logo.png</file>
+        <file>assets/icons/document-list.png</file>
+        <file>assets/icons/control-power.png</file>
+        <file>assets/icons/odata.png</file>
+        <file>assets/icons/notebook.png</file>
         <file>assets/icons/table-import.png</file>
         <file>assets/icons/table-export.png</file>
         <file>assets/icons/cross-circle.png</file>

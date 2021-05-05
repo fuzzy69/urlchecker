@@ -11,12 +11,16 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Network REQUIRED)
+find_package(Qt5Help REQUIRED)
+# find_package(Qt5 COMPONENTS Help REQUIRED)
 
 add_subdirectory(libs)
 add_subdirectory(src)
 
 target_link_libraries(urlchecker Qt5::Widgets)
 target_link_libraries(urlchecker Qt5::Network)
+target_link_libraries(urlchecker Qt5::Help)
+# target_link_libraries(urlchecker PRIVATE Qt5::Help)
 target_link_libraries(urlchecker ${CPR_LIBRARIES})
 target_link_libraries(urlchecker ${MY_LIBRARIES})
 

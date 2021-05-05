@@ -14,6 +14,7 @@ add_executable(
     application/common/table.cpp
     application/common/thread.cpp
   
+    application/core/helpbrowser.cpp
     application/core/helpwidget.cpp
     application/core/mainwindow.cpp
     application/core/proxieswidget.cpp
