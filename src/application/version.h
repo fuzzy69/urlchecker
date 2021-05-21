@@ -1,3 +1,3 @@
 #pragma once
 
-#define APP_VERSION "2021.5.3.45845"
+#define APP_VERSION "2021.5.21.28923"
