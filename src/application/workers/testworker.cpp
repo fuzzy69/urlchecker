@@ -32,7 +32,7 @@ void TestWorker::doWork(const QVariantMap& inputData)
         {QString("toolName"), QVariant("Test")},
         {QString("URL"), QVariant(url)},
         {QString("Result"), QVariant(QString::fromUtf8(response.text.c_str()))},
-        {QString("Status"), QVariant(ResultStatus::OK)}
+//         {QString("Status"), QVariant(ResultStatus::OK)}
     };
     qDebug() << response.text.c_str();
 

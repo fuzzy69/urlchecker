@@ -44,7 +44,7 @@ void ScrapeProxiesWorker::doWork(const QVariantMap& inputData)
             {QString("rowId"), QVariant(inputData["rowId"].toInt())},
             {QString("Proxy"), QVariant(QString::fromUtf8(proxy_string.c_str()))},
             {QString("Source"), QVariant(url)},
-            {QString("Status"), QVariant(ResultStatus::OK)}
+//             {QString("Status"), QVariant(ResultStatus::OK)}
         };
         emit Worker::result(data);
     }

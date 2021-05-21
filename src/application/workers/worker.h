@@ -6,6 +6,8 @@
 // #include <QMutex>
 #include <QQueue>
 
+#include "resultstatus.h"
+
 class QMutex;
 // class QQueue<QVariantMap>;
 
@@ -19,6 +21,7 @@ public:
 
 signals:
     void result(const QVariantMap &resultData);
+    void status(const qint8 rowId, const ResultStatus &resultStatus);
     void finished();
     void requestStop();
 

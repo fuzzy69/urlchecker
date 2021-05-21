@@ -59,12 +59,12 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
 
         {QString("rowId"), QVariant(inputData["rowId"].toInt())},
         {QString("status"), QVariant(static_cast<qlonglong>(response.status_code))},
-        {QString("message"), QVariant(status)},
+//         {QString("message"), QVariant(status)},
         {QString("result"), QVariant(rank)},
 
         {QString("URL"), QVariant(url)},
         {QString("Rank"), QVariant(rank)},
-        {QString("Status"), QVariant(status)}
+//         {QString("Status"), QVariant(status)}
     };
 
     emit Worker::result(data);

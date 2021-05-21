@@ -29,7 +29,7 @@ void DummyWorker::doWork(const QVariantMap& inputData)
         {QString("toolName"), QVariant("Dummy")},
         {QString("URL"), QVariant(url)},
         {QString("Result"), QVariant("OK")},
-        {QString("Status"), QVariant(ResultStatus::OK)}
+//         {QString("Status"), QVariant(ResultStatus::OK)}
     };
 
     emit Worker::result(data);
