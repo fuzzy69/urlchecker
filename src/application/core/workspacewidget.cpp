@@ -19,6 +19,8 @@
 #include <QDesktopServices>
 #include <QMap>
 #include <QVariant>
+#include <QMetaType>
+#include <QObject>
 
 #include "workspacewidget.h"
 #include "../config.h"
@@ -32,7 +34,7 @@
 #include "../workers/checkalexarank.h"
 #include "../workers/scrapeproxies.h"
 #include "../workers/dummyworker.h"
-#include "../workers/resultstatus.h"
+// #include "../workers/resultstatus.h"
 #include "../workers/testworker.h"
 
 #include "../libs/cpr/include/cpr/cpr.h"
@@ -99,8 +101,8 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) : QWidget(parent)
     m_progressBar = new QProgressBar;
     m_progressBar->setRange(0, 100);
 
-    m_tabWidget->addTab(m_inputTable->tableView(), QString("Source URLs"));
-    m_tabWidget->addTab(m_resultsTable->tableView(), QString("Results"));
+    m_tabWidget->addTab(m_inputTable->tableView(), QIcon(":assets/icons/document-list.png"), QString("Source URLs"));
+    m_tabWidget->addTab(m_resultsTable->tableView(), QIcon(":assets/icons/odata.png"), QString("Results"));
     m_topLayout->addWidget(m_toolsWidget);
     m_topLayout->addWidget(m_tabWidget);
     m_bottomLayout->addStretch(0);
@@ -255,6 +257,7 @@ void WorkspaceWidget::switchToSourcesTab()
 
 void WorkspaceWidget::startJob()
 {
+    qRegisterMetaType<ResultStatus>();
     auto currentTool = toolsWidget()->currentTool();
     m_resultsTable->resetColumns(currentTool.columns());
     m_resultsTable->setColumnRatios(currentTool.columnRatios());
@@ -306,6 +309,7 @@ void WorkspaceWidget::startJob()
         connect(thread, &Thread::started, worker, &Worker::run);
         connect(thread, &Thread::finished, thread, &Thread::deleteLater);
         connect(worker, &Worker::result, this, &WorkspaceWidget::onResult);
+        connect(worker, &Worker::status, this, &WorkspaceWidget::onStatus);
         connect(worker, &Worker::finished, thread, &Thread::quit);
         connect(worker, &Worker::finished, worker, &Worker::deleteLater);
         connect(worker, &Worker::finished, []{
@@ -347,19 +351,19 @@ void WorkspaceWidget::onResult(const QVariantMap& resultData)
     {
         if (column == QString("Status"))
         {
-            ResultStatus status = static_cast<ResultStatus>(resultData["Status"].toInt());
-            switch (status)
-            {
-                case ResultStatus::OK:
-                    row << "Done";
-                    break;
-                case ResultStatus::PROCESSING:
-                    row << "...";
-                    break;
-                case ResultStatus::FAILED:
-                    row << "Failed";
-                    break;
-            }
+//             ResultStatus status = static_cast<ResultStatus>(resultData["Status"].toInt());
+//             switch (status)
+//             {
+//                 case ResultStatus::OK:
+//                     row << "Done";
+//                     break;
+//                 case ResultStatus::PROCESSING:
+//                     row << "...";
+//                     break;
+//                 case ResultStatus::FAILED:
+//                     row << "Failed";
+//                     break;
+//             }
         }
         else
         {
@@ -369,4 +373,23 @@ void WorkspaceWidget::onResult(const QVariantMap& resultData)
     m_resultsTable->appendRow(row);
     int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
     m_progressBar->setValue(progresPercentage);
+}
+
+void WorkspaceWidget::onStatus(const qint8 rowId, const ResultStatus& resultStatus)
+{
+    qDebug() << "Status ...";
+    QVariant status;
+    switch (resultStatus)
+    {
+        case ResultStatus::OK:
+            status = QVariant("Done");
+            break;
+        case ResultStatus::PROCESSING:
+            status = QVariant("Processing ...");
+            break;
+        case ResultStatus::FAILED:
+            status = QVariant("Failed");
+            break;
+    }
+    m_inputTable->setCell(rowId, 1, status);
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QHelpCollectionProject version="1.0">
+    <assistant>
+        <title>URL Checker</title>
+        <cacheDirectory>/mnt/ramdisk/urlchecker/src/</cacheDirectory>
+        <startPage>qthelp://com.urlchecker.help/docs/index.html</startPage>
+    </assistant>    <docFiles>
+        <generate>
+            <file>
+                <input>help.qhp</input>
+                <output>help.qch</output>
+            </file>
+        </generate>
+        <register>
+            <file>help.qch</file>
+        </register>
+    </docFiles>
+</QHelpCollectionProject>

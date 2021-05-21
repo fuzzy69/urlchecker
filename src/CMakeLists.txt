@@ -36,3 +36,16 @@ add_executable(
     application/workers/scrapeproxies.cpp
     application/workers/testworker.cpp
 )
+
+add_custom_command(
+    TARGET urlchecker POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/docs/help.qhc
+        ${CMAKE_BINARY_DIR}/bin/docs/help.qhc
+)
+add_custom_command(
+    TARGET urlchecker POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_SOURCE_DIR}/docs/help.qch
+        ${CMAKE_BINARY_DIR}/bin/docs/help.qch
+)

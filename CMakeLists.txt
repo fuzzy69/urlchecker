@@ -9,11 +9,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Help REQUIRED)
 # find_package(Qt5 COMPONENTS Help REQUIRED)
 
+add_subdirectory(docs)
 add_subdirectory(libs)
 add_subdirectory(src)
 
@@ -25,7 +28,7 @@ target_link_libraries(urlchecker ${CPR_LIBRARIES})
 target_link_libraries(urlchecker ${MY_LIBRARIES})
 
 # Tests
-option(ENABLE_TEST "Turn on to enable tests" ON)
+option(ENABLE_TEST "Turn on to enable tests" OFF)
 if (ENABLE_TEST)
     enable_testing()
 

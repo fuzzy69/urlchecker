@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+    <namespace>com.urlchecker.help</namespace>
+    <virtualFolder>docs</virtualFolder>
+    <filterSection>
+        <toc>
+            <section title="URL Checker Help" ref="index.html">
+                <section title="Overview" ref="overview.html"></section>
+                <section title="User Interface" ref="user_interface.html"></section>
+                <section title="Configuration" ref="configuration.html"></section>
+            </section>
+        </toc>
+        <keywords>
+            <keyword name="Overview" ref="overview.html"/>
+            <keyword name="User Interface" ref="user_interface.html"/>
+            <keyword name="Configuration" ref="configuration.html"/>
+        </keywords>
+        <files>
+            <file>index.html</file>
+            <file>overview.html</file>
+            <file>user_interface.html</file>
+            <file>configuration.html</file>
+            <file>images/test.png</file>
+        </files>
+    </filterSection>
+</QtHelpProject>

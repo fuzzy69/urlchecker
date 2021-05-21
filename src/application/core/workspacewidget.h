@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QScopedPointer>
 
+#include "../workers/resultstatus.h"
+
 class QHBoxLayout;
 class QVBoxLayout;
 class QPushButton;
@@ -60,6 +62,7 @@ protected:
     void startJob();
     void stopJob();
     void onResult(const QVariantMap &resultData);
+    void onStatus(const qint8 rowId, const ResultStatus &resultStatus);
 
 private:
     Table* focusedTable();

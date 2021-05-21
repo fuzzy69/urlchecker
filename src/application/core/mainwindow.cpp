@@ -139,7 +139,7 @@ void MainWindow::createActions()
     m_recentUrlFilesMenu = new QMenu("Open Recent URL File", this);
     m_clearRecentUrlFilesAction = new QAction(QIcon(ICON_BROOM), "Clear List", this);
     m_exportResultsAction = new QAction(QIcon(ICON_TABLE_EXPORT), "Export Results", this);
-    m_quitAction = new QAction(QIcon(ICON_CROSS_CIRCLE), "Quit", this);
+    m_quitAction = new QAction(QIcon(":/assets/icons/control-power.png"), "Quit", this);
     m_removeAllAction = new QAction(QIcon(ICON_BROOM), "Remove All Rows", this);
     m_removeDuplicatesAction = new QAction(QIcon(ICON_TABLE_DELETE_ROW), "Remove Duplicates", this);
     m_selectAllAction = new QAction(QIcon(ICON_TABLE_SELECT_ALL), "Select All Rows", this);

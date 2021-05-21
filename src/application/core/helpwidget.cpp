@@ -1,3 +1,5 @@
+#include <QApplication>
+#include <QDir>
 #include <QHBoxLayout>
 #include <QTabWidget>
 #include <QTextBrowser>
@@ -18,14 +20,18 @@ HelpWidget::HelpWidget(QWidget* parent) : QWidget(parent)
     m_tabWidget = new QTabWidget;
     m_tabWidget->setMinimumWidth(200);
     m_splitter = new QSplitter(Qt::Horizontal);
-    auto documentPath = QString("/mnt/ramdisk/docs.qhc");
-    auto compiledDocumentPath = QString("/mnt/ramdisk/docs.qch");
+    auto documentPath = QString(QDir(QApplication::applicationDirPath()).filePath("docs/help.qhc"));
+    auto compiledDocumentPath = QString(QDir(QApplication::applicationDirPath()).filePath("docs/help.qch"));
     m_helpEngine = new QHelpEngine(documentPath, this);
     auto documentNamespace = QHelpEngineCore::namespaceName(documentPath);
     m_helpEngine->registerDocumentation(compiledDocumentPath);
-    m_helpEngine->setupData();
     m_helpBrowser = new HelpBrowser(m_helpEngine);
-    m_helpBrowser->setSource(QUrl("qthelp://docs.com.urlchecker/doc/index.html"));
+
+    if (documentNamespace.isEmpty())
+        qWarning() << "Document namespace is empty!";
+    if (!m_helpEngine->registeredDocumentations().contains(documentNamespace))
+        qWarning() << "Document namespace is not reistered!";
+
     m_tabWidget->addTab(m_helpEngine->contentWidget(), "Contents");
     m_tabWidget->addTab(m_helpEngine->indexWidget(), "Index");
     m_splitter->addWidget(m_tabWidget);
