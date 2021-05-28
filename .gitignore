@@ -1,8 +1,9 @@
 build/
 .kdev4
-*.kdev4
+*.kdev4*
 *.kate-swp
 CMakeLists.txt.user
 .vscode
 *.qch
 *.qhc
+CMD_OUTPUT

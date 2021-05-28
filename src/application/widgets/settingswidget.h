@@ -2,13 +2,12 @@
 
 #include <QWidget>
 
-class QVBoxLayout;
-class QSpinBox;
-class QLabel;
+class QCheckBox;
 class QGroupBox;
 class QGridLayout;
-class QCheckBox;
-
+class QLabel;
+class QSpinBox;
+class QVBoxLayout;
 
 class SettingsWidget : public QWidget
 {
@@ -16,10 +15,9 @@ class SettingsWidget : public QWidget
 public:
     explicit SettingsWidget(QWidget *parent = nullptr);
 
-    int threadCount() const;
-
 protected:
     void hideEvent(QHideEvent *event) override;
+    void showEvent ( QShowEvent * event ) override;
 
 private:
     QVBoxLayout *m_mainLayout;

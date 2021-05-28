@@ -4,8 +4,7 @@
 #include <QObject>
 #include <QVariantMap>
 
-#include "../libs/cpr/include/cpr/cpr.h"
-
+#include "cpr/cpr.h"
 
 class Requests
 {

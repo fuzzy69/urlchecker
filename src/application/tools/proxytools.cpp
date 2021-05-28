@@ -2,7 +2,6 @@
 
 #include <regex>
 
-
 std::vector<std::string> extract_proxies(const std::string& text)
 {
     std::vector<std::string> proxies;

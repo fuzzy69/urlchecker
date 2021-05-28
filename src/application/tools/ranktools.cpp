@@ -1,6 +1,5 @@
 #include <regex>
 
-
 std::optional<int> extract_alexa_rank(const std::string& html)
 {
     static std::regex regex("RANK=\"(\\d+)\"");

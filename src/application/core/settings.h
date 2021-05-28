@@ -1,17 +1,14 @@
 #pragma once
 
-#include <QObject>
-#include <QVariantMap>
+// #include <QObject>
+// #include <QVariantMap>
 
 
 /// Simple settings class for storing application settings into a JSON file
-class Settings final : public QObject
+class Settings final
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(Settings)
-
 public:
-    ~Settings() override;
+    ~Settings();
 
     /// Returns Settings class singleton instance
     static Settings &instance();
@@ -22,19 +19,21 @@ public:
     ///
     void setFilePath(const QString &filePath);
 
-public Q_SLOTS:
     /// Loads settings from a file. If file path is not passed it uses default path
     void load(const QString &filePath = QString());
     /// Saves current settings to a file. If file path is not passed it uses default path
     void save(const QString &filePath = QString());
-
-Q_SIGNALS:
-    /// Signals when settings key was updated with new value
-    void updated();
+    /**
+    * create a new main window, use given config if any for restore
+    * @param sconfig session config object
+    * @param sgroup session group for this window
+    * @return new constructed main window
+    */
+    void dump();
 
 private:
     /// Disallow default public constructor
-    explicit Settings(QObject *parent = nullptr);
+    explicit Settings();
 
     QVariantMap m_settings;
     QString m_settingsFilePath;

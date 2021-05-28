@@ -1,19 +1,12 @@
+#include "worker.h"
+
 #include <QApplication>
 #include <QMutex>
-#include <QObject>
-#include <QQueue>
-#include <QDebug>
-
-#include "worker.h"
-#include "resultstatus.h"
-#include "../config.h"
-#include "../constants.h"
-#include "../core/tools.h"
-
 
 Worker::Worker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) :
 m_inputDataQueue(inputDataQueue), m_mutex(mutex), m_settings(settings)
 {
+    Q_UNUSED(parent)
 }
 
 void Worker::run()

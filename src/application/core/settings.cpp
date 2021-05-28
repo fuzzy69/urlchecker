@@ -1,18 +1,18 @@
-#include <QApplication>
-#include <QDir>
-#include <QScopedPointer>
-#include <QSettings>
+// #include <QApplication>
+// #include <QDir>
+// #include <QScopedPointer>
+// #include <QSettings>
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QFile>
+#include <QVariantMap>
 
 #include "settings.h"
 
-
-Settings::Settings( QObject* parent)
+Settings::Settings()
 {
-    QDir applicationDir(QApplication::applicationDirPath());
-    m_settingsFilePath = applicationDir.absoluteFilePath("settings.json");
+//     QDir applicationDir(QApplication::applicationDirPath());
+//     m_settingsFilePath = applicationDir.absoluteFilePath("settings.json");
     m_settings = QVariantMap();
 //     load();
 }
@@ -66,4 +66,8 @@ void Settings::setValue(const QString& key, const QVariant& value)
 QVariant Settings::value(const QString& key) const
 {
     return m_settings[key];
+}
+
+void Settings::dump()
+{
 }

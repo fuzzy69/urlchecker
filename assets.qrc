@@ -1,6 +1,7 @@
 <RCC>
     <qresource>
         <file>assets/icons/application-logo.png</file>
+        <file>assets/icons/drive.png</file>
         <file>assets/icons/document-list.png</file>
         <file>assets/icons/control-power.png</file>
         <file>assets/icons/odata.png</file>
@@ -26,5 +27,8 @@
         <file>assets/icons/hammer.png</file>
         <file>assets/icons/chain.png</file>
         <file>assets/icons/alexa.png</file>
+        <file>assets/icons/book-open.png</file>
+        <file>assets/icons/book-open-bookmark.png</file>
+        <file>assets/icons/book-open-list.png</file>
     </qresource>
 </RCC>

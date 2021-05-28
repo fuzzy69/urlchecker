@@ -1,14 +1,8 @@
 #pragma once
 
-#include <QObject>
-#include <QVariant>
-#include <QMap>
-#include <QMutex>
-
 #include "worker.h"
 
-
-class DummyWorker : public Worker
+class DummyWorker final: public Worker
 {
     Q_OBJECT
     

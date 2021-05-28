@@ -1,17 +1,16 @@
-#include <QObject>
-#include <QDebug>
-#include <QThread>
-#include <QQueue>
-#include <QMutex>
-#include <QApplication>
-
-// #include "my/proxymanager.h"
-
 #include "testworker.h"
+
+// #include <QObject>
+// #include <QDebug>
+// #include <QThread>
+// #include <QQueue>
+// #include <QMutex>
+// #include <QApplication>
+
 #include "resultstatus.h"
 #include "../config.h"
 #include "../constants.h"
-#include "../core/tools.h"
+#include "../tools/tools.h"
 #include "../utils/requests.h"
 
 
@@ -34,7 +33,6 @@ void TestWorker::doWork(const QVariantMap& inputData)
         {QString("Result"), QVariant(QString::fromUtf8(response.text.c_str()))},
 //         {QString("Status"), QVariant(ResultStatus::OK)}
     };
-    qDebug() << response.text.c_str();
 
-    emit Worker::result(data);
+    Q_EMIT Worker::result(data);
 }

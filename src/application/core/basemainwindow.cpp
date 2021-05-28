@@ -5,7 +5,7 @@
 #include "basemainwindow.h"
 
 
-BaseMainWindow::BaseMainWindow(QWidget* parent) : QMainWindow(parent)
+BaseMainWindow::BaseMainWindow ( QWidget* parent ) : QMainWindow ( parent )
 {
 }
 
@@ -17,6 +17,6 @@ void BaseMainWindow::centerWindow()
 {
     QRect fg = this->frameGeometry();
     QPoint screenCenter = qApp->desktop()->availableGeometry().center();
-    fg.moveCenter(screenCenter);
-    this->move(fg.topLeft());
+    fg.moveCenter ( screenCenter );
+    this->move ( fg.topLeft() );
 }

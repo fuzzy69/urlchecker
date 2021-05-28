@@ -1,12 +1,6 @@
 #pragma once
 
-#include <QObject>
-#include <QVariant>
-#include <QMap>
-#include <QMutex>
-
 #include "worker.h"
-
 
 class CheckAlexaRankWorker final: public Worker
 {

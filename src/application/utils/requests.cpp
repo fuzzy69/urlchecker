@@ -1,14 +1,11 @@
 #include "requests.h"
 
-#include "../config.h"
-#include "../constants.h"
-
 #include "my/httpproxy.h"
 #include "my/proxymanager.h"
 #include "my/browserutils.h"
-// #include "../utils/proxymanager.h"
-// #include "../utils/useragentsmanager.h"
 
+#include "../config.h"
+#include "../constants.h"
 
 using my::network::HttpProxy;
 using my::network::ProxyManager;

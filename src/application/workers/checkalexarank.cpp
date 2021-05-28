@@ -1,20 +1,14 @@
+#include "checkalexarank.h"
+
 #include <optional>
 
-#include <QObject>
-#include <QDebug>
-#include <QThread>
-#include <QQueue>
-#include <QMutex>
 #include <QUrl>
-#include <QRegExp>
-#include <QApplication>
 
-#include "checkalexarank.h"
 #include "resultstatus.h"
 #include "../config.h"
 #include "../constants.h"
-#include "../core/tools.h"
 #include "../tools/ranktools.h"
+#include "../tools/tools.h"
 #include "../utils/requests.h"
 
 
@@ -24,11 +18,8 @@ CheckAlexaRankWorker::CheckAlexaRankWorker(QQueue< QVariantMap >* inputDataQueue
 
 void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
 {
-//     static QRegExp regex("RANK=\"(\\d+)\"");
-
     QUrl url(inputData["url"].toString());
     QString alexaUrl("http://data.alexa.com/data?cli=10&url=" + url.host());
-//     QString rank("");
 
     Requests requests(m_settings);
     cpr::Response response = requests.get(alexaUrl.toStdString());
@@ -46,12 +37,6 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
     {
         message = QString("Failed extracting rank value");
     }
-    
-//     int pos = regex.indexIn(QString(response.text.c_str()));
-//     if (pos > -1)
-//     {
-//         rank = regex.cap(1);
-//     }
     auto data = QVariantMap
     {
         {QString("toolId"), QVariant(Tools::CHECK_ALEXA_RANK)},
@@ -67,5 +52,5 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
 //         {QString("Status"), QVariant(status)}
     };
 
-    emit Worker::result(data);
+    Q_EMIT Worker::result(data);
 }

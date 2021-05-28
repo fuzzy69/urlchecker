@@ -3,14 +3,11 @@
 #include <QObject>
 #include <QVariant>
 #include <QMap>
-// #include <QMutex>
 #include <QQueue>
 
 #include "resultstatus.h"
 
 class QMutex;
-// class QQueue<QVariantMap>;
-
 
 class Worker : public QObject
 {
@@ -19,13 +16,13 @@ class Worker : public QObject
 public:
     explicit Worker(QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
 
-signals:
+Q_SIGNALS:
     void result(const QVariantMap &resultData);
     void status(const qint8 rowId, const ResultStatus &resultStatus);
     void finished();
     void requestStop();
 
-public slots:
+public Q_SLOTS:
     void run();
     void stop();
 

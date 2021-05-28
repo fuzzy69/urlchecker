@@ -1,13 +1,6 @@
 #pragma once
 
-#include <QObject>
-#include <QVariantMap>
-#include <QQueue>
-#include <QMap>
-#include <QMutex>
-
 #include "worker.h"
-
 
 class ScrapeProxiesWorker final: public Worker
 {

@@ -2,7 +2,6 @@
 
 #include <QMetaObject>
 
-
 enum class ResultStatus : qint8
 {
     OK,

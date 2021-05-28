@@ -7,6 +7,7 @@ target_link_libraries(catchmain PUBLIC catch)
 add_library(
     urlcheckertests
     OBJECT
+    #${CMAKE_SOURCE_DIR}/src/application/common/settings.cpp
     ${CMAKE_SOURCE_DIR}/src/application/tools/proxytools.cpp
     ${CMAKE_SOURCE_DIR}/src/application/tools/ranktools.cpp
     ${CMAKE_SOURCE_DIR}/src/application/utils/requests.cpp
@@ -19,12 +20,12 @@ target_link_libraries(urlcheckertests PUBLIC ${MY_LIBRARIES})
 add_executable(
     tests
 
-   testproxy.cpp
-   testproxymanager.cpp
-   testrand.cpp
-   testproxytools.cpp
-   testranktools.cpp
-   testuseragentsmanager.cpp
+    testproxy.cpp
+    testproxymanager.cpp
+    testrand.cpp
+    testproxytools.cpp
+    testranktools.cpp
+    testuseragentsmanager.cpp
 )
 target_link_libraries(tests PRIVATE catchmain)
 target_link_libraries(tests PUBLIC urlcheckertests)

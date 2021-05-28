@@ -3,46 +3,38 @@
 #include <QMutex>
 #include <QQueue>
 #include <QWidget>
-#include <QScopedPointer>
 
 #include "../workers/resultstatus.h"
 
 class QHBoxLayout;
-class QVBoxLayout;
 class QPushButton;
 class QProgressBar;
-class QTableView;
+// class QTableView;
+class QSplitter;
 class QTabWidget;
+class QTreeWidget;
+class QVBoxLayout;
 
 class Table;
+class TablesWidget;
 class Thread;
 class ToolsWidget;
 class Worker;
 
-class WorkspaceWidget : public QWidget
+class WorkspaceWidget final: public QWidget
 {
     Q_OBJECT
 public:
     explicit WorkspaceWidget(QWidget *parent = nullptr);
 
-    Table* inputTable();
-    Table* resultsTable();
     ToolsWidget* toolsWidget();
+    TablesWidget* tablesWidget();
     void setCurrentProgress(int value);
-//     void updateResultsRow(const QMap<QString, QVariant>& resultData);
-    void updateResultsRow(const QVariantMap& resultData);
-    void clearResultsTable();
-    void switchToResultsTab();
-    void switchToSourcesTab();
 
 public Q_SLOTS:
     void toggleTools();
-    void removeAllRows();
-    void selectAllRows();
-    void invertSelectedRows();
-    void removeDuplicatedRows();
-    void removeSelectedRows();
 
+    // TODO: managing application states doesn't look too good, find a better approach
     void onApplicationStart();
     void onApplicationReady();
     void onApplicationExit();
@@ -53,40 +45,40 @@ public Q_SLOTS:
 Q_SIGNALS:
     void jobStarted();
     void jobStopped();
-    void test();
+//     void test();
 
 protected:
-//     void hideEvent(QHideEvent *event) override;
+// //     void hideEvent(QHideEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
-    void startJob();
-    void stopJob();
     void onResult(const QVariantMap &resultData);
     void onStatus(const qint8 rowId, const ResultStatus &resultStatus);
 
+private Q_SLOTS:
+    void startJob();
+    void stopJob();
+    
 private:
-    Table* focusedTable();
-
     QVBoxLayout *m_mainLayout;
     QHBoxLayout *m_topLayout;
     QHBoxLayout *m_bottomLayout;
+    QSplitter *m_splitter;
 
-    Table *m_inputTable;
-    Table *m_resultsTable;
     QPushButton *m_startPushButton;
     QPushButton *m_stopPushButton;
     QPushButton *m_testPushButton;
     QProgressBar *m_progressBar;
-    QTableView *m_tableView;
-    QTabWidget *m_tabWidget;
+
+    QTabWidget *m_sideTabWidget;
     ToolsWidget *m_toolsWidget;
+    QTreeWidget *m_fileSystemWidget;
+    TablesWidget *m_tablesWidget;
 
     QList<Thread*> m_threads;
     QList<Worker*> m_workers;
     QQueue<QVariantMap> m_inputDataQueue;
+    QMutex m_mutex;
 
     int m_itemsDone;
     int m_totalItems;
-    // QScopedPointer<QMutex> m_mutex;
-    QMutex m_mutex;
 };

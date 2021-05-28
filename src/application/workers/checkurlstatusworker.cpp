@@ -10,7 +10,7 @@
 #include "resultstatus.h"
 #include "../config.h"
 #include "../constants.h"
-#include "../core/tools.h"
+#include "../tools/tools.h"
 #include "../utils/requests.h"
 
 

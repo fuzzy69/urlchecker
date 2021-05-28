@@ -1,20 +1,18 @@
 #include "settingswidget.h"
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QGridLayout>
-#include <QLabel>
-#include <QGroupBox>
-#include <QSpinBox>
-#include <QCheckBox>
 #include <QApplication>
-#include <QDir>
-#include <QSettings>
+#include <QCheckBox>
 #include <QDebug>
+#include <QDir>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QSpinBox>
+#include <QVBoxLayout>
 
-#include "../common/settings.h"
 #include "../config.h"
-
+#include "../texts.h"
+#include "../core/settings.h"
 
 SettingsWidget::SettingsWidget ( QWidget* parent ) :
     QWidget(parent)
@@ -50,34 +48,22 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
     m_mainLayout->addWidget(m_connectionGroupBox);
     m_mainLayout->addWidget(m_proxiesGroupBox);
     m_mainLayout->addStretch(0);
-
-    m_threadsSpinBox->setValue(Settings::instance().value("parallelTasks").toInt());
-    m_timeoutSpinBox->setValue(Settings::instance().value("timeout").toInt());
-    m_verifySslCheckBox->setChecked(Settings::instance().value("verifySsl").toBool());    
-    m_useProxiesCheckBox->setChecked(Settings::instance().value("useProxies").toBool());
-//     if (QFile::exists(m_settingsFilePath))
-//     {
-//         QSettings settings(m_settingsFilePath, QSettings::IniFormat);
-//         m_threadsSpinBox->setValue(settings.value("threadsCount", 1).toInt());
-//         m_timeoutSpinBox->setValue(settings.value("timeout", 15).toInt());
-//         m_useProxiesCheckBox->setChecked(settings.value("useProxies", false).toBool());
-//     }
 }
 
 void SettingsWidget::hideEvent(QHideEvent* event)
 {
     Q_UNUSED(event);
-    Settings::instance().setValue("parallelTasks", QVariant(m_threadsSpinBox->value()));
-    Settings::instance().setValue("timeout", QVariant(m_timeoutSpinBox->value()));
-    Settings::instance().setValue("verifySsl", QVariant(m_verifySslCheckBox->isChecked()));
-    Settings::instance().setValue("useProxies", QVariant(m_useProxiesCheckBox->isChecked()));
-//     QSettings settings(m_settingsFilePath, QSettings::IniFormat);
-//     settings.setValue("threadsCount", m_threadsSpinBox->value());
-//     settings.setValue("timeout", m_timeoutSpinBox->value());
-//     settings.setValue("useProxies", m_useProxiesCheckBox->isChecked());
+    Settings::instance().setValue( TEXT_THREADS, QVariant(m_threadsSpinBox->value()));
+    Settings::instance().setValue( TEXT_TIMEOUT, QVariant(m_timeoutSpinBox->value()));
+    Settings::instance().setValue( TEXT_VERIFY_SSL, QVariant(m_verifySslCheckBox->isChecked()));
+    Settings::instance().setValue( TEXT_USE_PROXIES, QVariant(m_useProxiesCheckBox->isChecked()));
 }
 
-int SettingsWidget::threadCount() const
+void SettingsWidget::showEvent ( QShowEvent* event )
 {
-    return m_threadsSpinBox->value();
+    Q_UNUSED(event);
+    m_threadsSpinBox->setValue(Settings::instance().value(QStringLiteral(TEXT_THREADS)).toInt());
+    m_timeoutSpinBox->setValue(Settings::instance().value( TEXT_TIMEOUT ).toInt());
+    m_verifySslCheckBox->setChecked(Settings::instance().value( TEXT_VERIFY_SSL ).toBool());    
+    m_useProxiesCheckBox->setChecked(Settings::instance().value( TEXT_USE_PROXIES ).toBool());
 }
