@@ -37,6 +37,8 @@ std::vector<std::string> split_lines(const std::string& text)
 std::string left_strip(const std::string& text)
 {
     std::size_t pos = text.find_first_not_of(" \t\n\r\f\v");
+    if (pos == std::string::npos)
+        return text;
 
     return text.substr(pos, text.length() - pos);
 }
@@ -44,6 +46,8 @@ std::string left_strip(const std::string& text)
 std::string right_strip(const std::string& text)
 {
     std::size_t pos = text.find_last_not_of(" \t\n\r\f\v");
+    if (pos == std::string::npos)
+        return text;
 
     return text.substr(0, pos + 1);
 }
