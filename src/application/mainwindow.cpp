@@ -119,14 +119,14 @@ void MainWindow::createMenuBar()
     m_fileMenu->addAction(m_exportResultsAction);
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(m_quitAction);
-    // Edit menu
-    m_editMenu->addAction( m_removeAllAction );
-    m_editMenu->addAction(m_removeDuplicatesAction);
-    // Filter menu
     // Selection menu
-    m_selectionMenu->addAction(m_removeSelectedAction);
+    m_selectionMenu->addAction(m_selectAllAction);
     m_selectionMenu->addAction(m_invertSelectionAction);
-    m_selectionMenu->addAction(m_removeSelectedAction);
+    // Edit menu
+    m_editMenu->addAction(m_removeSelectedAction);
+    m_editMenu->addAction(m_removeDuplicatesAction);
+    m_editMenu->addAction( m_removeAllAction );
+    // Filter menu
     // Window menu
     m_windowMenu->addAction(m_centerWindowAction);
     // Help menu
@@ -144,12 +144,12 @@ void MainWindow::createToolBar()
     m_toolBar->addAction(m_importUrlsAction);
     m_toolBar->addAction(m_exportResultsAction);
     m_toolBar->addSeparator();
-    m_toolBar->addAction( m_removeAllAction );
+    m_toolBar->addAction(m_removeSelectedAction);
     m_toolBar->addAction(m_removeDuplicatesAction);
+    m_toolBar->addAction( m_removeAllAction );
     m_toolBar->addSeparator();
     m_toolBar->addAction(m_selectAllAction);
     m_toolBar->addAction(m_invertSelectionAction);
-    m_toolBar->addAction(m_removeSelectedAction);
     m_toolBar->addSeparator();
     m_toolBar->addAction(m_quitAction);
 }
@@ -213,6 +213,12 @@ void MainWindow::createConnections()
     connect(m_helpAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
     // Misc
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
+    // Table actions
+    connect(m_selectAllAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->selectAll();});
+    connect(m_invertSelectionAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->invertSelection();});
+    connect(m_removeSelectedAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected();});
+    connect(m_removeDuplicatesAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates();});
+    connect(m_removeAllAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows();});
 }
 
 void MainWindow::loadSettings()
