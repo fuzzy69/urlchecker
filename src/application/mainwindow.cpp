@@ -27,6 +27,7 @@
 #include "texts.h"
 #include "version.h"
 #include "core/applicationstatemachine.h"
+#include "core/misc.h"
 #include "core/recentfiles.h"
 #include "core/settings.h"
 #include "core/table.h"
@@ -63,8 +64,9 @@ APPLICATION_VERSION )));
     createStatusBar();
     createConnections();
     //
+//     QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
     initSettings(applicationDir);
-    initUserAgents(applicationDir);
+    initUserAgents(applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE)));
     initProxies(applicationDir);
     //
     m_applicationStateMachine->start();
@@ -339,18 +341,18 @@ QVariant(applicationDir.filePath(QStringLiteral( USER_AGENTS_FILE ))));
     }
 }
 
-void MainWindow::initUserAgents(const QDir& applicationDir)
-{
-    QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
-    if (!QFile::exists(userAgentsFilePath))
-    {
-        File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
-    }
-    for (auto& line : File::readTextLines(userAgentsFilePath))
-    {
-        UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
-    }
-}
+// void MainWindow::initUserAgents(const QDir& applicationDir)
+// {
+//     QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
+//     if (!QFile::exists(userAgentsFilePath))
+//     {
+//         File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
+//     }
+//     for (auto& line : File::readTextLines(userAgentsFilePath))
+//     {
+//         UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
+//     }
+// }
 
 void MainWindow::initProxies ( const QDir& applicationDir )
 {

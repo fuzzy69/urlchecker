@@ -28,6 +28,7 @@ add_executable(
     src/application/core/applicationstatemachine.cpp
     src/application/core/basemainwindow.cpp
     src/application/core/helpbrowser.cpp
+    src/application/core/misc.cpp
     src/application/core/recentfiles.cpp
     src/application/core/settings.cpp
     src/application/core/table.cpp

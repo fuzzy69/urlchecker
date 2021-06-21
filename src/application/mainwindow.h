@@ -4,9 +4,6 @@
 
 #include "core/basemainwindow.h"
 
-// class QAction;
-// class QMenu;
-// class QWidget;
 class QHBoxLayout;
 class QLabel;
 class QPushButton;
@@ -54,7 +51,7 @@ private:
 
     void initSettings(const QDir& applicationDir);
     void initProxies(const QDir& applicationDir);
-    void initUserAgents(const QDir& applicationDir);
+//     void initUserAgents(const QDir& applicationDir);
 
     // MenuBar
     QMenu *m_fileMenu;
@@ -92,10 +89,6 @@ private:
     SideBarWidget *m_sideBarWidget;
 
     QStackedWidget *m_mainStackedWidget;
-//     QWidget *m_workspacePageWidget;
-//     QWidget *m_settingsPageWidget;
-//     QWidget *m_proxiesPageWidget;
-//     QWidget *m_helpPageWidget;
 
     WorkspaceWidget *m_workspaceWidget;
     SettingsWidget *m_settingsWidget;
