@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+﻿cmake_minimum_required(VERSION 3.15)
 project(urlchecker)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -40,6 +40,7 @@ add_executable(
 
     src/application/utils/requests.cpp
 
+    src/application/widgets/filesystemwidget.cpp
     src/application/widgets/helpwidget.cpp
     src/application/widgets/proxieswidget.cpp
     src/application/widgets/settingswidget.cpp
