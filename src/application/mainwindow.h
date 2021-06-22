@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QDir>
 
@@ -23,7 +23,7 @@ class MainWindow final : public BaseMainWindow
 
 public:
     explicit MainWindow ( QWidget *parent = nullptr );
-    ~MainWindow();
+    ~MainWindow() override;
 
 protected:
     void closeEvent ( QCloseEvent * event ) override;

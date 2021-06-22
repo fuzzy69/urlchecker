@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QMutex>
 #include <QQueue>
@@ -15,6 +15,7 @@ class QTabWidget;
 class QTreeWidget;
 class QVBoxLayout;
 
+class FilesystemWidget;
 class Table;
 class TablesWidget;
 class Thread;
@@ -71,7 +72,7 @@ private:
 
     QTabWidget *m_sideTabWidget;
     ToolsWidget *m_toolsWidget;
-    QTreeWidget *m_fileSystemWidget;
+    FilesystemWidget *m_fileSystemWidget;
     TablesWidget *m_tablesWidget;
 
     QList<Thread*> m_threads;

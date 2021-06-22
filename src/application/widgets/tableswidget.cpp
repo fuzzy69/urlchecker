@@ -1,4 +1,4 @@
-#include "tableswidget.h"
+﻿#include "tableswidget.h"
 
 #include <QDesktopServices>
 #include <QTableView>
@@ -14,7 +14,7 @@ TablesWidget::TablesWidget ( QWidget* parent ) :
 {
     m_tabWidget = new QTabWidget;
     m_inputTable = new Table(QStringList() << QStringLiteral("URL") << QStringLiteral("Status"), this);
-    m_inputTable->setColumnRatios(QList<float>() << 0.8);
+    m_inputTable->setColumnRatios(QList<float>() << 0.8f);
     m_resultsTable = new Table(QStringList() << QStringLiteral("Result"), this);
 //     m_resultsTable->setColumnRatios(m_toolsWidget->currentTool().columnRatios());
     m_tabWidget->addTab(m_inputTable->tableView(), QIcon(QStringLiteral(ICON_DOCUMENT_LIST)), 

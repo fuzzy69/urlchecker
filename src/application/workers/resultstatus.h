@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QMetaObject>
 
@@ -9,4 +9,4 @@ enum class ResultStatus : qint8
     FAILED
 };
 
-Q_DECLARE_METATYPE(ResultStatus)
+Q_DECLARE_METATYPE(ResultStatus);

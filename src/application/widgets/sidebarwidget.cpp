@@ -1,4 +1,4 @@
-#include "sidebarwidget.h"
+﻿#include "sidebarwidget.h"
 
 #include <QAction>
 #include <QDebug>
@@ -98,7 +98,7 @@ void SideBarWidget::mousePressEvent(QMouseEvent *event)
     {
         m_checkedAction = action;
         update();
-        Q_EMIT action->trigger();
+        action->trigger();
     }
     QWidget::mousePressEvent(event);
 }

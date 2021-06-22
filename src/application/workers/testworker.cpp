@@ -1,4 +1,4 @@
-#include "testworker.h"
+﻿#include "testworker.h"
 
 // #include <QObject>
 // #include <QDebug>
@@ -20,8 +20,9 @@ TestWorker::TestWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, con
 
 void TestWorker::doWork(const QVariantMap& inputData)
 {
-    QString url = inputData["url"].toString();
-    url = "http://httpbin.org/ip";
+    Q_UNUSED(inputData)
+//    QString url = inputData["url"].toString();
+    QString url = "http://httpbin.org/ip";
 
     Requests requests(m_settings);
     cpr::Response response = requests.get(url.toStdString());

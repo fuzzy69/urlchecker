@@ -1,4 +1,4 @@
-#include "settingswidget.h"
+﻿#include "settingswidget.h"
 
 #include <QApplication>
 #include <QCheckBox>
@@ -52,7 +52,7 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
 
 void SettingsWidget::hideEvent(QHideEvent* event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
     Settings::instance().setValue( TEXT_THREADS, QVariant(m_threadsSpinBox->value()));
     Settings::instance().setValue( TEXT_TIMEOUT, QVariant(m_timeoutSpinBox->value()));
     Settings::instance().setValue( TEXT_VERIFY_SSL, QVariant(m_verifySslCheckBox->isChecked()));
@@ -61,7 +61,7 @@ void SettingsWidget::hideEvent(QHideEvent* event)
 
 void SettingsWidget::showEvent ( QShowEvent* event )
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
     m_threadsSpinBox->setValue(Settings::instance().value(QStringLiteral(TEXT_THREADS)).toInt());
     m_timeoutSpinBox->setValue(Settings::instance().value( TEXT_TIMEOUT ).toInt());
     m_verifySslCheckBox->setChecked(Settings::instance().value( TEXT_VERIFY_SSL ).toBool());    

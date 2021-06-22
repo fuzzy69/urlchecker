@@ -1,4 +1,4 @@
-#include "workspacewidget.h"
+﻿#include "workspacewidget.h"
 
 #include <QDebug>
 #include <QDesktopServices>
@@ -18,6 +18,7 @@
 #include "../core/settings.h"
 #include "../core/table.h"
 #include "../core/thread.h"
+#include "../widgets/filesystemwidget.h"
 #include "../widgets/tableswidget.h"
 #include "../workers/dummyworker.h"
 #include "../workers/checkalexarank.h"
@@ -27,12 +28,8 @@
 #include "../workers/worker.h"
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : 
-    QWidget(parent)
+    QWidget(parent), m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>())
 {
-    m_threads = QList<Thread*>();
-    m_workers = QList<Worker*>();
-    m_inputDataQueue = QQueue<QMap<QString, QVariant>>();
-
     m_mainLayout = new QVBoxLayout(this);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(0);
@@ -44,7 +41,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
     m_toolsWidget = new ToolsWidget;
     m_sideTabWidget = new QTabWidget;
     m_tablesWidget = new TablesWidget;
-    m_fileSystemWidget = new QTreeWidget;
+    m_fileSystemWidget = new FilesystemWidget;
     m_startPushButton = new QPushButton(QIcon(ICON_CONTROL), tr("Start"));
     m_stopPushButton = new QPushButton(QIcon(ICON_CONTROL_STOP), tr("Stop"));
     m_testPushButton = new QPushButton(tr("Test"));

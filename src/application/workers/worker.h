@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QObject>
 #include <QVariant>
@@ -18,7 +18,7 @@ public:
 
 Q_SIGNALS:
     void result(const QVariantMap &resultData);
-    void status(const qint8 rowId, const ResultStatus &resultStatus);
+    void status(const int rowId, const ResultStatus &resultStatus);
     void finished();
     void requestStop();
 

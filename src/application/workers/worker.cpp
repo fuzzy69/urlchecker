@@ -1,10 +1,10 @@
-#include "worker.h"
+﻿#include "worker.h"
 
 #include <QApplication>
 #include <QMutex>
 
 Worker::Worker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) :
-m_inputDataQueue(inputDataQueue), m_mutex(mutex), m_settings(settings)
+m_running(false), m_inputDataQueue(inputDataQueue), m_mutex(mutex), m_settings(settings)
 {
     Q_UNUSED(parent)
 }

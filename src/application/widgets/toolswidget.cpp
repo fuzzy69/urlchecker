@@ -1,4 +1,4 @@
-// #include <QTreeWidget>
+﻿// #include <QTreeWidget>
 // #include <QTreeWidgetItem>
 // #include <QList>
 // #include <QMap>
@@ -8,14 +8,15 @@
 // #include "tool.h"
 #include "../icons.h"
 
-ToolsWidget::ToolsWidget ( QWidget* parent )
+ToolsWidget::ToolsWidget ( QWidget* parent ) : QTreeWidget(parent)
 {
-    setFixedWidth(200);
+//    setFixedWidth(200);
+    setMinimumWidth(200);
     setColumnCount(1);
 //     setHeaderLabel(tr("Tools"));
     connect(this, &QTreeWidget::currentItemChanged, [this](QTreeWidgetItem *current, QTreeWidgetItem *previous){
-        Q_UNUSED(current);
-        Q_UNUSED(previous);
+        Q_UNUSED(current)
+        Q_UNUSED(previous)
         auto tool = m_tools.value(current->text(0));
         m_currentTool = tool;
         Q_EMIT toolSelected(tool);
@@ -26,7 +27,7 @@ ToolsWidget::ToolsWidget ( QWidget* parent )
         QIcon(ICON_CHAIN), 
         QString("Check URL Status"),
         QStringList() << "URL" << "Result" << "Status",
-        QList<float>() << 0.5 << 0.3
+        QList<float>() << 0.5f << 0.3f
     ));
     addTool(
         Tool(
@@ -34,7 +35,7 @@ ToolsWidget::ToolsWidget ( QWidget* parent )
             QIcon(QStringLiteral(ICON_ALEXA)), 
             QString(QStringLiteral("Check Alexa Rank")),
             QStringList() << QStringLiteral("URL") << QStringLiteral("Rank") << QStringLiteral("Status"),
-            QList<float>() << 0.5 << 0.3
+            QList<float>() << 0.5f << 0.3f
         )
     );
     addTool(
@@ -43,7 +44,7 @@ ToolsWidget::ToolsWidget ( QWidget* parent )
             QIcon(QStringLiteral(ICON_MASK)), 
             QString(QStringLiteral("Scrape Proxies")),
             QStringList() << QStringLiteral("Proxy") << QStringLiteral("Source") << QStringLiteral("Status"),
-            QList<float>() << 0.5 << 0.3
+            QList<float>() << 0.5f << 0.3f
         )
     );
     addTool(Tool(
@@ -51,7 +52,7 @@ ToolsWidget::ToolsWidget ( QWidget* parent )
         QIcon(ICON_HAMMER), 
         QString("Test"),
         QStringList() << "URL" << "Result" << "Status",
-        QList<float>() << 0.5 << 0.3
+        QList<float>() << 0.5f << 0.3f
     ));
 #if APP_DEBUG
     addTool(Tool(
@@ -59,7 +60,7 @@ ToolsWidget::ToolsWidget ( QWidget* parent )
         QIcon(ICON_QUESTION), 
         QString("Dummy"),
         QStringList() << "URL" << "Result" << "Status",
-        QList<float>() << 0.5 << 0.3
+        QList<float>() << 0.5f << 0.3f
     ));
 #endif
     
