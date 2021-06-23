@@ -27,7 +27,7 @@ void Worker::run()
         doWork(inputData);
     }
 
-    emit Worker::finished();
+    Q_EMIT Worker::finished();
 }
 
 void Worker::stop()

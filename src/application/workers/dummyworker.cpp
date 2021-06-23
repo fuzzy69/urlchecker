@@ -1,4 +1,4 @@
-#include "dummyworker.h"
+﻿#include "dummyworker.h"
 
 #include <QThread>
 
@@ -14,19 +14,22 @@ DummyWorker::DummyWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, c
 
 void DummyWorker::doWork(const QVariantMap& inputData)
 {
-//     static const int timeout = m_settings["timeout"].toInt() * MILLIS_IN_SECOND;
-//     static const bool verifySsl = m_settings["verifySsl"].toBool();
-
     QString url = inputData["url"].toString();
-    QThread::sleep(2);
+    int rowId = inputData["rowId"].toInt();
+
+    Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
+    QThread::sleep(1);
+
     auto data = QVariantMap
     {
         {QString("toolId"), QVariant(Tools::DUMMY)},
         {QString("toolName"), QVariant("Dummy")},
+        {QString("rowId"), QVariant(rowId)},
         {QString("URL"), QVariant(url)},
         {QString("Result"), QVariant("OK")},
-//         {QString("Status"), QVariant(ResultStatus::OK)}
+        {QString("Details"), QVariant("")},
     };
 
     Q_EMIT Worker::result(data);
+    Q_EMIT Worker::status(rowId, ResultStatus::OK);
 }

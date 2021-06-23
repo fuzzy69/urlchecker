@@ -1,4 +1,4 @@
-#include <QAction>
+﻿#include <QAction>
 #include <QApplication>
 #include <QDebug>
 #include <QFileDialog>
@@ -68,6 +68,11 @@ APPLICATION_VERSION )));
     initSettings(applicationDir);
     initUserAgents(applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE)));
     initProxies(applicationDir);
+    // Init recent files
+    for (QAction *action : m_recentFiles->actions())
+    {
+        m_recentUrlFilesMenu->addAction(action);
+    }
     //
     m_applicationStateMachine->start();
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
@@ -219,6 +224,7 @@ void MainWindow::createConnections()
     connect(m_removeSelectedAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected();});
     connect(m_removeDuplicatesAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates();});
     connect(m_removeAllAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows();});
+    //
 }
 
 void MainWindow::loadSettings()

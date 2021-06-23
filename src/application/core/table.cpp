@@ -1,4 +1,4 @@
-#include <QAbstractItemView>
+﻿#include <QAbstractItemView>
 #include <QBrush>
 #include <QColor>
 #include <QItemSelectionModel>

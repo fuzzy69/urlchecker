@@ -62,8 +62,10 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
 
     connect(m_startPushButton, &QPushButton::clicked, this, &WorkspaceWidget::startJob);
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
-    connect(m_testPushButton, &QPushButton::clicked, [] {
+    connect(m_testPushButton, &QPushButton::clicked, [this] {
         qDebug() << "Test";
+        qDebug() << m_toolsWidget->currentTool().columnRatios();
+        m_tablesWidget->focusedTable()->resizeColumns();
     });
 }
 
@@ -217,6 +219,8 @@ void WorkspaceWidget::stopJob()
 void WorkspaceWidget::onResult(const QVariantMap& resultData)
 {
     ++m_itemsDone;
+    if (m_itemsDone == 1)
+        m_tablesWidget->focusedTable()->resizeColumns();
 //     Tools currentToolId = static_cast<Tools>(resultData["toolId"].toInt());
     auto currentToolName = resultData["toolName"].toString();
     Tool currentTool = m_toolsWidget->getTool(currentToolName);
@@ -225,26 +229,26 @@ void WorkspaceWidget::onResult(const QVariantMap& resultData)
     QStringList row;
     for (const auto& column : currentTool.columns())
     {
-        if (column == QString("Status"))
-        {
-            ResultStatus status = static_cast<ResultStatus>(resultData["Status"].toInt());
-            switch (status)
-            {
-                case ResultStatus::OK:
-                    row << "Done";
-                    break;
-                case ResultStatus::PROCESSING:
-                    row << "...";
-                    break;
-                case ResultStatus::FAILED:
-                    row << "Failed";
-                    break;
-            }
-        }
-        else
-        {
+//        if (column == QString("Status"))
+//        {
+//            ResultStatus status = static_cast<ResultStatus>(resultData["Status"].toInt());
+//            switch (status)
+//            {
+//                case ResultStatus::OK:
+//                    row << "Done";
+//                    break;
+//                case ResultStatus::PROCESSING:
+//                    row << "...";
+//                    break;
+//                case ResultStatus::FAILED:
+//                    row << "Failed";
+//                    break;
+//            }
+//        }
+//        else
+//        {
         row << resultData[column].toString();
-        }
+//        }
     }
     m_tablesWidget->resultsTable()->appendRow(row);
     int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
@@ -253,7 +257,6 @@ void WorkspaceWidget::onResult(const QVariantMap& resultData)
 
 void WorkspaceWidget::onStatus(const int rowId, const ResultStatus& resultStatus)
 {
-//     qDebug() << "Status ...";
     QVariant status;
     switch (resultStatus)
     {
