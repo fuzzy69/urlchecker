@@ -53,7 +53,7 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
     void onResult(const QVariantMap &resultData);
-    void onStatus(const qint8 rowId, const ResultStatus &resultStatus);
+    void onStatus(const int rowId, const ResultStatus &resultStatus);
 
 private Q_SLOTS:
     void startJob();

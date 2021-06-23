@@ -251,7 +251,7 @@ void WorkspaceWidget::onResult(const QVariantMap& resultData)
     m_progressBar->setValue(progresPercentage);
 }
 
-void WorkspaceWidget::onStatus(const qint8 rowId, const ResultStatus& resultStatus)
+void WorkspaceWidget::onStatus(const int rowId, const ResultStatus& resultStatus)
 {
 //     qDebug() << "Status ...";
     QVariant status;
