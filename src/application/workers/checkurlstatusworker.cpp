@@ -14,7 +14,7 @@
 #include "../utils/requests.h"
 
 
-CheckUrlStatusWorker::CheckUrlStatusWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, mutex, settings, parent)
+CheckUrlStatusWorker::CheckUrlStatusWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {
 }
 
@@ -23,6 +23,7 @@ void CheckUrlStatusWorker::doWork(const QVariantMap& inputData)
     QString url = inputData["url"].toString();
     int rowId = inputData["rowId"].toInt();
 
+    logMessage(QString("Checking URL '%1'...").arg(url));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.head(url.toStdString());

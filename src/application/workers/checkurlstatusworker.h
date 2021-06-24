@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QObject>
 #include <QVariant>
@@ -13,7 +13,7 @@ class CheckUrlStatusWorker final : public Worker
     Q_OBJECT
 
 public:
-    explicit CheckUrlStatusWorker(QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
+    explicit CheckUrlStatusWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
 
 protected:
     void doWork(const QVariantMap &inputData) override;

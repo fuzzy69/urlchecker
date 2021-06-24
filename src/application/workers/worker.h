@@ -14,13 +14,16 @@ class Worker : public QObject
     Q_OBJECT
     
 public:
-    explicit Worker(QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
+    explicit Worker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
+
+    void logMessage(const QString& message);
 
 Q_SIGNALS:
     void result(const QVariantMap &resultData);
     void status(const int rowId, const ResultStatus &resultStatus);
     void finished();
     void requestStop();
+    void log(const QString& message);
 
 public Q_SLOTS:
     void run();
@@ -29,6 +32,7 @@ public Q_SLOTS:
 protected:
     virtual void doWork(const QVariantMap& inputData) = 0;
 
+    int m_id;
     bool m_running;
     QQueue<QVariantMap>* m_inputDataQueue;
     QMutex* m_mutex;

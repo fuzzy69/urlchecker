@@ -42,6 +42,7 @@ add_executable(
 
     src/application/widgets/filesystemwidget.cpp
     src/application/widgets/helpwidget.cpp
+    src/application/widgets/logwidget.cpp
     src/application/widgets/proxieswidget.cpp
     src/application/widgets/settingswidget.cpp
     src/application/widgets/sidebarwidget.cpp

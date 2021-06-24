@@ -10,7 +10,7 @@
 #include "../tools/tools.h"
 #include "../utils/requests.h"
 
-ScrapeProxiesWorker::ScrapeProxiesWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, mutex, settings, parent)
+ScrapeProxiesWorker::ScrapeProxiesWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {
 }
 
@@ -19,6 +19,7 @@ void ScrapeProxiesWorker::doWork(const QVariantMap& inputData)
     QString url = inputData["url"].toString();
     int rowId = inputData["rowId"].toInt();
 
+    logMessage(QString("Scraping proxies from: '%1'...").arg(url));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(url.toStdString());

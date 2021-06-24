@@ -19,6 +19,7 @@
 #include "../core/table.h"
 #include "../core/thread.h"
 #include "../widgets/filesystemwidget.h"
+#include "../widgets/logwidget.h"
 #include "../widgets/tableswidget.h"
 #include "../workers/dummyworker.h"
 #include "../workers/checkalexarank.h"
@@ -36,12 +37,14 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
 
     m_topLayout = new QHBoxLayout;
     m_bottomLayout = new QHBoxLayout;
-    m_splitter = new QSplitter(Qt::Horizontal);
+    m_horizontalSplitter = new QSplitter(Qt::Horizontal);
+    m_verticalSplitter = new QSplitter(Qt::Vertical);
 
     m_toolsWidget = new ToolsWidget;
     m_sideTabWidget = new QTabWidget;
     m_tablesWidget = new TablesWidget;
     m_fileSystemWidget = new FilesystemWidget;
+    m_logWidget = new LogWidget;
     m_startPushButton = new QPushButton(QIcon(ICON_CONTROL), tr("Start"));
     m_stopPushButton = new QPushButton(QIcon(ICON_CONTROL_STOP), tr("Stop"));
     m_testPushButton = new QPushButton(tr("Test"));
@@ -49,10 +52,13 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
     m_progressBar->setRange(0, 100);
     m_sideTabWidget->addTab(m_toolsWidget, QIcon(ICON_HAMMER), tr("Tools"));
     m_sideTabWidget->addTab(m_fileSystemWidget, QIcon(ICON_DRIVE), tr("Filesystem"));
-    m_splitter->addWidget(m_sideTabWidget);
-    m_splitter->addWidget(m_tablesWidget);
-    m_splitter->setSizes(QList<int>({300, 1000}));
-    m_topLayout->addWidget(m_splitter);
+    m_horizontalSplitter->addWidget(m_sideTabWidget);
+    m_horizontalSplitter->addWidget(m_tablesWidget);
+    m_horizontalSplitter->setSizes(QList<int>({300, 1000}));
+    m_verticalSplitter->addWidget(m_horizontalSplitter);
+    m_verticalSplitter->addWidget(m_logWidget);
+    m_verticalSplitter->setSizes(QList<int>({1000, 200}));
+    m_topLayout->addWidget(m_verticalSplitter);
     m_bottomLayout->addWidget(m_progressBar);
     m_bottomLayout->addWidget(m_startPushButton);
     m_bottomLayout->addWidget(m_stopPushButton);
@@ -64,8 +70,6 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
     connect(m_testPushButton, &QPushButton::clicked, [this] {
         qDebug() << "Test";
-        qDebug() << m_toolsWidget->currentTool().columnRatios();
-        m_tablesWidget->focusedTable()->resizeColumns();
     });
 }
 
@@ -154,8 +158,10 @@ void WorkspaceWidget::startJob()
     }
     const int parallelTasks = Settings::instance().value(QStringLiteral(TEXT_THREADS)).toInt();
     assert(parallelTasks > 0);
+    int workerId;
     for (int i = 0; i < parallelTasks;++i)
     {
+        workerId = i + 1;
         auto thread = new Thread;
         Worker *worker;
 
@@ -166,19 +172,19 @@ void WorkspaceWidget::startJob()
         switch (currentTool.id())
         {
             case Tools::CHECK_URL_STATUS:
-                worker = new CheckUrlStatusWorker(&m_inputDataQueue, &m_mutex, settings);
+                worker = new CheckUrlStatusWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
                 break;
             case Tools::CHECK_ALEXA_RANK:
-                worker = new CheckAlexaRankWorker(&m_inputDataQueue, &m_mutex, settings);
+                worker = new CheckAlexaRankWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
                 break;
             case Tools::SCRAPE_PROXIES:
-                worker = new ScrapeProxiesWorker(&m_inputDataQueue, &m_mutex, settings);
+                worker = new ScrapeProxiesWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
                 break;
             case Tools::TEST:
-                worker = new TestWorker(&m_inputDataQueue, &m_mutex, settings);
+                worker = new TestWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
                 break;
             default:
-                worker = new DummyWorker(&m_inputDataQueue, &m_mutex, settings);
+                worker = new DummyWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
         }
         m_threads.append(thread);
         m_workers.append(worker);
@@ -194,6 +200,7 @@ void WorkspaceWidget::startJob()
             qDebug() << "Worker finished";
         });
         connect(worker, &Worker::requestStop, worker, &Worker::stop);
+        connect(worker, &Worker::log, m_logWidget, &LogWidget::onLog);
     }
 
     Q_EMIT jobStarted();

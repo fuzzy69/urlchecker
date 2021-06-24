@@ -16,6 +16,7 @@ class QTreeWidget;
 class QVBoxLayout;
 
 class FilesystemWidget;
+class LogWidget;
 class Table;
 class TablesWidget;
 class Thread;
@@ -46,6 +47,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void jobStarted();
     void jobStopped();
+    void log(const QString& message);
 //     void test();
 
 protected:
@@ -64,6 +66,8 @@ private:
     QHBoxLayout *m_topLayout;
     QHBoxLayout *m_bottomLayout;
     QSplitter *m_splitter;
+    QSplitter *m_verticalSplitter;
+    QSplitter *m_horizontalSplitter;
 
     QPushButton *m_startPushButton;
     QPushButton *m_stopPushButton;
@@ -74,6 +78,7 @@ private:
     ToolsWidget *m_toolsWidget;
     FilesystemWidget *m_fileSystemWidget;
     TablesWidget *m_tablesWidget;
+    LogWidget *m_logWidget;
 
     QList<Thread*> m_threads;
     QList<Worker*> m_workers;

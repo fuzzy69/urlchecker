@@ -12,7 +12,7 @@
 #include "../utils/requests.h"
 
 
-CheckAlexaRankWorker::CheckAlexaRankWorker(QQueue< QVariantMap >* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent) : Worker(inputDataQueue, mutex, settings, parent)
+CheckAlexaRankWorker::CheckAlexaRankWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {
 }
 
@@ -22,6 +22,7 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
     QString alexaUrl("http://data.alexa.com/data?cli=10&url=" + url.host());
     int rowId = inputData["rowId"].toInt();
 
+    logMessage(QString("Checking URL '%1'...").arg(url.toString()));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(alexaUrl.toStdString());
