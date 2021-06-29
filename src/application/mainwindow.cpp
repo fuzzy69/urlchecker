@@ -31,6 +31,7 @@
 #include "core/recentfiles.h"
 #include "core/settings.h"
 #include "core/table.h"
+#include "widgets/filesystemwidget.h"
 #include "widgets/helpwidget.h"
 #include "widgets/proxieswidget.h"
 #include "widgets/settingswidget.h"
@@ -211,6 +212,18 @@ void MainWindow::createConnections()
         m_recentFiles->clear();
     });
     connect(m_quitAction, &QAction::triggered, this, &MainWindow::close);
+    // Window
+    connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
+    //Help menu
+    connect(m_aboutAction, &QAction::triggered, [&] {QMessageBox::about(this,
+        QString("About %1").arg(APPLICATION_TITLE),
+        QString(
+            "<h3>%1 %2</h3><br/>"
+            "%3<br/>"
+            "Fugue icons are provided by <a href='http://p.yusukekamiyamane.com/'>Yusuke"
+        "Kamiyamane</a>"
+        ).arg(APPLICATION_TITLE, APPLICATION_VERSION, APPLICATION_DESCRIPTION)
+    );});
     // Sidebar
     connect(m_workspaceAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
     connect(m_settingsAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
@@ -224,7 +237,12 @@ void MainWindow::createConnections()
     connect(m_removeSelectedAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected();});
     connect(m_removeDuplicatesAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates();});
     connect(m_removeAllAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows();});
-    //
+    // Tools
+    // Filesystem
+    connect(m_workspaceWidget->filesystemWidget(), &FilesystemWidget::urlFileDoubleClicked, [this](const QString& filePath){
+        qDebug() << "123" << filePath;
+        importUrlFile(filePath);
+    });
 }
 
 void MainWindow::loadSettings()
