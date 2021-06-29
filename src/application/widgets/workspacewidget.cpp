@@ -86,6 +86,11 @@ ToolsWidget * WorkspaceWidget::toolsWidget()
     return m_toolsWidget;
 }
 
+FilesystemWidget *WorkspaceWidget::filesystemWidget()
+{
+    return m_fileSystemWidget;
+}
+
 TablesWidget * WorkspaceWidget::tablesWidget()
 {
     return m_tablesWidget;

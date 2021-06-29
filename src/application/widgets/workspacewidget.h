@@ -30,6 +30,7 @@ public:
     explicit WorkspaceWidget(QWidget *parent = nullptr);
 
     ToolsWidget* toolsWidget();
+    FilesystemWidget* filesystemWidget();
     TablesWidget* tablesWidget();
     void setCurrentProgress(int value);
 
