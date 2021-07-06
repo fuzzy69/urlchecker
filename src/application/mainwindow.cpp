@@ -31,6 +31,7 @@
 #include "core/recentfiles.h"
 #include "core/settings.h"
 #include "core/table.h"
+#include "core/thread.h"
 #include "tools/tool.h"
 #include "widgets/filesystemwidget.h"
 #include "widgets/helpwidget.h"
@@ -219,8 +220,10 @@ void MainWindow::createConnections()
         m_recentFiles->clear();
     });
     connect(m_quitAction, &QAction::triggered, this, &MainWindow::close);
+
     // Window
     connect(m_centerWindowAction, &QAction::triggered, this, &MainWindow::centerWindow);
+
     //Help menu
     connect(m_aboutAction, &QAction::triggered, [&] {QMessageBox::about(this,
         QString("About %1").arg(APPLICATION_TITLE),
@@ -231,24 +234,34 @@ void MainWindow::createConnections()
         "Kamiyamane</a>"
         ).arg(APPLICATION_TITLE, APPLICATION_VERSION, APPLICATION_DESCRIPTION)
     );});
+
     // Sidebar
     connect(m_workspaceAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
     connect(m_settingsAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
     connect(m_proxiesAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
     connect(m_helpAction, &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
+
     // Misc
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
+
+    // Workspace widget
+    connect(m_workspaceWidget, &WorkspaceWidget::jobStarted, m_applicationStateMachine, &ApplicationStateMachine::jobStart);
+    connect(m_workspaceWidget, &WorkspaceWidget::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStop);
+
     // Table actions
     connect(m_selectAllAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->selectAll();});
     connect(m_invertSelectionAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->invertSelection();});
     connect(m_removeSelectedAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected();});
     connect(m_removeDuplicatesAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates();});
     connect(m_removeAllAction, &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows();});
+
     // Tools
+
     // Filesystem
     connect(m_workspaceWidget->filesystemWidget(), &FilesystemWidget::urlFileDoubleClicked, [this](const QString& filePath){
         importUrlFile(filePath);
     });
+
     // Statusbar
 //    connect(m_sidebarPushButton, &QPushButton::clicked, [this](){
 //        m_sideBarWidget->setVisible(!m_sideBarWidget->isVisible());
@@ -258,6 +271,27 @@ void MainWindow::createConnections()
     });
     connect(m_logPushButton, &QPushButton::clicked, [this](){
         m_workspaceWidget->toggleLogWidget();
+    });
+
+    // Application states
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationStarted, [this](){
+        m_workspaceWidget->onApplicationStart();
+    });
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationIdling, [this](){
+        m_workspaceWidget->onApplicationReady();
+        m_statusBarLabel->setText("Ready.");
+    });
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationExiting, [this](){
+        m_workspaceWidget->onApplicationExit();
+    });
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStarted, [this](){
+        m_workspaceWidget->onJobStart();
+    });
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStopping, [this](){
+        m_workspaceWidget->onJobStop();
+    });
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobFinished, [this](){
+        m_workspaceWidget->onJobDone();
     });
 }
 
@@ -302,6 +336,9 @@ QMessageBox::Yes | QMessageBox::No);
 // Slots
 void MainWindow::onPulse()
 {
+    m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
+    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING && Thread::count() == 0)
+        emit m_applicationStateMachine->jobDone();
 }
 
 void MainWindow::importUrlFile(const QString &filePath)
