@@ -81,6 +81,16 @@ void WorkspaceWidget::toggleTools()
         m_toolsWidget->setVisible(true);
 }
 
+void WorkspaceWidget::toggleSideTabWidget()
+{
+    m_sideTabWidget->setVisible(!m_sideTabWidget->isVisible());
+}
+
+void WorkspaceWidget::toggleLogWidget()
+{
+    m_logWidget->setVisible(!m_logWidget->isVisible());
+}
+
 ToolsWidget * WorkspaceWidget::toolsWidget()
 {
     return m_toolsWidget;
@@ -94,6 +104,11 @@ FilesystemWidget *WorkspaceWidget::filesystemWidget()
 TablesWidget * WorkspaceWidget::tablesWidget()
 {
     return m_tablesWidget;
+}
+
+LogWidget *WorkspaceWidget::logWidget()
+{
+    return m_logWidget;
 }
 
 void WorkspaceWidget::setCurrentProgress(int value)

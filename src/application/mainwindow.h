@@ -98,6 +98,8 @@ private:
     // Statusbar
     QStatusBar *m_statusBar;
     QPushButton *m_toolsPushButton;
+//    QPushButton *m_sidebarPushButton;
+    QPushButton *m_logPushButton;
     QLabel *m_activeThreadsLabel;
     QLabel *m_statusBarLabel;
 

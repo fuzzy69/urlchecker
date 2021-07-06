@@ -31,12 +31,15 @@
 #include "core/recentfiles.h"
 #include "core/settings.h"
 #include "core/table.h"
+#include "tools/tool.h"
 #include "widgets/filesystemwidget.h"
 #include "widgets/helpwidget.h"
+//#include "widgets/logwidget.h"
 #include "widgets/proxieswidget.h"
 #include "widgets/settingswidget.h"
 #include "widgets/sidebarwidget.h"
 #include "widgets/tableswidget.h"
+#include "widgets/toolswidget.h"
 #include "widgets/workspacewidget.h"
 
 using my::filesystem::File;
@@ -193,11 +196,15 @@ void MainWindow::createStatusBar()
     m_statusBar = new QStatusBar;
     setStatusBar(m_statusBar);
 
-    m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), "");
+//    m_sidebarPushButton = new QPushButton(QIcon(ICON_BOOK_OPEN_LIST), QStringLiteral(" Sidebar"));
+    m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), QStringLiteral(" Tools"));
+    m_logPushButton = new QPushButton(QIcon(ICON_DOCUMENT_LIST), QStringLiteral(" Log"));
     m_statusBarLabel = new QLabel;
     m_activeThreadsLabel = new QLabel(tr(TEXT_ACTIVE_THREADS));
 
     m_statusBar->addPermanentWidget(m_toolsPushButton);
+//    m_statusBar->addPermanentWidget(m_sidebarPushButton);
+    m_statusBar->addPermanentWidget(m_logPushButton);
     m_statusBar->addPermanentWidget(m_statusBarLabel, 1);
     m_statusBar->addPermanentWidget(m_activeThreadsLabel);
 }
@@ -240,8 +247,17 @@ void MainWindow::createConnections()
     // Tools
     // Filesystem
     connect(m_workspaceWidget->filesystemWidget(), &FilesystemWidget::urlFileDoubleClicked, [this](const QString& filePath){
-        qDebug() << "123" << filePath;
         importUrlFile(filePath);
+    });
+    // Statusbar
+//    connect(m_sidebarPushButton, &QPushButton::clicked, [this](){
+//        m_sideBarWidget->setVisible(!m_sideBarWidget->isVisible());
+//    });
+    connect(m_toolsPushButton, &QPushButton::clicked, [this](){
+        m_workspaceWidget->toggleSideTabWidget();
+    });
+    connect(m_logPushButton, &QPushButton::clicked, [this](){
+        m_workspaceWidget->toggleLogWidget();
     });
 }
 

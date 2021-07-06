@@ -32,10 +32,13 @@ public:
     ToolsWidget* toolsWidget();
     FilesystemWidget* filesystemWidget();
     TablesWidget* tablesWidget();
+    LogWidget* logWidget();
     void setCurrentProgress(int value);
 
 public Q_SLOTS:
     void toggleTools();
+    void toggleSideTabWidget();
+    void toggleLogWidget();
 
     // TODO: managing application states doesn't look too good, find a better approach
     void onApplicationStart();
