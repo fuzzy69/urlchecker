@@ -3,6 +3,7 @@
 #include <QWidget>
 
 class QDirModel;
+class QFileSystemModel;
 class QHBoxLayout;
 class QTreeView;
 
@@ -18,5 +19,5 @@ Q_SIGNALS:
 private:
     QHBoxLayout *m_mainLayout;
     QTreeView* m_filesystemTreeView;
-    QDirModel* m_filesystemModel;
+    QFileSystemModel* m_filesystemModel;
 };
