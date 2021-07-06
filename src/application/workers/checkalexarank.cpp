@@ -3,6 +3,7 @@
 #include <optional>
 
 #include <QUrl>
+#include <QDebug>
 
 #include "resultstatus.h"
 #include "../config.h"
@@ -29,16 +30,17 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
 
     QString rank("");
     auto status = ResultStatus::FAILED;
-    QString details("");
+    QString details;
     std::optional<int> rank_result = extract_alexa_rank(response.text);
     if (rank_result)
     {
         status = ResultStatus::OK;
         rank = QString::number(rank_result.value());
+        details = QStringLiteral("OK");
     }
     else
     {
-        details = QString("Failed extracting rank value");
+        details = QStringLiteral("Failed extracting rank value");
     }
 
     auto data = QVariantMap
@@ -47,7 +49,7 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
         {QString("toolName"), QVariant("Check Alexa Rank")},
         {QString("rowId"), QVariant(inputData["rowId"].toInt())},
         {QString("URL"), QVariant(url)},
-        {QString("Result"), QVariant(rank)},
+        {QString("Rank"), QVariant(rank)},
         {QString("Details"), QVariant(details)}
     };
 
