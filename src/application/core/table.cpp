@@ -59,6 +59,16 @@ int Table::rowCount() const
     return m_tableModel->rowCount();
 }
 
+int Table::columnCount() const
+{
+    return m_columns.count();
+}
+
+QStringList Table::columnNames() const
+{
+    return m_columns;
+}
+
 bool Table::removeRow(int rowIndex)
 {
     return m_tableModel->removeRow(rowIndex);

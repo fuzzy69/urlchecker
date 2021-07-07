@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QColor>
 #include <QObject>
@@ -17,6 +17,8 @@ public:
     void setColumnRatios(QList<float> columnRatios);
     void resizeColumns();
     int rowCount() const;
+    int columnCount() const;
+    QStringList columnNames() const;
     bool removeRow(int rowIndex);
     void removeAllRows();
     void removeDuplicates();

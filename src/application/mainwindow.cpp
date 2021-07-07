@@ -389,14 +389,40 @@ void MainWindow::exportResults()
         QMessageBox::information(this, QStringLiteral("Export Results"), QStringLiteral("Nothing to export!"));
         return;
     }
-    QString filePath(QDir(m_lastDirectory).absoluteFilePath(QStringLiteral("results.txt")));
-    filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Export Results"), filePath, QStringLiteral("Text files (*.txt)"));
-    QStringList urls;
-    for (int i = 0; i < resultsTable->rowCount(); ++i)
+//    QString filePath(QDir(m_lastDirectory).absoluteFilePath(QStringLiteral("results")));
+    QString filePath(QDir(m_lastDirectory).absoluteFilePath(""));
+    filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Export Results"), filePath, QStringLiteral("Text files (*.txt);;CSV files (*.csv)"));
+    QFileInfo fileInfo(filePath);
+    QStringList lines;
+    if (fileInfo.suffix().toLower() == QStringLiteral("csv"))
     {
-        urls << resultsTable->cell(i, 0).toString();
+        lines << resultsTable->columnNames().join(QStringLiteral(","));
+        for (int i = 0; i < resultsTable->rowCount(); ++i)
+        {
+            QStringList cells;
+            for (int j = 0; j < resultsTable->columnCount(); ++j)
+            {
+                cells.append(resultsTable->cell(i, j).toString());
+            }
+            lines << cells.join(QStringLiteral(","));
+        }
     }
-    File::writeTextFile(filePath, urls);
+    else if (fileInfo.suffix().toLower() == QStringLiteral("txt"))
+//    else
+    {
+//        if (fileInfo.suffix().toLower() != QStringLiteral("txt"))
+//            filePath += QStringLiteral(".txt");
+        for (int i = 0; i < resultsTable->rowCount(); ++i)
+        {
+            lines << resultsTable->cell(i, 0).toString();
+        }
+    }
+    else
+    {
+        QMessageBox::warning(this, QStringLiteral("Export Results"), QStringLiteral("Unsupported file type!"));
+        return;
+    }
+    File::writeTextFile(filePath, lines);
     m_lastDirectory = QDir(filePath).absolutePath();
 }
 
