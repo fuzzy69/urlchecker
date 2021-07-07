@@ -10,7 +10,7 @@
 
 #include "table.h"
 
-Table::Table(QStringList columns, QObject *parent) : QObject(parent), m_columns(columns)
+Table::Table(const QStringList& columns, QObject *parent) : QObject(parent), m_columns(columns)
 {
     m_tableView = new QTableView;
     m_tableModel = new QStandardItemModel;
@@ -19,7 +19,7 @@ Table::Table(QStringList columns, QObject *parent) : QObject(parent), m_columns(
     m_tableView->horizontalHeader()->setStretchLastSection(true);
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_tableView->setSelectionMode(QAbstractItemView::MultiSelection);
+//    m_tableView->setSelectionMode(QAbstractItemView::MultiSelection);
 
     connect(m_tableView, &QTableView::doubleClicked, this, &Table::doubleClicked);
 }
@@ -40,7 +40,7 @@ void Table::resetColumns(const QStringList &columns)
     m_tableView->setModel(m_tableModel);
 }
 
-void Table::setColumnRatios(QList<float> columnRatios)
+void Table::setColumnRatios(const QList<float>& columnRatios)
 {
     m_columnRatios = columnRatios;
 }
@@ -50,7 +50,7 @@ void Table::resizeColumns()
     for (int i = 0; i < m_tableModel->columnCount(); ++i)
     {
         if (i < m_columnRatios.count())
-            m_tableView->setColumnWidth(i, m_tableView->geometry().width() * m_columnRatios.at(i));
+            m_tableView->setColumnWidth(i, static_cast<int>(static_cast<float>(m_tableView->geometry().width()) * m_columnRatios.at(i)));
     }
 }
 
@@ -172,7 +172,7 @@ QSet<int> Table::selectedRows() const
     return rowsIndexes;
 }
 
-void Table::name(QString name)
+void Table::name(const QString& name)
 {
     m_name = name;
 }

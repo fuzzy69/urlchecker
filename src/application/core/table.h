@@ -11,10 +11,10 @@ class Table : public QObject
 {
     Q_OBJECT
 public:
-    explicit Table(QStringList columns, QObject* parent = nullptr);
-    ~Table();
+    explicit Table(const QStringList& columns, QObject* parent = nullptr);
+    ~Table() override;
 
-    void setColumnRatios(QList<float> columnRatios);
+    void setColumnRatios(const QList<float>& columnRatios);
     void resizeColumns();
     int rowCount() const;
     int columnCount() const;
@@ -32,7 +32,7 @@ public:
     void invertSelection();
     QSet<int> selectedRows() const;
     void setRowColor(int rowIndex, const QColor &textColor, const QColor &backgroundColor);
-    void name(QString name);
+    void name(const QString& name);
     QString name() const;
     QTableView* tableView() const;
     QStandardItemModel* tableModel() const;
