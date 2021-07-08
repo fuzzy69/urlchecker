@@ -56,6 +56,7 @@ add_executable(
     src/application/workers/scrapeproxies.cpp
     src/application/workers/testworker.cpp
     src/application/workers/worker.cpp
+    src/application/workers/workerfactory.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)

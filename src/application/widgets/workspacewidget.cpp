@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QProgressBar>
 #include <QSplitter>
@@ -21,11 +22,13 @@
 #include "../widgets/filesystemwidget.h"
 #include "../widgets/logwidget.h"
 #include "../widgets/tableswidget.h"
-#include "../workers/dummyworker.h"
-#include "../workers/checkalexarank.h"
-#include "../workers/checkurlstatusworker.h"
-#include "../workers/scrapeproxies.h"
-#include "../workers/testworker.h"
+
+#include "../workers/workerfactory.h"
+//#include "../workers/dummyworker.h"
+//#include "../workers/checkalexarank.h"
+//#include "../workers/checkurlstatusworker.h"
+//#include "../workers/scrapeproxies.h"
+//#include "../workers/testworker.h"
 #include "../workers/worker.h"
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : 
@@ -160,6 +163,11 @@ void WorkspaceWidget::resizeEvent(QResizeEvent* event)
 
 void WorkspaceWidget::startJob()
 {
+    if (m_tablesWidget->inputTable()->rowCount() == 0)
+    {
+        QMessageBox::warning(this, QStringLiteral("Start Job"), QStringLiteral("Nothing to do. Source URLs table is empty!"));
+        return;
+    }
     qRegisterMetaType<ResultStatus>();
     auto currentTool = toolsWidget()->currentTool();
     m_tablesWidget->resultsTable()->resetColumns(currentTool.columns());
@@ -178,10 +186,10 @@ void WorkspaceWidget::startJob()
     }
     const int parallelTasks = Settings::instance().value(QStringLiteral(TEXT_THREADS)).toInt();
     assert(parallelTasks > 0);
-    int workerId;
     for (int i = 0; i < parallelTasks;++i)
     {
-        workerId = i + 1;
+        int workerId(i+ 1);
+//        workerId = i + 1;
         auto thread = new Thread;
         Worker *worker;
 
@@ -189,23 +197,24 @@ void WorkspaceWidget::startJob()
         QVariantMap settings;
         settings.insert(QString("timeout"), Settings::instance().value(QStringLiteral(TEXT_TIMEOUT)));
         settings.insert(QString("useProxies"), Settings::instance().value(QStringLiteral(TEXT_USE_PROXIES)));
-        switch (currentTool.id())
-        {
-            case Tools::CHECK_URL_STATUS:
-                worker = new CheckUrlStatusWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-                break;
-            case Tools::CHECK_ALEXA_RANK:
-                worker = new CheckAlexaRankWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-                break;
-            case Tools::SCRAPE_PROXIES:
-                worker = new ScrapeProxiesWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-                break;
-            case Tools::TEST:
-                worker = new TestWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-                break;
-            default:
-                worker = new DummyWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-        }
+        worker = workerFactory(currentTool.id(), workerId, &m_inputDataQueue, &m_mutex, settings);
+//        switch (currentTool.id())
+//        {
+//            case Tools::CHECK_URL_STATUS:
+//                worker = new CheckUrlStatusWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
+//                break;
+//            case Tools::CHECK_ALEXA_RANK:
+//                worker = new CheckAlexaRankWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
+//                break;
+//            case Tools::SCRAPE_PROXIES:
+//                worker = new ScrapeProxiesWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
+//                break;
+//            case Tools::TEST:
+//                worker = new TestWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
+//                break;
+//            default:
+//                worker = new DummyWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
+//        }
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
