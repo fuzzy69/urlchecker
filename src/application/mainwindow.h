@@ -2,7 +2,7 @@
 
 #include <QDir>
 
-#include "core/basemainwindow.h"
+#include "widgets/mainwindowbase.h"
 
 class QHBoxLayout;
 class QLabel;
@@ -17,7 +17,7 @@ class SettingsWidget;
 class SideBarWidget;
 class WorkspaceWidget;
 
-class MainWindow final : public BaseMainWindow
+class MainWindow final : public MainWindowBase
 {
     Q_OBJECT
 

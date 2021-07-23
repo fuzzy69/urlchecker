@@ -1,19 +1,19 @@
-#include <QApplication>
+﻿#include <QApplication>
 #include <QDesktopWidget>
 #include <QMainWindow>
 
-#include "basemainwindow.h"
+#include "mainwindowbase.h"
 
 
-BaseMainWindow::BaseMainWindow ( QWidget* parent ) : QMainWindow ( parent )
+MainWindowBase::MainWindowBase ( QWidget* parent ) : QMainWindow ( parent )
 {
 }
 
-BaseMainWindow::~BaseMainWindow()
+MainWindowBase::~MainWindowBase()
 {
 }
 
-void BaseMainWindow::centerWindow()
+void MainWindowBase::centerWindow()
 {
     QRect fg = this->frameGeometry();
     QPoint screenCenter = qApp->desktop()->availableGeometry().center();

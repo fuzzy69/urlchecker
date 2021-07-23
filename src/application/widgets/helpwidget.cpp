@@ -1,4 +1,4 @@
-#include "helpwidget.h"
+﻿#include "helpwidget.h"
 
 #include <QApplication>
 #include <QDir>
@@ -12,7 +12,7 @@
 #include <QDebug>
 #include <QSplitter>
 
-#include "../core/helpbrowser.h"
+#include "helpbrowser.h"
 #include "../icons.h"
 
 HelpWidget::HelpWidget(QWidget* parent) : QWidget(parent)

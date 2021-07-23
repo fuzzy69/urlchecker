@@ -50,7 +50,7 @@ using my::browser::UserAgentsManager;
 using my::data::USER_AGENTS_TEXT;
 
 MainWindow::MainWindow ( QWidget* parent ) : 
-    BaseMainWindow(parent)
+    MainWindowBase(parent)
 {
     setWindowTitle(QStringLiteral("%1 - %2").arg( QStringLiteral(APPLICATION_TITLE) ).arg(QStringLiteral( 
 APPLICATION_VERSION )));

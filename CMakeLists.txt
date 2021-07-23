@@ -26,8 +26,6 @@ add_executable(
     src/application/mainwindow.cpp
 
     src/application/core/applicationstatemachine.cpp
-    src/application/core/basemainwindow.cpp
-    src/application/core/helpbrowser.cpp
     src/application/core/misc.cpp
     src/application/core/recentfiles.cpp
     src/application/core/settings.cpp
@@ -48,8 +46,10 @@ add_executable(
     src/application/utils/requests.cpp
 
     src/application/widgets/filesystemwidget.cpp
+    src/application/widgets/helpbrowser.cpp
     src/application/widgets/helpwidget.cpp
     src/application/widgets/logwidget.cpp
+    src/application/widgets/mainwindowbase.cpp
     src/application/widgets/proxieswidget.cpp
     src/application/widgets/settingswidget.cpp
     src/application/widgets/sidebarwidget.cpp

@@ -1,15 +1,15 @@
-#pragma once
+﻿#pragma once
 
 #include <QMainWindow>
 
 
-class BaseMainWindow : public QMainWindow
+class MainWindowBase : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit BaseMainWindow(QWidget *parent = nullptr);
-    virtual ~BaseMainWindow();
+    explicit MainWindowBase(QWidget *parent = nullptr);
+    virtual ~MainWindowBase();
 
 protected:
     void centerWindow();
