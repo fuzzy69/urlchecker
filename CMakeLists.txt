@@ -33,10 +33,17 @@ add_executable(
     src/application/core/settings.cpp
     src/application/core/table.cpp
     src/application/core/thread.cpp
+    src/application/core/worker.cpp
     
-    src/application/tools/proxytools.cpp
-    src/application/tools/ranktools.cpp
+    src/application/tools/alexarank/checkalexarankworker.cpp
+    src/application/tools/alexarank/utilities.cpp
+    src/application/tools/dummy/dummyworker.cpp
+    src/application/tools/scrapeproxies/scrapeproxiesworker.cpp
+    src/application/tools/scrapeproxies/utilities.cpp
+    src/application/tools/test/testworker.cpp
+    src/application/tools/urlstatus/checkurlstatusworker.cpp
     src/application/tools/tool.cpp
+    src/application/tools/workerfactory.cpp
 
     src/application/utils/requests.cpp
 
@@ -49,14 +56,6 @@ add_executable(
     src/application/widgets/tableswidget.cpp
     src/application/widgets/toolswidget.cpp
     src/application/widgets/workspacewidget.cpp
-    
-    src/application/workers/checkalexarank.cpp
-    src/application/workers/checkurlstatusworker.cpp
-    src/application/workers/dummyworker.cpp
-    src/application/workers/scrapeproxies.cpp
-    src/application/workers/testworker.cpp
-    src/application/workers/worker.cpp
-    src/application/workers/workerfactory.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)

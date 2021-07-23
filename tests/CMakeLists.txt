@@ -7,9 +7,8 @@ target_link_libraries(catchmain PUBLIC catch)
 add_library(
     urlcheckertests
     OBJECT
-    #${CMAKE_SOURCE_DIR}/src/application/common/settings.cpp
-    ${CMAKE_SOURCE_DIR}/src/application/tools/proxytools.cpp
-    ${CMAKE_SOURCE_DIR}/src/application/tools/ranktools.cpp
+    ${CMAKE_SOURCE_DIR}/src/application/tools/alexarank/utilities.cpp
+    ${CMAKE_SOURCE_DIR}/src/application/tools/scrapeproxies/utilities.cpp
     ${CMAKE_SOURCE_DIR}/src/application/utils/requests.cpp
 )
 target_include_directories(urlcheckertests INTERFACE ${CMAKE_SOURCE_DIR}/src)

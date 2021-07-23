@@ -1,6 +1,6 @@
-﻿#include "proxytools.h"
+﻿#include <regex>
 
-#include <regex>
+#include "utilities.h"
 
 std::vector<std::string> extract_proxies(const std::string& text)
 {

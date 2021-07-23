@@ -1,17 +1,14 @@
-﻿#include <QObject>
-#include <QDebug>
-#include <QThread>
-#include <QQueue>
-#include <QMutex>
-#include <QApplication>
+﻿#include <optional>
+
+#include <QUrl>
 #include <QDebug>
 
 #include "checkurlstatusworker.h"
-#include "resultstatus.h"
-#include "../config.h"
-#include "../constants.h"
-#include "../tools/tools.h"
-#include "../utils/requests.h"
+#include "../../core/resultstatus.h"
+#include "../../config.h"
+#include "../../constants.h"
+#include "../tools.h"
+#include "../../utils/requests.h"
 
 
 CheckUrlStatusWorker::CheckUrlStatusWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)

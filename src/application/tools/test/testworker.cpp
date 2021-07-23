@@ -1,18 +1,15 @@
-﻿#include "testworker.h"
+﻿#include <optional>
 
-// #include <QObject>
-// #include <QDebug>
-// #include <QThread>
-// #include <QQueue>
-// #include <QMutex>
-// #include <QApplication>
+#include <QDebug>
+#include <QUrl>
+#include <QThread>
 
-#include "resultstatus.h"
-#include "../config.h"
-#include "../constants.h"
-#include "../tools/tools.h"
-#include "../utils/requests.h"
-
+#include "testworker.h"
+#include "../../core/resultstatus.h"
+#include "../../config.h"
+#include "../../constants.h"
+#include "../tools.h"
+#include "../../utils/requests.h"
 
 TestWorker::TestWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {
@@ -21,7 +18,6 @@ TestWorker::TestWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mute
 void TestWorker::doWork(const QVariantMap& inputData)
 {
     Q_UNUSED(inputData)
-//    QString url = inputData["url"].toString();
     QString url = "http://httpbin.org/ip";
     int rowId = inputData["rowId"].toInt();
 

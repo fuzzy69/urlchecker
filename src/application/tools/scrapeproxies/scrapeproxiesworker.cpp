@@ -1,14 +1,15 @@
-﻿#include "scrapeproxies.h"
+﻿#include <optional>
 
-#include <QObject>
 #include <QUrl>
+#include <QDebug>
 
-#include "resultstatus.h"
-#include "../config.h"
-#include "../constants.h"
-#include "../tools/proxytools.h"
-#include "../tools/tools.h"
-#include "../utils/requests.h"
+#include "scrapeproxiesworker.h"
+#include "utilities.h"
+#include "../../core/resultstatus.h"
+#include "../../config.h"
+#include "../../constants.h"
+#include "../tools.h"
+#include "../../utils/requests.h"
 
 ScrapeProxiesWorker::ScrapeProxiesWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {

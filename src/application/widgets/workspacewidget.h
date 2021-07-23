@@ -4,7 +4,7 @@
 #include <QQueue>
 #include <QWidget>
 
-#include "../workers/resultstatus.h"
+#include "../core/resultstatus.h"
 
 class QHBoxLayout;
 class QPushButton;

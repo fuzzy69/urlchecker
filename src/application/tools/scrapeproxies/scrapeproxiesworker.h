@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "worker.h"
+#include "../../core/worker.h"
 
 class ScrapeProxiesWorker final: public Worker
 {

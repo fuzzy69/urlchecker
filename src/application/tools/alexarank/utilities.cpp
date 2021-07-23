@@ -1,4 +1,6 @@
-#include <regex>
+﻿#include <regex>
+
+#include "utilities.h"
 
 std::optional<int> extract_alexa_rank(const std::string& html)
 {

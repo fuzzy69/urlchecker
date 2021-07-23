@@ -1,11 +1,11 @@
 ﻿#include "workerfactory.h"
 
 #include "../tools/tools.h"
-#include "checkalexarank.h"
-#include "checkurlstatusworker.h"
-#include "dummyworker.h"
-#include "scrapeproxies.h"
-#include "testworker.h"
+#include "alexarank/checkalexarankworker.h"
+#include "urlstatus/checkurlstatusworker.h"
+#include "dummy/dummyworker.h"
+#include "scrapeproxies/scrapeproxiesworker.h"
+#include "test/testworker.h"
 
 Worker *workerFactory(int id, int workerId, QQueue<QVariantMap> *inputDataQueue, QMutex *mutex, const QVariantMap &settings)
 {

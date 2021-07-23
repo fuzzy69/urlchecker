@@ -1,10 +1,10 @@
-#include <filesystem>
+﻿#include <filesystem>
 #include <iostream>
 #include <string>
 
 #include "catch.hpp"
 
-#include "application/tools/proxytools.h"
+#include "application/tools/scrapeproxies/utilities.h"
 
 
 TEST_CASE("Test proxy tools functions", "[proxytools]")

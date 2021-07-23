@@ -23,13 +23,8 @@
 #include "../widgets/logwidget.h"
 #include "../widgets/tableswidget.h"
 
-#include "../workers/workerfactory.h"
-//#include "../workers/dummyworker.h"
-//#include "../workers/checkalexarank.h"
-//#include "../workers/checkurlstatusworker.h"
-//#include "../workers/scrapeproxies.h"
-//#include "../workers/testworker.h"
-#include "../workers/worker.h"
+#include "../tools/workerfactory.h"
+#include "../core/worker.h"
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : 
     QWidget(parent), m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>())

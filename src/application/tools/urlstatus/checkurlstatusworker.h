@@ -1,12 +1,6 @@
 ﻿#pragma once
 
-#include <QObject>
-#include <QVariant>
-#include <QMap>
-#include <QMutex>
-
-#include "worker.h"
-
+#include "../../core/worker.h"
 
 class CheckUrlStatusWorker final : public Worker
 {

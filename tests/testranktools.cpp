@@ -1,10 +1,10 @@
-#include <filesystem>
+﻿#include <filesystem>
 #include <iostream>
 #include <string>
 
 #include "catch.hpp"
 
-#include "application/tools/ranktools.h"
+#include "application/tools/alexarank/utilities.h"
 
 
 TEST_CASE("Test rank tools functions", "[ranktools]")
