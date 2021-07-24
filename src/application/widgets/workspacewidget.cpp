@@ -25,6 +25,7 @@
 
 #include "../tools/workerfactory.h"
 #include "../core/worker.h"
+#include "../core/toolsmanager.h"
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : 
     QWidget(parent), m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>())
@@ -164,7 +165,8 @@ void WorkspaceWidget::startJob()
         return;
     }
     qRegisterMetaType<ResultStatus>();
-    auto currentTool = toolsWidget()->currentTool();
+//    auto currentTool = toolsWidget()->currentTool();
+    auto currentTool = ToolsManager::instance().currentTool();
     m_tablesWidget->resultsTable()->resetColumns(currentTool.columns());
     m_tablesWidget->resultsTable()->setColumnRatios(currentTool.columnRatios());
     m_itemsDone = 0;
@@ -254,7 +256,8 @@ void WorkspaceWidget::onResult(const QVariantMap& resultData)
         m_tablesWidget->focusedTable()->resizeColumns();
 //     Tools currentToolId = static_cast<Tools>(resultData["toolId"].toInt());
     auto currentToolName = resultData["toolName"].toString();
-    Tool currentTool = m_toolsWidget->getTool(currentToolName);
+//    Tool currentTool = m_toolsWidget->getTool(currentToolName);
+    auto currentTool = ToolsManager::instance().getTool(currentToolName);
 //     int rowIndex = resultData["rowId"].toInt();
     QString result = resultData["result"].toString();
     QStringList row;

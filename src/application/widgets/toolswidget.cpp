@@ -1,5 +1,6 @@
 ﻿#include "toolswidget.h"
 #include "../icons.h"
+#include "../core/toolsmanager.h"
 
 ToolsWidget::ToolsWidget ( QWidget* parent ) : QTreeWidget(parent)
 {
@@ -9,53 +10,15 @@ ToolsWidget::ToolsWidget ( QWidget* parent ) : QTreeWidget(parent)
     connect(this, &QTreeWidget::currentItemChanged, [this](QTreeWidgetItem *current, QTreeWidgetItem *previous){
         Q_UNUSED(current)
         Q_UNUSED(previous)
-        auto tool = m_tools.value(current->text(0));
-        m_currentTool = tool;
-        Q_EMIT toolSelected(tool);
+        ToolsManager::instance().setCurrentTool(current->text(0));
+        Q_EMIT toolSelected(current->text(0));
     });
-    addTool(
-        Tool(
-        Tools::CHECK_URL_STATUS, 
-        QIcon(ICON_CHAIN), 
-        QString(QStringLiteral("Check URL Status")),
-        QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),
-        QList<float>() << 0.5f << 0.1f
-    ));
-    addTool(
-        Tool(
-            Tools::CHECK_ALEXA_RANK, 
-            QIcon(QStringLiteral(ICON_ALEXA)), 
-            QString(QStringLiteral("Check Alexa Rank")),
-            QStringList() << QStringLiteral("URL") << QStringLiteral("Rank") << QStringLiteral("Details"),
-            QList<float>() << 0.5f << 0.2f
-        )
-    );
-    addTool(
-        Tool(
-            Tools::SCRAPE_PROXIES, 
-            QIcon(QStringLiteral(ICON_MASK)), 
-            QString(QStringLiteral("Scrape Proxies")),
-            QStringList() << QStringLiteral("Proxy") << QStringLiteral("Source") << QStringLiteral("Details"),
-            QList<float>() << 0.5f << 0.3f
-        )
-    );
-    addTool(Tool(
-        Tools::TEST, 
-        QIcon(ICON_HAMMER), 
-        QString(QStringLiteral("Test")),
-        QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),
-        QList<float>() << 0.5f << 0.1f
-    ));
-#if APP_DEBUG
-    addTool(Tool(
-        Tools::DUMMY, 
-        QIcon(ICON_QUESTION), 
-        QString(QStringLiteral("Dummy")),
-        QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),
-        QList<float>() << 0.5f << 0.1f
-    ));
-#endif
-    
+    // TODO:Improve tool adding logic
+    for (const auto& toolName : ToolsManager::instance().tools().keys())
+    {
+        auto tool = ToolsManager::instance().tools().value(toolName);
+        addTool(tool, tool.name() == ToolsManager::instance().currentTool().name());
+    }
 }
 
 void ToolsWidget::addTool(const Tool& tool, bool current)
@@ -66,17 +29,5 @@ void ToolsWidget::addTool(const Tool& tool, bool current)
     if (current)
     {
         setCurrentItem(item);
-        m_currentTool = tool;
     }
-    m_tools.insert(tool.name(), tool);
-}
-
-Tool ToolsWidget::currentTool()
-{
-    return m_currentTool;
-}
-
-Tool ToolsWidget::getTool(const QString& toolName) const
-{
-    return m_tools[toolName];
 }

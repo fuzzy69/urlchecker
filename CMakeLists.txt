@@ -31,6 +31,7 @@ add_executable(
     src/application/core/settings.cpp
     src/application/core/table.cpp
     src/application/core/thread.cpp
+    src/application/core/toolsmanager.cpp
     src/application/core/worker.cpp
     
     src/application/tools/alexarank/checkalexarankworker.cpp
