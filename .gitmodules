@@ -4,3 +4,6 @@
 [submodule "libs/tidy-html5"]
 	path = libs/tidy-html5
 	url = https://github.com/htacg/tidy-html5.git
+[submodule "libs/pugixml"]
+	path = libs/pugixml
+	url = https://github.com/zeux/pugixml.git
