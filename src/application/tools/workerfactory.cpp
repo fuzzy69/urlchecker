@@ -6,6 +6,7 @@
 #include "dummy/dummyworker.h"
 #include "scrapeproxies/scrapeproxiesworker.h"
 #include "test/testworker.h"
+#include "scrapelinks/scrapelinksworker.h"
 
 Worker *workerFactory(int id, int workerId, QQueue<QVariantMap> *inputDataQueue, QMutex *mutex, const QVariantMap &settings)
 {
@@ -21,6 +22,9 @@ Worker *workerFactory(int id, int workerId, QQueue<QVariantMap> *inputDataQueue,
             break;
         case Tools::SCRAPE_PROXIES:
             worker = new ScrapeProxiesWorker(workerId, inputDataQueue, mutex, settings);
+            break;
+        case Tools::SCRAPE_LINKS:
+            worker = new ScrapeLinkskWorker(workerId, inputDataQueue, mutex, settings);
             break;
         case Tools::TEST:
             worker = new TestWorker(workerId, inputDataQueue, mutex, settings);

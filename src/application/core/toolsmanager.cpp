@@ -36,12 +36,19 @@ ToolsManager::ToolsManager()
         QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),
         QList<float>() << 0.5f << 0.1f
     ));
+    addTool(Tool(
+        Tools::SCRAPE_LINKS,
+        QIcon(ICON_CHAIN),
+        QString(QStringLiteral("Scrape Links")),
+        QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),
+        QList<float>() << 0.5f << 0.1f
+    ));
 #if APP_DEBUG
     addTool(Tool(
         Tools::DUMMY,
         QIcon(ICON_QUESTION),
         QString(QStringLiteral("Dummy")),
-        QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),
+        QStringList() << QStringLiteral("URL") << QStringLiteral("Source") << QStringLiteral("Details"),
         QList<float>() << 0.5f << 0.1f
     ));
 #endif

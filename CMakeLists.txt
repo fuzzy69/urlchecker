@@ -37,6 +37,8 @@ add_executable(
     src/application/tools/alexarank/checkalexarankworker.cpp
     src/application/tools/alexarank/utilities.cpp
     src/application/tools/dummy/dummyworker.cpp
+    src/application/tools/scrapelinks/scrapelinksworker.cpp
+    src/application/tools/scrapelinks/utilities.cpp
     src/application/tools/scrapeproxies/scrapeproxiesworker.cpp
     src/application/tools/scrapeproxies/utilities.cpp
     src/application/tools/test/testworker.cpp
@@ -45,6 +47,8 @@ add_executable(
     src/application/tools/workerfactory.cpp
 
     src/application/utils/requests.cpp
+    src/application/utils/simpledom.cpp
+    src/application/utils/tidyhtml.cpp
 
     src/application/widgets/filesystemwidget.cpp
     src/application/widgets/helpbrowser.cpp
@@ -63,6 +67,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Help)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CPR_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${MY_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)
+target_link_libraries(${PROJECT_NAME} PRIVATE tidy)
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
