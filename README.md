@@ -1,9 +1,9 @@
-# URL Checker
+# URL Checker (**WIP**)
 
 
 ### About
 
-C++ Qt5 multi-threaded application for checking HTTP response status of urls (**Work in progress**).
+C++ Qt5 multi-threaded application for checking HTTP response status of urls.
 
 ### Screenshot
 
@@ -19,6 +19,8 @@ Libraries/frameworks:
 - [Qt](https://github.com/qt/qt5) (>=5.11 maybe it will work with older minor releases)
 - [cpr](https://github.com/whoshuu/cpr)
 - [Catch2](https://github.com/catchorg/Catch2)
+- [pugixml](https://github.com/zeux/pugixml)
+- [HTML Tidy](https://github.com/htacg/tidy-html5)
 
 
 ### Build instructions
@@ -37,6 +39,8 @@ Download dependencies:
 ```
 git submodule update --init --recursive 
 ```
+
+Build and install HTML Tidy by following build instructions on https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md. Copy created shared object to urlchecker/libs/tidy-html5/ directory.
 
 Create build directory somewhere (preferably out of project directory) and navigate into it:
 ```
