@@ -4,7 +4,9 @@
 
 TidyHtml::TidyHtml() : m_doc(tidyCreate())
 {
-    tidyOptSetBool(m_doc, TidyXhtmlOut, yes);
+    tidyOptSetBool(m_doc, TidyXhtmlOut, yes)
+    and tidyOptSetBool(m_doc, TidyQuiet, yes)
+    and tidyOptSetBool(m_doc, TidyShowWarnings, no);
 }
 
 TidyHtml::~TidyHtml()
