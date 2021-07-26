@@ -35,5 +35,6 @@ void DummyWorker::doWork(const QVariantMap& inputData)
     };
 
     Q_EMIT Worker::result(data);
+    Q_EMIT Worker::itemDone();
     Q_EMIT Worker::status(rowId, ResultStatus::OK);
 }

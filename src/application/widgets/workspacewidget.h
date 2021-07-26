@@ -60,6 +60,7 @@ protected:
 
     void onResult(const QVariantMap &resultData);
     void onStatus(const int rowId, const ResultStatus &resultStatus);
+    void onItemDone();
 
 private Q_SLOTS:
     void startJob();

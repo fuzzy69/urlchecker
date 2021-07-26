@@ -54,6 +54,6 @@ void ScrapeLinkskWorker::doWork(const QVariantMap& inputData)
     }
 
     auto status = ResultStatus::OK;
-
+    Q_EMIT Worker::itemDone();
     Q_EMIT Worker::status(rowId, status);
 }

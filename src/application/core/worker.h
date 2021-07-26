@@ -21,6 +21,7 @@ public:
 Q_SIGNALS:
     void result(const QVariantMap &resultData);
     void status(const int rowId, const ResultStatus &resultStatus);
+    void itemDone();
     void finished();
     void requestStop();
     void log(const QString& message);

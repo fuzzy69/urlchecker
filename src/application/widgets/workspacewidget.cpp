@@ -195,23 +195,7 @@ void WorkspaceWidget::startJob()
         settings.insert(QString("timeout"), Settings::instance().value(QStringLiteral(TEXT_TIMEOUT)));
         settings.insert(QString("useProxies"), Settings::instance().value(QStringLiteral(TEXT_USE_PROXIES)));
         worker = workerFactory(currentTool.id(), workerId, &m_inputDataQueue, &m_mutex, settings);
-//        switch (currentTool.id())
-//        {
-//            case Tools::CHECK_URL_STATUS:
-//                worker = new CheckUrlStatusWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-//                break;
-//            case Tools::CHECK_ALEXA_RANK:
-//                worker = new CheckAlexaRankWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-//                break;
-//            case Tools::SCRAPE_PROXIES:
-//                worker = new ScrapeProxiesWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-//                break;
-//            case Tools::TEST:
-//                worker = new TestWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-//                break;
-//            default:
-//                worker = new DummyWorker(workerId, &m_inputDataQueue, &m_mutex, settings);
-//        }
+
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
@@ -220,6 +204,7 @@ void WorkspaceWidget::startJob()
         connect(thread, &Thread::finished, thread, &Thread::deleteLater);
         connect(worker, &Worker::result, this, &WorkspaceWidget::onResult);
         connect(worker, &Worker::status, this, &WorkspaceWidget::onStatus);
+        connect(worker, &Worker::itemDone, this, &WorkspaceWidget::onItemDone);
         connect(worker, &Worker::finished, thread, &Thread::quit);
         connect(worker, &Worker::finished, worker, &Worker::deleteLater);
         connect(worker, &Worker::finished, []{
@@ -251,42 +236,16 @@ void WorkspaceWidget::stopJob()
 
 void WorkspaceWidget::onResult(const QVariantMap& resultData)
 {
-    ++m_itemsDone;
-    if (m_itemsDone == 1)
+    if (m_tablesWidget->focusedTable()->rowCount() == 1)
         m_tablesWidget->focusedTable()->resizeColumns();
-//     Tools currentToolId = static_cast<Tools>(resultData["toolId"].toInt());
     auto currentToolName = resultData["toolName"].toString();
-//    Tool currentTool = m_toolsWidget->getTool(currentToolName);
     auto currentTool = ToolsManager::instance().getTool(currentToolName);
-//     int rowIndex = resultData["rowId"].toInt();
-    QString result = resultData["result"].toString();
     QStringList row;
     for (const auto& column : currentTool.columns())
     {
-//        if (column == QString("Status"))
-//        {
-//            ResultStatus status = static_cast<ResultStatus>(resultData["Status"].toInt());
-//            switch (status)
-//            {
-//                case ResultStatus::OK:
-//                    row << "Done";
-//                    break;
-//                case ResultStatus::PROCESSING:
-//                    row << "...";
-//                    break;
-//                case ResultStatus::FAILED:
-//                    row << "Failed";
-//                    break;
-//            }
-//        }
-//        else
-//        {
         row << resultData[column].toString();
-//        }
     }
     m_tablesWidget->resultsTable()->appendRow(row);
-    int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
-    m_progressBar->setValue(progresPercentage);
 }
 
 void WorkspaceWidget::onStatus(const int rowId, const ResultStatus& resultStatus)
@@ -305,4 +264,11 @@ void WorkspaceWidget::onStatus(const int rowId, const ResultStatus& resultStatus
             break;
     }
     m_tablesWidget->inputTable()->setCell(rowId, 1, status);
+}
+
+void WorkspaceWidget::onItemDone()
+{
+    ++m_itemsDone;
+    int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
+    m_progressBar->setValue(progresPercentage);
 }
