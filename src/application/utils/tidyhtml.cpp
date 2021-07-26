@@ -1,4 +1,4 @@
-#include "tidybuffio.h"
+﻿#include "tidybuffio.h"
 
 #include "tidyhtml.h"
 
@@ -15,7 +15,7 @@ TidyHtml::~TidyHtml()
 std::string TidyHtml::process(const std::string& html)
 {
     std::string result;
-    TidyBuffer buffer = {0};
+    TidyBuffer buffer = {nullptr, nullptr, 0, 0, 0};
     // TODO: Improve this and add error handling
     tidyParseString(m_doc, html.c_str());
     tidyCleanAndRepair(m_doc);
@@ -24,7 +24,10 @@ std::string TidyHtml::process(const std::string& html)
     char* buffer_chars = static_cast<char*>(malloc(buffer_size + 10));
     tidySaveString(m_doc, buffer_chars, &buffer_size);
     result = std::string(buffer_chars);
-    tidyBufFree(&buffer);
+    if (buffer.size)
+        tidyBufFree(&buffer);
+    else
+        result = "";
     
     return result;
 }
