@@ -40,7 +40,7 @@ ToolsManager::ToolsManager()
         Tools::SCRAPE_LINKS,
         QIcon(ICON_CHAIN),
         QString(QStringLiteral("Scrape Links")),
-        QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),
+        QStringList() << QStringLiteral("URL") << QStringLiteral("Source") << QStringLiteral("Details"),
         QList<float>() << 0.5f << 0.1f
     ));
 #if APP_DEBUG
