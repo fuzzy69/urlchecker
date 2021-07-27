@@ -25,6 +25,7 @@ add_executable(
     src/main.cpp
     src/application/mainwindow.cpp
 
+    src/application/core/applicationbridge.cpp
     src/application/core/applicationstatemachine.cpp
     src/application/core/misc.cpp
     src/application/core/recentfiles.cpp
@@ -33,6 +34,7 @@ add_executable(
     src/application/core/thread.cpp
     src/application/core/toolsmanager.cpp
     src/application/core/worker.cpp
+    src/application/core/workermanager.cpp
     
     src/application/tools/alexarank/checkalexarankworker.cpp
     src/application/tools/alexarank/utilities.cpp

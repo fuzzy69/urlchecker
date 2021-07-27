@@ -16,19 +16,21 @@
 #include "toolswidget.h"
 #include "../icons.h"
 #include "../texts.h"
+#include "../core/applicationbridge.h"
 #include "../core/settings.h"
 #include "../core/table.h"
-#include "../core/thread.h"
+//#include "../core/thread.h"
+#include "../core/workermanager.h"
 #include "../widgets/filesystemwidget.h"
 #include "../widgets/logwidget.h"
 #include "../widgets/tableswidget.h"
 
-#include "../tools/workerfactory.h"
-#include "../core/worker.h"
+//#include "../tools/workerfactory.h"
+//#include "../core/worker.h"
 #include "../core/toolsmanager.h"
 
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : 
-    QWidget(parent), m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>())
+    QWidget(parent)/*, m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>())*/
 {
     m_mainLayout = new QVBoxLayout(this);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -65,11 +67,20 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
     m_mainLayout->addLayout(m_topLayout);
     m_mainLayout->addLayout(m_bottomLayout);
 
+    m_workerManager = new WorkerManager(this);
+
+    ApplicationBridge::instance().setToolsWidget(m_toolsWidget);
+    ApplicationBridge::instance().setTablesWidget(m_tablesWidget);
+    ApplicationBridge::instance().setLogWidget(m_logWidget);
+    ApplicationBridge::instance().setProgressBar(m_progressBar);
+
     connect(m_startPushButton, &QPushButton::clicked, this, &WorkspaceWidget::startJob);
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
-    connect(m_testPushButton, &QPushButton::clicked, [this] {
-        qDebug() << "Test";
-    });
+    connect(m_workerManager, &WorkerManager::result, this, &WorkspaceWidget::onResult);
+    connect(m_workerManager, &WorkerManager::status, this, &WorkspaceWidget::onStatus);
+//    connect(m_testPushButton, &QPushButton::clicked, [this] {
+//        qDebug() << "Test";
+//    });
 }
 
 void WorkspaceWidget::toggleTools()
@@ -169,70 +180,74 @@ void WorkspaceWidget::startJob()
     auto currentTool = ToolsManager::instance().currentTool();
     m_tablesWidget->resultsTable()->resetColumns(currentTool.columns());
     m_tablesWidget->resultsTable()->setColumnRatios(currentTool.columnRatios());
-    m_itemsDone = 0;
-    m_totalItems = m_tablesWidget->inputTable()->rowCount();
-    m_threads.clear();
-    m_workers.clear();
-    for (int i = 0; i < m_tablesWidget->inputTable()->rowCount(); ++i)
-    {
-        auto url = m_tablesWidget->inputTable()->cell(i, 0).toString();
-        m_inputDataQueue.enqueue({
-            {QString("rowId"), QVariant(i)},
-            {QString("url"), QVariant(url)}
-        });
-    }
-    const int parallelTasks = Settings::instance().value(QStringLiteral(TEXT_THREADS)).toInt();
-    assert(parallelTasks > 0);
-    for (int i = 0; i < parallelTasks;++i)
-    {
-        int workerId(i+ 1);
-//        workerId = i + 1;
-        auto thread = new Thread;
-        Worker *worker;
+    m_workerManager->startJob();
+//    m_itemsDone = 0;
+//    m_totalItems = m_tablesWidget->inputTable()->rowCount();
+//    m_threads.clear();
+//    m_workers.clear();
+//    for (int i = 0; i < m_tablesWidget->inputTable()->rowCount(); ++i)
+//    {
+//        auto url = m_tablesWidget->inputTable()->cell(i, 0).toString();
+//        m_inputDataQueue.enqueue({
+//            {QString("rowId"), QVariant(i)},
+//            {QString("url"), QVariant(url)}
+//        });
+//    }
+//    const int parallelTasks = Settings::instance().value(QStringLiteral(TEXT_THREADS)).toInt();
+//    assert(parallelTasks > 0);
+//    for (int i = 0; i < parallelTasks;++i)
+//    {
+//        int workerId(i+ 1);
+////        workerId = i + 1;
+//        auto thread = new Thread;
+//        Worker *worker;
 
-        // TODO: Improve tool switching logic
-        QVariantMap settings;
-        settings.insert(QString("timeout"), Settings::instance().value(QStringLiteral(TEXT_TIMEOUT)));
-        settings.insert(QString("useProxies"), Settings::instance().value(QStringLiteral(TEXT_USE_PROXIES)));
-        worker = workerFactory(currentTool.id(), workerId, &m_inputDataQueue, &m_mutex, settings);
+//        // TODO: Improve tool switching logic
+//        QVariantMap settings;
+//        settings.insert(QString("timeout"), Settings::instance().value(QStringLiteral(TEXT_TIMEOUT)));
+//        settings.insert(QString("useProxies"), Settings::instance().value(QStringLiteral(TEXT_USE_PROXIES)));
+//        worker = workerFactory(currentTool.id(), workerId, &m_inputDataQueue, &m_mutex, settings);
 
-        m_threads.append(thread);
-        m_workers.append(worker);
-        m_workers[i]->moveToThread(m_threads[i]);
+//        m_threads.append(thread);
+//        m_workers.append(worker);
+//        m_workers[i]->moveToThread(m_threads[i]);
 
-        connect(thread, &Thread::started, worker, &Worker::run);
-        connect(thread, &Thread::finished, thread, &Thread::deleteLater);
-        connect(worker, &Worker::result, this, &WorkspaceWidget::onResult);
-        connect(worker, &Worker::status, this, &WorkspaceWidget::onStatus);
-        connect(worker, &Worker::itemDone, this, &WorkspaceWidget::onItemDone);
-        connect(worker, &Worker::finished, thread, &Thread::quit);
-        connect(worker, &Worker::finished, worker, &Worker::deleteLater);
-        connect(worker, &Worker::finished, []{
-            qDebug() << "Worker finished";
-        });
-        connect(worker, &Worker::requestStop, worker, &Worker::stop);
-        connect(worker, &Worker::log, m_logWidget, &LogWidget::onLog);
-    }
+//        connect(thread, &Thread::started, worker, &Worker::run);
+//        connect(thread, &Thread::finished, thread, &Thread::deleteLater);
+//        connect(worker, &Worker::result, this, &WorkspaceWidget::onResult);
+//        connect(worker, &Worker::status, this, &WorkspaceWidget::onStatus);
+//        connect(worker, &Worker::itemDone, this, &WorkspaceWidget::onItemDone);
+//        connect(worker, &Worker::finished, thread, &Thread::quit);
+//        connect(worker, &Worker::finished, worker, &Worker::deleteLater);
+//        connect(worker, &Worker::finished, []{
+//            qDebug() << "Worker finished";
+//        });
+//        connect(worker, &Worker::requestStop, worker, &Worker::stop);
+//        connect(worker, &Worker::log, m_logWidget, &LogWidget::onLog);
+//    }
 
-    Q_EMIT jobStarted();
+//    Q_EMIT jobStarted();
     m_tablesWidget->switchToResultsTab();
-    for (int i = 0; i < parallelTasks; ++i)
-    {
-        m_threads[i]->start();
-    }
+//    for (int i = 0; i < parallelTasks; ++i)
+//    {
+//        m_threads[i]->start();
+//    }
 }
 
 void WorkspaceWidget::stopJob()
 {
-    for (Worker *worker: m_workers)
-    {
-        if (worker)
-        {
-            Q_EMIT worker->requestStop();
-        }
-    }
-    Q_EMIT jobStopped();
+    m_workerManager->stopJob();
 }
+
+//    for (Worker *worker: m_workers)
+//    {
+//        if (worker)
+//        {
+//            Q_EMIT worker->requestStop();
+//        }
+//    }
+//    Q_EMIT jobStopped();
+//}
 
 void WorkspaceWidget::onResult(const QVariantMap& resultData)
 {
@@ -266,9 +281,9 @@ void WorkspaceWidget::onStatus(const int rowId, const ResultStatus& resultStatus
     m_tablesWidget->inputTable()->setCell(rowId, 1, status);
 }
 
-void WorkspaceWidget::onItemDone()
-{
-    ++m_itemsDone;
-    int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
-    m_progressBar->setValue(progresPercentage);
-}
+//void WorkspaceWidget::onItemDone()
+//{
+//    ++m_itemsDone;
+//    int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
+//    m_progressBar->setValue(progresPercentage);
+//}

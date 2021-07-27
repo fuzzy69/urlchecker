@@ -26,6 +26,7 @@
 #include "mainwindow.h"
 #include "texts.h"
 #include "version.h"
+#include "core/applicationbridge.h"
 #include "core/applicationstatemachine.h"
 #include "core/misc.h"
 #include "core/recentfiles.h"
@@ -190,6 +191,9 @@ void MainWindow::createWidgets()
     m_centralLayout->addWidget(m_mainStackedWidget);
 
     setCentralWidget(m_centralWidget);
+
+    ApplicationBridge::instance().setSettingsWidget(m_settingsWidget);
+    ApplicationBridge::instance().setProxiesWidget(m_proxiesWidget);
 }
 
 void MainWindow::createStatusBar()
@@ -208,6 +212,8 @@ void MainWindow::createStatusBar()
     m_statusBar->addPermanentWidget(m_logPushButton);
     m_statusBar->addPermanentWidget(m_statusBarLabel, 1);
     m_statusBar->addPermanentWidget(m_activeThreadsLabel);
+
+    ApplicationBridge::instance().setStatusBar(m_statusBar);
 }
 
 void MainWindow::createConnections()

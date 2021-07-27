@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include <QMutex>
-#include <QQueue>
+//#include <QMutex>
+//#include <QQueue>
 #include <QWidget>
 
 #include "../core/resultstatus.h"
@@ -19,9 +19,10 @@ class FilesystemWidget;
 class LogWidget;
 class Table;
 class TablesWidget;
-class Thread;
+//class Thread;
 class ToolsWidget;
-class Worker;
+//class Worker;
+class WorkerManager;
 
 class WorkspaceWidget final: public QWidget
 {
@@ -85,11 +86,12 @@ private:
     TablesWidget *m_tablesWidget;
     LogWidget *m_logWidget;
 
-    QList<Thread*> m_threads;
-    QList<Worker*> m_workers;
-    QQueue<QVariantMap> m_inputDataQueue;
-    QMutex m_mutex;
+    WorkerManager* m_workerManager;
+//    QList<Thread*> m_threads;
+//    QList<Worker*> m_workers;
+//    QQueue<QVariantMap> m_inputDataQueue;
+//    QMutex m_mutex;
 
-    int m_itemsDone;
-    int m_totalItems;
+//    int m_itemsDone;
+//    int m_totalItems;
 };
