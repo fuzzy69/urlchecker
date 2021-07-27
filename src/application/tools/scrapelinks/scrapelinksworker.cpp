@@ -18,8 +18,13 @@
 
 using my::text::starts_with;
 
-ScrapeLinkskWorker::ScrapeLinkskWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
+ScrapeLinkskWorker::ScrapeLinkskWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent), m_dom(std::make_unique<SimpleDOM>()), m_tidy(std::make_unique<TidyHtml>())
 {
+}
+
+ScrapeLinkskWorker::~ScrapeLinkskWorker()
+{
+
 }
 
 void ScrapeLinkskWorker::doWork(const QVariantMap& inputData)
@@ -31,11 +36,12 @@ void ScrapeLinkskWorker::doWork(const QVariantMap& inputData)
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(url.toString().toStdString());
-    TidyHtml tidy_html;
-    std::string html = tidy_html.process(response.text);
-    SimpleDOM dom;
-    dom.from_string(html);
-    for (auto& element : dom.select_all("//a"))
+//    TidyHtml tidy_html;
+//    std::string html = tidy_html.process(response.text);
+    std::string html = m_tidy->process(response.text);
+//    SimpleDOM dom;
+    m_dom->from_string(html);
+    for (auto& element : m_dom->select_all("//a"))
     {
         // TODO: Validate link
         std::string link = element.attribute("href");

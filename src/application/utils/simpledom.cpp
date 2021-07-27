@@ -1,4 +1,4 @@
-#include "simpledom.h"
+﻿#include "simpledom.h"
 
 HTMLElement::HTMLElement(const pugi::xpath_node& node) : m_node(node)
 {
