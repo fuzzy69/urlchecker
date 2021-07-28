@@ -177,7 +177,7 @@ void WorkspaceWidget::startJob()
     }
     qRegisterMetaType<ResultStatus>();
 //    auto currentTool = toolsWidget()->currentTool();
-    auto currentTool = ToolsManager::instance().currentTool();
+    auto& currentTool = ToolsManager::instance().currentTool();
     m_tablesWidget->resultsTable()->resetColumns(currentTool.columns());
     m_tablesWidget->resultsTable()->setColumnRatios(currentTool.columnRatios());
     m_workerManager->startJob();
@@ -228,6 +228,7 @@ void WorkspaceWidget::startJob()
 
 //    Q_EMIT jobStarted();
     m_tablesWidget->switchToResultsTab();
+    m_tablesWidget->resultsTable()->setContextMenu(currentTool.contextMenu());
 //    for (int i = 0; i < parallelTasks; ++i)
 //    {
 //        m_threads[i]->start();
@@ -254,7 +255,7 @@ void WorkspaceWidget::onResult(const QVariantMap& resultData)
     if (m_tablesWidget->focusedTable()->rowCount() == 1)
         m_tablesWidget->focusedTable()->resizeColumns();
     auto currentToolName = resultData["toolName"].toString();
-    auto currentTool = ToolsManager::instance().getTool(currentToolName);
+    auto& currentTool = ToolsManager::instance().getTool(currentToolName);
     QStringList row;
     for (const auto& column : currentTool.columns())
     {

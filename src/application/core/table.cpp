@@ -2,11 +2,13 @@
 #include <QBrush>
 #include <QColor>
 #include <QItemSelectionModel>
+#include <QMenu>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QTableView>
-#include <QDebug>
 #include <QHeaderView>
+
+#include <QDebug>
 
 #include "table.h"
 
@@ -20,8 +22,10 @@ Table::Table(const QStringList& columns, QObject *parent) : QObject(parent), m_c
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 //    m_tableView->setSelectionMode(QAbstractItemView::MultiSelection);
+    m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connect(m_tableView, &QTableView::doubleClicked, this, &Table::doubleClicked);
+    connect(m_tableView, &QTableView::customContextMenuRequested, this,&Table::onCustomContextMenuRequest);
 }
 
 Table::~Table()
@@ -38,6 +42,11 @@ void Table::resetColumns(const QStringList &columns)
     m_tableModel->clear();
     m_tableModel->setHorizontalHeaderLabels(m_columns);
     m_tableView->setModel(m_tableModel);
+}
+
+void Table::setContextMenu(QMenu *contextMenu)
+{
+    m_contextMenu = contextMenu;
 }
 
 void Table::setColumnRatios(const QList<float>& columnRatios)
@@ -228,5 +237,13 @@ void Table::removeSelected()
     {
         if (selectedIndexes.contains(i))
             removeRow(i);
+    }
+}
+
+void Table::onCustomContextMenuRequest(const QPoint &pos)
+{
+    if (m_contextMenu)
+    {
+        m_contextMenu->popup(m_tableView->viewport()->mapToGlobal(pos));
     }
 }

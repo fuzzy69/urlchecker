@@ -12,7 +12,8 @@ class ToolsWidget : public QTreeWidget
 public:
     explicit ToolsWidget(QWidget *parent = nullptr);
 
-    void addTool(const Tool &tool, bool current = false);
+//    void addTool(const Tool &tool, bool current = false);
+    void addTool(Tool &tool, bool current = false);
 
 signals:
     void toolSelected(const QString &toolText);

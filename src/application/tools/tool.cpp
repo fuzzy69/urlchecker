@@ -1,6 +1,7 @@
-#include "tool.h"
+﻿#include "tool.h"
 
 #include <QIcon>
+#include <QMenu>
 #include <QString>
 
 
@@ -13,6 +14,12 @@ Tool::Tool(Tools toolId, const QIcon& icon, const QString& name, const QStringLi
     m_id(toolId), m_icon(icon), m_name(name), m_columns(columns), m_columnRatios(columnRatios)
 {
 }
+
+//Tool::~Tool()
+//{
+////    if (m_contextMenu)
+////        delete m_contextMenu;
+//}
 
 Tools Tool::id() const
 {
@@ -37,4 +44,14 @@ QStringList Tool::columns() const
 QList<float> Tool::columnRatios() const
 {
     return m_columnRatios;
+}
+
+QMenu *Tool::contextMenu() const
+{
+    return m_contextMenu;
+}
+
+void Tool::setContextMenu(QMenu *contextMenu)
+{
+    m_contextMenu = contextMenu;
 }

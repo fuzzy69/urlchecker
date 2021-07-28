@@ -16,12 +16,14 @@ ToolsWidget::ToolsWidget ( QWidget* parent ) : QTreeWidget(parent)
     // TODO:Improve tool adding logic
     for (const auto& toolName : ToolsManager::instance().tools().keys())
     {
-        auto tool = ToolsManager::instance().tools().value(toolName);
-        addTool(tool, tool.name() == ToolsManager::instance().currentTool().name());
+        Tool* tool = ToolsManager::instance().tools().value(toolName);
+        addTool(*tool, false);
+//        addTool(*tool, tool->name() == ToolsManager::instance().currentTool().name());
     }
 }
 
-void ToolsWidget::addTool(const Tool& tool, bool current)
+//void ToolsWidget::addTool(const Tool& tool, bool current)
+void ToolsWidget::addTool(Tool& tool, bool current)
 {
     auto item = new QTreeWidgetItem(QStringList(tool.name()));
     item->setIcon(0, tool.icon());

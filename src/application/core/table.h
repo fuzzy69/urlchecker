@@ -6,6 +6,7 @@
 
 class QTableView;
 class QStandardItemModel;
+class QMenu;
 
 class Table : public QObject
 {
@@ -37,11 +38,13 @@ public:
     QTableView* tableView() const;
     QStandardItemModel* tableModel() const;
     void resetColumns(const QStringList &columns);
+    void setContextMenu(QMenu* contextMenu);
 
-signals:
+Q_SIGNALS:
     void doubleClicked(const QModelIndex &modelIndex);
 
-public slots:
+public Q_SLOTS:
+    void onCustomContextMenuRequest(const QPoint &pos);
 
 private:
     QTableView* m_tableView;
@@ -49,4 +52,5 @@ private:
     QStringList m_columns;
     QList<float> m_columnRatios;
     QString m_name;
+    QMenu* m_contextMenu = nullptr;
 };

@@ -25,6 +25,7 @@ add_executable(
     src/main.cpp
     src/application/mainwindow.cpp
 
+    src/application/core/actionsmanager.cpp
     src/application/core/applicationbridge.cpp
     src/application/core/applicationstatemachine.cpp
     src/application/core/misc.cpp
@@ -36,15 +37,21 @@ add_executable(
     src/application/core/worker.cpp
     src/application/core/workermanager.cpp
     
+    src/application/tools/alexarank/alexaranktool.cpp
     src/application/tools/alexarank/checkalexarankworker.cpp
     src/application/tools/alexarank/utilities.cpp
     src/application/tools/dummy/dummyworker.cpp
+    src/application/tools/dummy/dummytool.cpp
+    src/application/tools/scrapelinks/scrapelinkstool.cpp
     src/application/tools/scrapelinks/scrapelinksworker.cpp
     src/application/tools/scrapelinks/utilities.cpp
+    src/application/tools/scrapeproxies/scrapeproxiestool.cpp
     src/application/tools/scrapeproxies/scrapeproxiesworker.cpp
     src/application/tools/scrapeproxies/utilities.cpp
+    src/application/tools/test/testtool.cpp
     src/application/tools/test/testworker.cpp
     src/application/tools/urlstatus/checkurlstatusworker.cpp
+    src/application/tools/urlstatus/urlstatustool.cpp
     src/application/tools/tool.cpp
     src/application/tools/workerfactory.cpp
 
