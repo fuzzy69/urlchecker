@@ -37,7 +37,7 @@ private Q_SLOTS:
     void exportResults();
 
 private:
-    void createActions();
+//    void createActions();
     void createMenuBar();
     void createToolBar();
     void createWidgets();
@@ -63,21 +63,21 @@ private:
     QMenu *m_helpMenu;
 
     // Actions
-    QAction *m_workspaceAction;
-    QAction *m_proxiesAction;
-    QAction *m_settingsAction;
-    QAction *m_helpAction;
-    QAction *m_importUrlsAction;
-    QAction *m_clearRecentUrlFilesAction;
-    QAction *m_exportResultsAction;
-    QAction *m_quitAction;
-    QAction *m_removeAllAction;
-    QAction *m_removeDuplicatesAction;
-    QAction *m_selectAllAction;
-    QAction *m_removeSelectedAction;
-    QAction *m_invertSelectionAction;
-    QAction *m_centerWindowAction;
-    QAction *m_aboutAction;
+//    QAction *m_workspaceAction;
+//    QAction *m_proxiesAction;
+//    QAction *m_settingsAction;
+//    QAction *m_helpAction;
+//    QAction *m_importUrlsAction;
+//    QAction *m_clearRecentUrlFilesAction;
+//    QAction *m_exportResultsAction;
+//    QAction *m_quitAction;
+//    QAction *m_removeAllAction;
+//    QAction *m_removeDuplicatesAction;
+//    QAction *m_selectAllAction;
+//    QAction *m_removeSelectedAction;
+//    QAction *m_invertSelectionAction;
+//    QAction *m_centerWindowAction;
+//    QAction *m_aboutAction;
 
     // ToolBar
     QToolBar *m_toolBar;

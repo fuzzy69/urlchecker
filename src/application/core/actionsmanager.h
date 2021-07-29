@@ -19,6 +19,7 @@ public:
     void addAction(const QString& actionName, QAction* action);
     QAction* action(const QString& actionName) const;
 //    QAction* createAction(const QString& actionName, const QString& iconFile, const QString& actionText, const QObject* receiver, const QMetaMethod& method);
+    QAction* createAction(const QString& actionName, const QString& iconFile, const QString& actionText);
     template<typename Receiver, typename Slot>
     QAction* createAction(const QString& actionName, const QString& iconFile, const QString& actionText, const Receiver* receiver, const Slot& slot)
     {

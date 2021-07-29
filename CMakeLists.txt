@@ -23,6 +23,7 @@ add_executable(
     assets.qrc
 
     src/main.cpp
+    src/application/actions.cpp
     src/application/mainwindow.cpp
 
     src/application/core/actionsmanager.cpp
