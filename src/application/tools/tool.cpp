@@ -6,12 +6,12 @@
 
 
 Tool::Tool() :
-    m_id(Tools::NONE), m_icon(QIcon()), m_name(QString()), m_columns(QStringList()), m_columnRatios(QList<float>())
+    m_id(Tools::NONE), m_category(ToolCategory::NONE), m_icon(QIcon()), m_name(QString()), m_columns(QStringList()), m_columnRatios(QList<float>())
 {
 }
 
-Tool::Tool(Tools toolId, const QIcon& icon, const QString& name, const QStringList &columns, const QList<float> &columnRatios) :
-    m_id(toolId), m_icon(icon), m_name(name), m_columns(columns), m_columnRatios(columnRatios)
+Tool::Tool(Tools toolId, ToolCategory category, const QIcon& icon, const QString& name, const QStringList &columns, const QList<float> &columnRatios) :
+    m_id(toolId), m_category(category), m_icon(icon), m_name(name), m_columns(columns), m_columnRatios(columnRatios)
 {
 }
 
@@ -24,6 +24,11 @@ Tool::Tool(Tools toolId, const QIcon& icon, const QString& name, const QStringLi
 Tools Tool::id() const
 {
     return m_id;
+}
+
+ToolCategory Tool::category() const
+{
+    return m_category;
 }
 
 QIcon Tool::icon() const

@@ -3,6 +3,7 @@
 
 TestTool::TestTool() : Tool(
     Tools::TEST,
+    ToolCategory::MISC,
     QIcon(ICON_HAMMER),
     QString(QStringLiteral("Test")),
     QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),

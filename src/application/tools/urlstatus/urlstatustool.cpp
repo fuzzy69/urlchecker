@@ -3,6 +3,7 @@
 
 UrlStatusTool::UrlStatusTool() : Tool(
     Tools::CHECK_URL_STATUS,
+    ToolCategory::URL,
     QIcon(ICON_CHAIN),
     QString(QStringLiteral("Check URL Status")),
     QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),

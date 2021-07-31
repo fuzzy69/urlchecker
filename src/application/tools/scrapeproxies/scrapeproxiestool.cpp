@@ -14,6 +14,7 @@
 
 ScrapeProxiesTool::ScrapeProxiesTool() : Tool(
     Tools::SCRAPE_PROXIES,
+    ToolCategory::SCRAPERS,
     QIcon(QStringLiteral(ICON_MASK)),
     QString(QStringLiteral("Scrape Proxies")),
     QStringList() << QStringLiteral("Proxy") << QStringLiteral("Source") << QStringLiteral("Details"),

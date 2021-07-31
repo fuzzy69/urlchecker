@@ -23,6 +23,7 @@ Table::Table(const QStringList& columns, QObject *parent) : QObject(parent), m_c
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 //    m_tableView->setSelectionMode(QAbstractItemView::MultiSelection);
     m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_tableView->setAlternatingRowColors(true);
 
     connect(m_tableView, &QTableView::doubleClicked, this, &Table::doubleClicked);
     connect(m_tableView, &QTableView::customContextMenuRequested, this,&Table::onCustomContextMenuRequest);

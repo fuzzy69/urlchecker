@@ -13,10 +13,11 @@ class Tool : public QObject
 
 public:
     Tool();
-    Tool(Tools toolId, const QIcon &icon, const QString &name, const QStringList &columns, const QList<float> &columnRatios);
+    Tool(Tools toolId, ToolCategory category, const QIcon &icon, const QString &name, const QStringList &columns, const QList<float> &columnRatios);
 //    virtual ~Tool();
 
     Tools id() const;
+    ToolCategory category() const;
     QIcon icon() const;
     QString name() const;
     QStringList columns() const;
@@ -26,6 +27,7 @@ public:
 
 protected:
     Tools m_id;
+    ToolCategory m_category;
     QIcon m_icon;
     QString m_name;
     QStringList m_columns;

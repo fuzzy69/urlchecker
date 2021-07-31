@@ -1,8 +1,11 @@
 ﻿#pragma once
 
+#include <QMap>
+#include <QSet>
 #include <QTreeWidget>
 
 #include "../tools/tool.h"
+#include "../tools/tools.h"
 
 class QTreeWidgetItem;
 
@@ -22,4 +25,6 @@ signals:
 private:
     QMap<QString, Tool> m_tools;
     Tool m_currentTool;
+    QSet<QString> m_categories;
+    QMap<ToolCategory, QTreeWidgetItem*> m_categoriesItemMap;
 };

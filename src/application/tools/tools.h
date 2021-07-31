@@ -2,6 +2,16 @@
 
 #include "../config.h"
 
+enum class ToolCategory
+{
+    MISC,
+    SEO,
+    EXTRACTORS,
+    SCRAPERS,
+    URL,
+    NONE
+};
+
 
 enum Tools
 {
