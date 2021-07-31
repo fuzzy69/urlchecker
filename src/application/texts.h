@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define TEXT_ACTIVE_THREADS " Active Threads: / "
 #define TEXT_THREADS "parallelTasks"
@@ -10,3 +10,8 @@
 #define TEXT_USER_AGENTS_FILE "userAgentsFilePath"
 #define TEXT_GEOMETRY "geometry"
 #define TEXT_WINDOW_STATE "windowState"
+
+#define TEXT_WORKSPACE "Workspace"
+#define TEXT_SETTINGS "Settings"
+#define TEXT_PROXIES "Proxies"
+#define TEXT_HELP "Help"

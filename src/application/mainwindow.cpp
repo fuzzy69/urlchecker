@@ -78,10 +78,10 @@ APPLICATION_VERSION )));
     initUserAgents(applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE)));
     initProxies(applicationDir);
     // Init recent files
-//    for (QAction *action : m_recentFiles->actions())
-//    {
-//        m_recentUrlFilesMenu->addAction(action);
-//    }
+    for (QAction *action : m_recentFiles->actions())
+    {
+        m_recentUrlFilesMenu->addAction(action);
+    }
     //
     m_applicationStateMachine->start();
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
@@ -127,9 +127,11 @@ void MainWindow::createMenuBar()
     m_helpMenu = menuBar()->addMenu(tr("Help"));
     // File menu
     m_fileMenu->addAction(ActionsManager::instance().action("importUrls"));
-//    m_fileMenu->addMenu(m_recentUrlFilesMenu);
+    m_recentUrlFilesMenu = new QMenu(tr("Open Recent URL File"), this);
+    m_fileMenu->addMenu(m_recentUrlFilesMenu);
 //    m_recentUrlFilesMenu->addAction(m_clearRecentUrlFilesAction);
-//    m_recentUrlFilesMenu->addSeparator();
+    m_recentUrlFilesMenu->addAction(ActionsManager::instance().action("clearRecentUrlFiles"));
+    m_recentUrlFilesMenu->addSeparator();
     m_fileMenu->addAction(ActionsManager::instance().action("exportResults"));
     m_fileMenu->addSeparator();
     m_fileMenu->addAction(ActionsManager::instance().action("quit"));
@@ -222,19 +224,19 @@ void MainWindow::createStatusBar()
 void MainWindow::createConnections()
 {
     // File menu
-    connect(ActionsManager::instance().action("importUrls"), &QAction::triggered, this, &MainWindow::importUrls);
-    connect(ActionsManager::instance().action("exportResults"), &QAction::triggered, this, &MainWindow::exportResults);
+    connect(ActionsManager::instance().action(ACTION_IMPORT_URLS), &QAction::triggered, this, &MainWindow::importUrls);
+    connect(ActionsManager::instance().action(ACTION_EXPORT_RESULTS), &QAction::triggered, this, &MainWindow::exportResults);
     connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
-    connect(ActionsManager::instance().action("clearRecentUrlFiles"), &QAction::triggered, [this]{
+    connect(ActionsManager::instance().action(ACTION_CLEAR_RECENT_URL_FILES), &QAction::triggered, [this]{
         m_recentFiles->clear();
     });
-    connect(ActionsManager::instance().action("quit"), &QAction::triggered, this, &MainWindow::close);
+    connect(ActionsManager::instance().action(ACTION_QUIT), &QAction::triggered, this, &MainWindow::close);
 
     // Window
-    connect(ActionsManager::instance().action("centerWindow"), &QAction::triggered, this, &MainWindow::centerWindow);
+    connect(ActionsManager::instance().action(ACTION_CENTER_WINDOW), &QAction::triggered, this, &MainWindow::centerWindow);
 
     //Help menu
-    connect(ActionsManager::instance().action("about"), &QAction::triggered, [&] {QMessageBox::about(this,
+    connect(ActionsManager::instance().action(ACTION_ABOUT), &QAction::triggered, [&] {QMessageBox::about(this,
         QString("About %1").arg(APPLICATION_TITLE),
         QString(
             "<h3>%1 %2</h3><br/>"
@@ -258,17 +260,18 @@ void MainWindow::createConnections()
     connect(m_workspaceWidget, &WorkspaceWidget::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStop);
 
     // Table actions
-    connect(ActionsManager::instance().action("selectAllRows"), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->selectAll();});
-    connect(ActionsManager::instance().action("invertRowsSelection"), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->invertSelection();});
-    connect(ActionsManager::instance().action("removeSelectedRows"), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected();});
-    connect(ActionsManager::instance().action("removeDuplicates"), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates();});
-    connect(ActionsManager::instance().action("removeAllRows"), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows();});
+    connect(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->selectAll();});
+    connect(ActionsManager::instance().action(ACTION_INVERT_ROWS_SELECTION), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->invertSelection();});
+    connect(ActionsManager::instance().action(ACTION_REMOVE_SELECTED_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected();});
+    connect(ActionsManager::instance().action(ACTION_REMOVE_DUPLICATE_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates();});
+    connect(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows();});
 
     // Tools
 
     // Filesystem
     connect(m_workspaceWidget->filesystemWidget(), &FilesystemWidget::urlFileDoubleClicked, [this](const QString& filePath){
         importUrlFile(filePath);
+        m_recentFiles->addFile(filePath);
     });
 
     // Statusbar
