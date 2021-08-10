@@ -1,5 +1,5 @@
 <RCC>
-    <qresource>
+    <qresource prefix="/">
         <file>assets/icons/application-logo.png</file>
         <file>assets/icons/drive.png</file>
         <file>assets/icons/document-list.png</file>
@@ -30,5 +30,6 @@
         <file>assets/icons/book-open.png</file>
         <file>assets/icons/book-open-bookmark.png</file>
         <file>assets/icons/book-open-list.png</file>
+        <file>assets/icons/sitemap-application-blue.png</file>
     </qresource>
 </RCC>

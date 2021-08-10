@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define ICON_APPLICATION_LOGO ":assets/icons/application-logo.png"
 #define ICON_DESKTOP ":assets/icons/desktop.png"
@@ -28,3 +28,4 @@
 #define ICON_BOOK_OPEN_LIST ":assets/icons/book-open-list.png"
 #define ICON_DOCUMENT_LIST ":assets/icons/document-list.png"
 #define ICON_ODATA ":assets/icons/odata.png"
+#define ICON_SITEMAP ":assets/icons/sitemap-application-blue.png"

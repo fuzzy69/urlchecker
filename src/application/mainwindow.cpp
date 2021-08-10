@@ -181,6 +181,8 @@ void MainWindow::createWidgets()
     // Main widgets
     m_mainStackedWidget = new QStackedWidget;
     m_workspaceWidget = new WorkspaceWidget;
+    // FIXME: Application sometimes crashes on exit, possible ownership issue with SettingsWidget?
+//    m_settingsWidget = new SettingsWidget(this);
     m_settingsWidget = new SettingsWidget;
     m_proxiesWidget = new ProxiesWidget;
     m_helpWidget = new HelpWidget;

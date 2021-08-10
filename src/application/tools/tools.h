@@ -19,6 +19,7 @@ enum Tools
     CHECK_ALEXA_RANK,
     SCRAPE_PROXIES,
     SCRAPE_LINKS,
+    SCRAPE_SITEMAPS,
     TEST,
 #if APP_DEBUG
     DUMMY,

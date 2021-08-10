@@ -6,6 +6,7 @@
 #include "../tools/test/testtool.h"
 #include "../tools/scrapelinks/scrapelinkstool.h"
 #include "../tools/urlstatus/urlstatustool.h"
+#include "../tools/scrapesitemaps/scrapesitemapstool.h"
 
 ToolsManager::ToolsManager()
 {
@@ -15,6 +16,7 @@ ToolsManager::ToolsManager()
     addTool(new ScrapeLinksTool);
     addTool(new UrlStatusTool);
     addTool(new AlexaRankTool);
+    addTool(new ScrapeSitemapsTool);
 
     setCurrentTool(QStringLiteral("Check URL Status"));
 }
