@@ -20,6 +20,7 @@ enum Tools
     SCRAPE_PROXIES,
     SCRAPE_LINKS,
     SCRAPE_SITEMAPS,
+    SCRAPE_EMAILS,
     TEST,
 #if APP_DEBUG
     DUMMY,

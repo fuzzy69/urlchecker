@@ -8,6 +8,7 @@
 #include "test/testworker.h"
 #include "scrapelinks/scrapelinksworker.h"
 #include "scrapesitemaps/scrapesitemapsworker.h"
+#include "scrapeemails/scrapeemailsworker.h"
 
 // FIXME: This is temporary solution, switching tools/worker should be resolved differently
 Worker *workerFactory(int id, int workerId, QQueue<QVariantMap> *inputDataQueue, QMutex *mutex, const QVariantMap &settings)
@@ -30,6 +31,9 @@ Worker *workerFactory(int id, int workerId, QQueue<QVariantMap> *inputDataQueue,
             break;
         case Tools::SCRAPE_SITEMAPS:
             worker = new ScrapeSitemapskWorker(workerId, inputDataQueue, mutex, settings);
+            break;
+        case Tools::SCRAPE_EMAILS:
+            worker = new ScrapeEmailsWorker(workerId, inputDataQueue, mutex, settings);
             break;
         case Tools::TEST:
             worker = new TestWorker(workerId, inputDataQueue, mutex, settings);

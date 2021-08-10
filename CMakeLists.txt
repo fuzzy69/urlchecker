@@ -58,6 +58,9 @@ add_executable(
     src/application/tools/scrapesitemaps/scrapesitemapstool.cpp
     src/application/tools/scrapesitemaps/scrapesitemapsworker.cpp
     src/application/tools/scrapesitemaps/utilities.cpp
+    src/application/tools/scrapeemails/scrapeemailstool.cpp
+    src/application/tools/scrapeemails/scrapeemailsworker.cpp
+    src/application/tools/scrapeemails/utilities.cpp
 
     src/application/utils/requests.cpp
     src/application/utils/simpledom.cpp

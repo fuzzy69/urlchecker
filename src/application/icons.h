@@ -29,3 +29,4 @@
 #define ICON_DOCUMENT_LIST ":assets/icons/document-list.png"
 #define ICON_ODATA ":assets/icons/odata.png"
 #define ICON_SITEMAP ":assets/icons/sitemap-application-blue.png"
+#define ICON_EMAIL ":assets/icons/at-sign.png"
