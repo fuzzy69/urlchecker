@@ -64,6 +64,9 @@ add_executable(
     src/application/tools/scrapephonenumbers/scrapephonenumberstool.cpp
     src/application/tools/scrapephonenumbers/scrapephonenumbersworker.cpp
     src/application/tools/scrapephonenumbers/utilities.cpp
+    src/application/tools/checksearchengineindex/checksearchengineindextool.cpp
+    src/application/tools/checksearchengineindex/checksearchengineindexworker.cpp
+    src/application/tools/checksearchengineindex/utilities.cpp
 
     src/application/utils/requests.cpp
     src/application/utils/simpledom.cpp

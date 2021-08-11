@@ -6,6 +6,8 @@
 std::unordered_set<std::string> extract_phone_numbers(const std::string &text)
 {
     std::unordered_set<std::string> phone_numbers;
+    // TODO: Improve regex
+    // Regex source https://ihateregex.io/expr/phone/
     static const std::regex regex(R"([\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6})");
     std::sregex_iterator iter(text.begin(), text.end(), regex);
     std::sregex_iterator end;

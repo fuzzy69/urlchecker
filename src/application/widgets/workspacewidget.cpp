@@ -78,9 +78,9 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
     connect(m_workerManager, &WorkerManager::result, this, &WorkspaceWidget::onResult);
     connect(m_workerManager, &WorkerManager::status, this, &WorkspaceWidget::onStatus);
-//    connect(m_testPushButton, &QPushButton::clicked, [this] {
-//        qDebug() << "Test";
-//    });
+    connect(m_testPushButton, &QPushButton::clicked, [] {
+        qDebug() << "Test";
+    });
 }
 
 void WorkspaceWidget::toggleTools()

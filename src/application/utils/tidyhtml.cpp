@@ -6,7 +6,10 @@ TidyHtml::TidyHtml() : m_doc(tidyCreate())
 {
     tidyOptSetBool(m_doc, TidyXhtmlOut, yes)
     and tidyOptSetBool(m_doc, TidyQuiet, yes)
-    and tidyOptSetBool(m_doc, TidyShowWarnings, no);
+    and tidyOptSetBool(m_doc, TidyShowWarnings, no)
+    and tidyOptSetBool(m_doc, TidyForceOutput, yes)
+//    and tidyOptSetBool(m_doc, TidyCustomTags, yes);
+    ;
 }
 
 TidyHtml::~TidyHtml()

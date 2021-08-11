@@ -33,5 +33,6 @@
         <file>assets/icons/sitemap-application-blue.png</file>
         <file>assets/icons/at-sign.png</file>
         <file>assets/icons/telephone-handset-wire.png</file>
+        <file>assets/icons/bookmarks.png</file>
     </qresource>
 </RCC>
