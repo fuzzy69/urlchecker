@@ -8,6 +8,7 @@
 #include "../tools/urlstatus/urlstatustool.h"
 #include "../tools/scrapesitemaps/scrapesitemapstool.h"
 #include "../tools/scrapeemails/scrapeemailsstool.h"
+#include "../tools/scrapephonenumbers/scrapephonenumberstool.h"
 
 ToolsManager::ToolsManager()
 {
@@ -19,6 +20,7 @@ ToolsManager::ToolsManager()
     addTool(new AlexaRankTool);
     addTool(new ScrapeSitemapsTool);
     addTool(new ScrapeEmailsTool);
+    addTool(new ScrapePhoneNumbersTool);
 
     setCurrentTool(QStringLiteral("Check URL Status"));
 }

@@ -32,5 +32,6 @@
         <file>assets/icons/book-open-list.png</file>
         <file>assets/icons/sitemap-application-blue.png</file>
         <file>assets/icons/at-sign.png</file>
+        <file>assets/icons/telephone-handset-wire.png</file>
     </qresource>
 </RCC>

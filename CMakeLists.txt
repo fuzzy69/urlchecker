@@ -61,6 +61,9 @@ add_executable(
     src/application/tools/scrapeemails/scrapeemailstool.cpp
     src/application/tools/scrapeemails/scrapeemailsworker.cpp
     src/application/tools/scrapeemails/utilities.cpp
+    src/application/tools/scrapephonenumbers/scrapephonenumberstool.cpp
+    src/application/tools/scrapephonenumbers/scrapephonenumbersworker.cpp
+    src/application/tools/scrapephonenumbers/utilities.cpp
 
     src/application/utils/requests.cpp
     src/application/utils/simpledom.cpp
