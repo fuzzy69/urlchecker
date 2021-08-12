@@ -34,5 +34,6 @@
         <file>assets/icons/at-sign.png</file>
         <file>assets/icons/telephone-handset-wire.png</file>
         <file>assets/icons/bookmarks.png</file>
+        <file>assets/icons/images.png</file>
     </qresource>
 </RCC>

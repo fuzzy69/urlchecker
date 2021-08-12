@@ -11,6 +11,7 @@
 #include "scrapeemails/scrapeemailsworker.h"
 #include "scrapephonenumbers/scrapephonenumbersworker.h"
 #include "checksearchengineindex/checksearchengineindexworker.h"
+#include "scrapeimages/scrapeimagesworker.h"
 
 // FIXME: This is temporary solution, switching tools/worker should be resolved differently
 Worker *workerFactory(int id, int workerId, QQueue<QVariantMap> *inputDataQueue, QMutex *mutex, const QVariantMap &settings)
@@ -42,6 +43,9 @@ Worker *workerFactory(int id, int workerId, QQueue<QVariantMap> *inputDataQueue,
             break;
         case Tools::CHECK_SEARCH_ENGINE_INDEX:
             worker = new CheckSearchEngineIndexWorker(workerId, inputDataQueue, mutex, settings);
+            break;
+        case Tools::SCRAPE_IMAGES:
+            worker = new ScrapeImagesWorker(workerId, inputDataQueue, mutex, settings);
             break;
         case Tools::TEST:
             worker = new TestWorker(workerId, inputDataQueue, mutex, settings);

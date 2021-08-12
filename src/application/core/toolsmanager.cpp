@@ -10,6 +10,7 @@
 #include "../tools/scrapeemails/scrapeemailsstool.h"
 #include "../tools/scrapephonenumbers/scrapephonenumberstool.h"
 #include "../tools/checksearchengineindex/checksearchengineindextool.h"
+#include "../tools/scrapeimages/scrapeimagestool.h"
 
 ToolsManager::ToolsManager()
 {
@@ -23,6 +24,7 @@ ToolsManager::ToolsManager()
     addTool(new ScrapeEmailsTool);
     addTool(new ScrapePhoneNumbersTool);
     addTool(new CheckSearchEngineIndexTool);
+    addTool(new ScrapeImagesTool);
 
     setCurrentTool(QStringLiteral("Check URL Status"));
 }

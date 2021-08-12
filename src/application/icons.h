@@ -32,3 +32,4 @@
 #define ICON_EMAIL ":assets/icons/at-sign.png"
 #define ICON_PHONE_NUMBER ":assets/icons/telephone-handset-wire.png"
 #define ICON_BOOKMARKS ":assets/icons/bookmarks.png"
+#define ICON_IMAGES ":assets/icons/images.png"

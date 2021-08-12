@@ -46,6 +46,9 @@ add_executable(
     src/application/tools/scrapelinks/scrapelinkstool.cpp
     src/application/tools/scrapelinks/scrapelinksworker.cpp
     src/application/tools/scrapelinks/utilities.cpp
+    src/application/tools/scrapeimages/scrapeimagestool.cpp
+    src/application/tools/scrapeimages/scrapeimagesworker.cpp
+    src/application/tools/scrapeimages/utilities.cpp
     src/application/tools/scrapeproxies/scrapeproxiestool.cpp
     src/application/tools/scrapeproxies/scrapeproxiesworker.cpp
     src/application/tools/scrapeproxies/utilities.cpp
