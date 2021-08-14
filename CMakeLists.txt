@@ -8,6 +8,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -75,17 +76,24 @@ add_executable(
     src/application/utils/simpledom.cpp
     src/application/utils/tidyhtml.cpp
 
+    src/application/widgets/settingswidget/settingswidget.cpp
+    src/application/widgets/settingswidget/generalsettingspage.cpp
+    src/application/widgets/settingswidget/connectionsettingspage.cpp
+    src/application/widgets/settingswidget/proxiessettingspage.cpp
+    src/application/widgets/settingswidget/generalsettings.ui
+    src/application/widgets/settingswidget/connectionsettings.ui
+    src/application/widgets/settingswidget/proxiessettings.ui
     src/application/widgets/filesystemwidget.cpp
     src/application/widgets/helpbrowser.cpp
     src/application/widgets/helpwidget.cpp
     src/application/widgets/logwidget.cpp
     src/application/widgets/mainwindowbase.cpp
     src/application/widgets/proxieswidget.cpp
-    src/application/widgets/settingswidget.cpp
     src/application/widgets/sidebarwidget.cpp
     src/application/widgets/tableswidget.cpp
     src/application/widgets/toolswidget.cpp
     src/application/widgets/workspacewidget.cpp
+
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)

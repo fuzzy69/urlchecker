@@ -33,3 +33,5 @@
 #define ICON_PHONE_NUMBER ":assets/icons/telephone-handset-wire.png"
 #define ICON_BOOKMARKS ":assets/icons/bookmarks.png"
 #define ICON_IMAGES ":assets/icons/images.png"
+#define ICON_DASHBOARD ":assets/icons/dashboard.png"
+#define ICON_NETWORK_IP ":assets/icons/network-ip.png"

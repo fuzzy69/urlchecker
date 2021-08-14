@@ -35,5 +35,7 @@
         <file>assets/icons/telephone-handset-wire.png</file>
         <file>assets/icons/bookmarks.png</file>
         <file>assets/icons/images.png</file>
+        <file>assets/icons/dashboard.png</file>
+        <file>assets/icons/network-ip.png</file>
     </qresource>
 </RCC>

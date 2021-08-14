@@ -38,7 +38,7 @@
 #include "widgets/helpwidget.h"
 //#include "widgets/logwidget.h"
 #include "widgets/proxieswidget.h"
-#include "widgets/settingswidget.h"
+#include "widgets/settingswidget/settingswidget.h"
 #include "widgets/sidebarwidget.h"
 #include "widgets/tableswidget.h"
 #include "widgets/toolswidget.h"
