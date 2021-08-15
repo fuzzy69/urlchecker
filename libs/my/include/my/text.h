@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include <string>
@@ -20,5 +20,11 @@ std::string right_strip(const std::string& text);
 std::string strip(const std::string& text);
 
 bool starts_with(const std::string& text, const std::string& prefix);
+
+std::string trim_whitespaces(const std::string &text);
+
+std::string to_lower(const std::string& text);
+
+std::string to_upper(const std::string& text);
 }
 }

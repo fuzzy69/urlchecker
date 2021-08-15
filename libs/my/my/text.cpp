@@ -1,8 +1,8 @@
-#include "my/text.h"
+﻿#include "my/text.h"
 
+#include <regex>
 #include <sstream>
 #include <string>
-
 
 namespace my
 {
@@ -61,5 +61,28 @@ bool starts_with(const std::string& text, const std::string& prefix)
 {
     return text.compare(0, prefix.length(), prefix) == 0;
 }
+
+std::string trim_whitespaces(const std::string &text)
+{
+    static const std::regex re(R"(\s+)");
+
+    return regex_replace(text, re, " ");
+}
+
+std::string to_lower(const std::string& text)
+{
+    std::string result(text);
+    std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c){ return std::tolower(c); });
+
+    return result;
+};
+
+std::string to_upper(const std::string& text)
+{
+    std::string result(text);
+    std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c){ return std::toupper(c); });
+
+    return result;
+};
 }
 }
