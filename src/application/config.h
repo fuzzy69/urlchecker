@@ -12,5 +12,5 @@
 #define MAX_RECENT_FILES 5
 
 #define SETTINGS_FILE "settings.json"
-#define PROXIES_FILE "data/proxies.json"
-#define USER_AGENTS_FILE "data/user_agents.json"
+#define PROXIES_FILE "data/proxies.txt"
+#define USER_AGENTS_FILE "data/user_agents.txt"

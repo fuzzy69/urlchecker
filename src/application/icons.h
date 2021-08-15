@@ -35,3 +35,5 @@
 #define ICON_IMAGES ":assets/icons/images.png"
 #define ICON_DASHBOARD ":assets/icons/dashboard.png"
 #define ICON_NETWORK_IP ":assets/icons/network-ip.png"
+#define ICON_USER_SILHOUETTE ":assets/icons/user-silhouette.png"
+#define ICON_USER_SILHOUETTE_QUESTION ":assets/icons/user-silhouette-question.png"

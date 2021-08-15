@@ -37,5 +37,7 @@
         <file>assets/icons/images.png</file>
         <file>assets/icons/dashboard.png</file>
         <file>assets/icons/network-ip.png</file>
+        <file>assets/icons/user-silhouette.png</file>
+        <file>assets/icons/user-silhouette-question.png</file>
     </qresource>
 </RCC>

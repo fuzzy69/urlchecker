@@ -42,6 +42,7 @@
 #include "widgets/sidebarwidget.h"
 #include "widgets/tableswidget.h"
 #include "widgets/toolswidget.h"
+#include "widgets/useragentswidget.h"
 #include "widgets/workspacewidget.h"
 
 #include "actions.h"
@@ -75,7 +76,8 @@ APPLICATION_VERSION )));
     //
 //     QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
     initSettings(applicationDir);
-    initUserAgents(applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE)));
+//    initUserAgents(applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE)));
+    initUserAgents(applicationDir);
     initProxies(applicationDir);
     // Init recent files
     for (QAction *action : m_recentFiles->actions())
@@ -176,6 +178,7 @@ void MainWindow::createWidgets()
     m_sideBarWidget = new SideBarWidget;
     m_sideBarWidget->addAction(ActionsManager::instance().action("workspace"), true);
     m_sideBarWidget->addAction(ActionsManager::instance().action("settings"));
+    m_sideBarWidget->addAction(ActionsManager::instance().action("userAgents"));
     m_sideBarWidget->addAction(ActionsManager::instance().action("proxies"));
     m_sideBarWidget->addAction(ActionsManager::instance().action("help"));
     // Main widgets
@@ -184,11 +187,13 @@ void MainWindow::createWidgets()
     // FIXME: Application sometimes crashes on exit, possible ownership issue with SettingsWidget?
 //    m_settingsWidget = new SettingsWidget(this);
     m_settingsWidget = new SettingsWidget;
+    m_userAgentsWidget = new UserAgentsWidget;
     m_proxiesWidget = new ProxiesWidget;
     m_helpWidget = new HelpWidget;
 
     m_mainStackedWidget->addWidget(m_workspaceWidget);
     m_mainStackedWidget->addWidget(m_settingsWidget);
+    m_mainStackedWidget->addWidget(m_userAgentsWidget);
     m_mainStackedWidget->addWidget(m_proxiesWidget);
     m_mainStackedWidget->addWidget(m_helpWidget);
     // Central widget
@@ -251,8 +256,9 @@ void MainWindow::createConnections()
     // Sidebar
     connect(ActionsManager::instance().action("workspace"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
     connect(ActionsManager::instance().action("settings"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
-    connect(ActionsManager::instance().action("proxies"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
-    connect(ActionsManager::instance().action("help"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
+    connect(ActionsManager::instance().action("userAgents"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
+    connect(ActionsManager::instance().action("proxies"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
+    connect(ActionsManager::instance().action("help"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(4);});
 
     // Misc
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
@@ -341,6 +347,8 @@ QMessageBox::Yes | QMessageBox::No);
     // TODO: Stop remaining running workers/threads
     Q_EMIT m_applicationStateMachine->applicationExiting();
     saveSettings();
+    // Save user agents to file
+    File::writeTextFile(Settings::instance().value(QStringLiteral(USER_AGENTS_FILE)).toString(), m_userAgentsWidget->toPlainText());
     // Save proxies to file
     File::writeTextFile(Settings::instance().value(QStringLiteral(PROXIES_FILE)).toString(), m_proxiesWidget->toPlainText());
 
@@ -467,22 +475,27 @@ QVariant(applicationDir.filePath(QStringLiteral( USER_AGENTS_FILE ))));
     }
 }
 
-// void MainWindow::initUserAgents(const QDir& applicationDir)
-// {
-//     QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
-//     if (!QFile::exists(userAgentsFilePath))
-//     {
-//         File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
-//     }
-//     for (auto& line : File::readTextLines(userAgentsFilePath))
-//     {
-//         UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
-//     }
-// }
+ void MainWindow::initUserAgents(const QDir& applicationDir)
+ {
+     QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
+     if (!QFile::exists(userAgentsFilePath))
+     {
+         File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
+     }
+     for (auto& line : File::readTextLines(userAgentsFilePath))
+     {
+         UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
+         m_userAgentsWidget->append(line);
+     }
+ }
 
 void MainWindow::initProxies ( const QDir& applicationDir )
 {
     QString proxiesFilePath = applicationDir.filePath(QStringLiteral(PROXIES_FILE));
+     if (!QFile::exists(proxiesFilePath))
+     {
+         File::writeTextFile(proxiesFilePath, QStringLiteral(""));
+     }
     for (auto& proxy : my::network::loadProxiesFromFile(proxiesFilePath))
     {
         ProxyManager::instance().add_proxy(proxy);

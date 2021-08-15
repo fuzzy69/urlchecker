@@ -92,6 +92,7 @@ add_executable(
     src/application/widgets/sidebarwidget.cpp
     src/application/widgets/tableswidget.cpp
     src/application/widgets/toolswidget.cpp
+    src/application/widgets/useragentswidget.cpp
     src/application/widgets/workspacewidget.cpp
 
 )

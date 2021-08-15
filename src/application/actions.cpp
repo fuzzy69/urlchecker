@@ -35,6 +35,7 @@ void createActions()
     // Sidebar
     ActionsManager::instance().createAction(QStringLiteral("workspace"), QStringLiteral(ICON_DESKTOP), QStringLiteral(TEXT_WORKSPACE));
     ActionsManager::instance().createAction(QStringLiteral("settings"), QStringLiteral(ICON_GEAR), QStringLiteral(TEXT_SETTINGS));
+    ActionsManager::instance().createAction(QStringLiteral("userAgents"), QStringLiteral(ICON_USER_SILHOUETTE_QUESTION), QStringLiteral(TEXT_USER_AGENTS));
     ActionsManager::instance().createAction(QStringLiteral("proxies"), QStringLiteral(ICON_MASK), QStringLiteral(TEXT_PROXIES));
     ActionsManager::instance().createAction(QStringLiteral("help"), QStringLiteral(ICON_QUESTION), QStringLiteral(TEXT_HELP));
     //    m_workspaceAction = new QAction(QIcon(ICON_DESKTOP), tr("Workspace"), this);

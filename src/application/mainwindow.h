@@ -15,6 +15,7 @@ class ProxiesWidget;
 class RecentFiles;
 class SettingsWidget;
 class SideBarWidget;
+class UserAgentsWidget;
 class WorkspaceWidget;
 
 class MainWindow final : public MainWindowBase
@@ -51,7 +52,7 @@ private:
 
     void initSettings(const QDir& applicationDir);
     void initProxies(const QDir& applicationDir);
-//     void initUserAgents(const QDir& applicationDir);
+     void initUserAgents(const QDir& applicationDir);
 
     // MenuBar
     QMenu *m_fileMenu;
@@ -92,6 +93,7 @@ private:
 
     WorkspaceWidget *m_workspaceWidget;
     SettingsWidget *m_settingsWidget;
+    UserAgentsWidget *m_userAgentsWidget;
     ProxiesWidget *m_proxiesWidget;
     HelpWidget *m_helpWidget;
 
