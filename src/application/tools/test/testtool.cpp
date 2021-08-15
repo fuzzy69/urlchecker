@@ -7,7 +7,7 @@ TestTool::TestTool() : Tool(
     QIcon(ICON_HAMMER),
     QString(QStringLiteral("Test")),
     QStringList() << QStringLiteral("URL") << QStringLiteral("Result") << QStringLiteral("Details"),
-    QList<float>() << 0.5f << 0.1f
+    QList<float>() << 0.5f << 0.3f
 )
 {
 
