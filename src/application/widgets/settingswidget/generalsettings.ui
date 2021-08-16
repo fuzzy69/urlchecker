@@ -50,6 +50,9 @@
        <layout class="QHBoxLayout" name="processesLayout">
         <item>
          <widget class="QLabel" name="workersCountLabel">
+          <property name="toolTip">
+           <string>How many parallel requests to run at once.</string>
+          </property>
           <property name="text">
            <string>Workers count:</string>
           </property>

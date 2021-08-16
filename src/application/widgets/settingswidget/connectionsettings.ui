@@ -21,6 +21,9 @@
        <layout class="QFormLayout" name="formLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="completionTriggerLabel">
+          <property name="toolTip">
+           <string>How many retries after failed request</string>
+          </property>
           <property name="text">
            <string>Connection retries:</string>
           </property>
@@ -52,6 +55,9 @@
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="connectionTimeoutLabel">
+          <property name="toolTip">
+           <string>How long to wait for server response after performed request</string>
+          </property>
           <property name="text">
            <string>Timeout in seconds:</string>
           </property>
@@ -110,7 +116,7 @@
         <item row="3" column="0">
          <widget class="QCheckBox" name="verifySslCheckBox">
           <property name="toolTip">
-           <string>Inserts the common prefix of available completion items.</string>
+           <string>Force SSL verification for HTTPS connection. May fail on some servers.</string>
           </property>
           <property name="text">
            <string>Verify SSL</string>
