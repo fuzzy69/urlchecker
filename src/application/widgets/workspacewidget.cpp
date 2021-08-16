@@ -48,7 +48,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
     m_logWidget = new LogWidget;
     m_startPushButton = new QPushButton(QIcon(ICON_CONTROL), tr("Start"));
     m_stopPushButton = new QPushButton(QIcon(ICON_CONTROL_STOP), tr("Stop"));
-    m_testPushButton = new QPushButton(tr("Test"));
+//    m_testPushButton = new QPushButton(tr("Test"));
     m_progressBar = new QProgressBar;
     m_progressBar->setRange(0, 100);
     m_sideTabWidget->addTab(m_toolsWidget, QIcon(ICON_HAMMER), tr("Tools"));
@@ -63,7 +63,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
     m_bottomLayout->addWidget(m_progressBar);
     m_bottomLayout->addWidget(m_startPushButton);
     m_bottomLayout->addWidget(m_stopPushButton);
-    m_bottomLayout->addWidget(m_testPushButton);
+//    m_bottomLayout->addWidget(m_testPushButton);
     m_mainLayout->addLayout(m_topLayout);
     m_mainLayout->addLayout(m_bottomLayout);
 
@@ -78,9 +78,9 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
     connect(m_workerManager, &WorkerManager::result, this, &WorkspaceWidget::onResult);
     connect(m_workerManager, &WorkerManager::status, this, &WorkspaceWidget::onStatus);
-    connect(m_testPushButton, &QPushButton::clicked, [] {
-        qDebug() << "Test";
-    });
+//    connect(m_testPushButton, &QPushButton::clicked, [] {
+//        qDebug() << "Test";
+//    });
 }
 
 void WorkspaceWidget::toggleTools()

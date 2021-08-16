@@ -99,6 +99,7 @@ void SideBarWidget::mousePressEvent(QMouseEvent *event)
         m_checkedAction = action;
         update();
         action->trigger();
+        Q_EMIT currentActionIndexChanged(m_actions.indexOf(action));
     }
     QWidget::mousePressEvent(event);
 }

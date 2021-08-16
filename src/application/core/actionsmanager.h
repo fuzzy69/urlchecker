@@ -30,6 +30,9 @@ public:
         return action;
     }
 
+//Q_SIGNALS:
+//    void currentActionIndexChanged(int index);
+
 private:
     static ActionsManager* m_instance;
     QMap<QString, QAction*> m_actions;

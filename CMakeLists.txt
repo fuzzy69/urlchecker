@@ -38,7 +38,8 @@ add_executable(
     src/application/core/toolsmanager.cpp
     src/application/core/worker.cpp
     src/application/core/workermanager.cpp
-    
+#    src/application/core/useragents/useragentsmanager.cpp
+
     src/application/tools/alexarank/alexaranktool.cpp
     src/application/tools/alexarank/checkalexarankworker.cpp
     src/application/tools/alexarank/utilities.cpp
@@ -79,9 +80,11 @@ add_executable(
     src/application/widgets/settingswidget/settingswidget.cpp
     src/application/widgets/settingswidget/generalsettingspage.cpp
     src/application/widgets/settingswidget/connectionsettingspage.cpp
+    src/application/widgets/settingswidget/useragentssettingspage.cpp
     src/application/widgets/settingswidget/proxiessettingspage.cpp
     src/application/widgets/settingswidget/generalsettings.ui
     src/application/widgets/settingswidget/connectionsettings.ui
+    src/application/widgets/settingswidget/useragentssettings.ui
     src/application/widgets/settingswidget/proxiessettings.ui
     src/application/widgets/filesystemwidget.cpp
     src/application/widgets/helpbrowser.cpp

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UserAgentsSettings</class>
+ <widget class="QWidget" name="UserAgentsSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>953</width>
+    <height>1394</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="userAgentsGroupBox">
+     <property name="title">
+      <string>User agents</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="globalUserAgentLineEdit"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="useRandomUserAgentRadioButton">
+        <property name="toolTip">
+         <string>Use random user agent from user agents list for each request.</string>
+        </property>
+        <property name="text">
+         <string>Use random user agent</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="useGlobalUserAgentRadioButton">
+        <property name="toolTip">
+         <string>Use one user agent for each request.</string>
+        </property>
+        <property name="text">
+         <string>Use global user agent</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="tieUserAgentToProxyRadioButton">
+        <property name="toolTip">
+         <string>Use random user agent and for every subsequent request with the same proxie keep using the same user agent. </string>
+        </property>
+        <property name="text">
+         <string>Tie user agent to proxy</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>529</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

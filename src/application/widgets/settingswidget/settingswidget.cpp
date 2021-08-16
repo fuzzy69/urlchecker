@@ -21,6 +21,7 @@
 
 #include "generalsettingspage.h"
 #include "connectionsettingspage.h"
+#include "useragentssettingspage.h"
 #include "proxiessettingspage.h"
 
 SettingsWidget::SettingsWidget ( QWidget* parent ) :
@@ -49,6 +50,13 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
     connectionItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     connectionItem->setSizeHint(QSize(200, 40));
     m_categoriesListWidget->addItem(connectionItem);
+    QListWidgetItem* userAgentsItem = new QListWidgetItem;
+    userAgentsItem->setIcon(QIcon(ICON_USER_SILHOUETTE_QUESTION));
+    userAgentsItem->setText(QStringLiteral("User Agents"));
+    userAgentsItem->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    userAgentsItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    userAgentsItem->setSizeHint(QSize(200, 40));
+    m_categoriesListWidget->addItem(userAgentsItem);
     QListWidgetItem* proxiesItem = new QListWidgetItem;
     proxiesItem->setIcon(QIcon(ICON_MASK));
     proxiesItem->setText(QStringLiteral("Proxies"));
@@ -60,6 +68,7 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
     m_contentsStackedWidget = new QStackedWidget;
     m_contentsStackedWidget->addWidget(new GeneralSettingsPage);
     m_contentsStackedWidget->addWidget(new ConnectionSettingsPage);
+    m_contentsStackedWidget->addWidget(new UserAgentsSettingsPage);
     m_contentsStackedWidget->addWidget(new ProxiesSettingsPage);
     m_mainLayout = new QHBoxLayout(this);
 

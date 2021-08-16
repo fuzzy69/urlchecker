@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QList>
 #include <QWidget>
@@ -17,6 +17,9 @@ public:
     /// Returns pointer to a created action from given text and icon
     QAction* addAction ( const QString& text, const QIcon& icon );
     QSize minimumSizeHint() const override;
+
+Q_SIGNALS:
+    void currentActionIndexChanged(int index);
 
 protected:
     void paintEvent ( QPaintEvent *event ) override;

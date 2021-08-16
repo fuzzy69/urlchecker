@@ -77,7 +77,7 @@ private:
 
     QPushButton *m_startPushButton;
     QPushButton *m_stopPushButton;
-    QPushButton *m_testPushButton;
+//    QPushButton *m_testPushButton;
     QProgressBar *m_progressBar;
 
     QTabWidget *m_sideTabWidget;

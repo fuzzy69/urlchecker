@@ -1,4 +1,4 @@
-#include "requests.h"
+﻿#include "requests.h"
 
 #include "my/httpproxy.h"
 #include "my/proxymanager.h"
@@ -21,7 +21,8 @@ Requests::Requests(const QVariantMap& settings) : m_settings(settings)
 cpr::Response Requests::get(const std::string& url)
 {
     auto headers = cpr::Header{
-        {"user-agent", UserAgentsManager<QString>::instance().get_random().toStdString()}
+//        {"user-agent", UserAgentsManager<QString>::instance().get_random().toStdString()}
+        {"user-agent", UserAgentsManager<QString>::instance().get_user_agent().toStdString()}
     };
     if (m_useProxies)
     {
@@ -41,7 +42,8 @@ cpr::Response Requests::get(const std::string& url)
 cpr::Response Requests::head(const std::string& url)
 {
     auto headers = cpr::Header{
-        {"user-agent", UserAgentsManager<QString>::instance().get_random().toStdString()}
+//        {"user-agent", UserAgentsManager<QString>::instance().get_random().toStdString()}
+        {"user-agent", UserAgentsManager<QString>::instance().get_user_agent().toStdString()}
     };
     if (m_useProxies)
     {

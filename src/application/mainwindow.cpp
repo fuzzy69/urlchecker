@@ -254,11 +254,12 @@ void MainWindow::createConnections()
     );});
 
     // Sidebar
-    connect(ActionsManager::instance().action("workspace"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
-    connect(ActionsManager::instance().action("settings"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
-    connect(ActionsManager::instance().action("userAgents"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
-    connect(ActionsManager::instance().action("proxies"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
-    connect(ActionsManager::instance().action("help"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(4);});
+//    connect(ActionsManager::instance().action("workspace"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
+//    connect(ActionsManager::instance().action("settings"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
+//    connect(ActionsManager::instance().action("userAgents"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
+//    connect(ActionsManager::instance().action("proxies"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
+//    connect(ActionsManager::instance().action("help"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(4);});
+    connect(m_sideBarWidget, &SideBarWidget::currentActionIndexChanged, m_mainStackedWidget, &QStackedWidget::setCurrentIndex);
 
     // Misc
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
@@ -487,6 +488,7 @@ QVariant(applicationDir.filePath(QStringLiteral( USER_AGENTS_FILE ))));
          UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
          m_userAgentsWidget->append(line);
      }
+     UserAgentsManager<QString>::instance().set_default_user_agent(USER_AGENT);
  }
 
 void MainWindow::initProxies ( const QDir& applicationDir )
