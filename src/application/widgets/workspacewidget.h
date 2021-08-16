@@ -34,6 +34,7 @@ public:
     FilesystemWidget* filesystemWidget();
     TablesWidget* tablesWidget();
     LogWidget* logWidget();
+    WorkerManager* workerManager();
     void setCurrentProgress(int value);
 
 public Q_SLOTS:

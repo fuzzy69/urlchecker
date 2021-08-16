@@ -121,6 +121,11 @@ LogWidget *WorkspaceWidget::logWidget()
     return m_logWidget;
 }
 
+WorkerManager *WorkspaceWidget::workerManager()
+{
+    return m_workerManager;
+}
+
 void WorkspaceWidget::setCurrentProgress(int value)
 {
     m_progressBar->setValue(value);

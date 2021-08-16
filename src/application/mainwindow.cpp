@@ -47,6 +47,7 @@
 
 #include "actions.h"
 #include "core/actionsmanager.h"
+#include "core/workermanager.h"
 
 using my::filesystem::File;
 // using my::network::HttpProxy;
@@ -265,8 +266,8 @@ void MainWindow::createConnections()
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
 
     // Workspace widget
-    connect(m_workspaceWidget, &WorkspaceWidget::jobStarted, m_applicationStateMachine, &ApplicationStateMachine::jobStart);
-    connect(m_workspaceWidget, &WorkspaceWidget::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStop);
+    connect(m_workspaceWidget->workerManager(), &WorkerManager::jobStarted, m_applicationStateMachine, &ApplicationStateMachine::jobStart);
+    connect(m_workspaceWidget->workerManager(), &WorkerManager::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStop);
 
     // Table actions
     connect(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->selectAll();});
