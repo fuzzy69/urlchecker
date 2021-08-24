@@ -72,5 +72,14 @@ void ToolsWidget::addTool(Tool& tool, bool current)
 //    if (current)
 //    {
 //        setCurrentItem(item);
-//    }
+    //    }
+}
+
+void ToolsWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::RightButton)
+    {
+        Q_EMIT toolSettingsRequested(ToolsManager::instance().currentTool());
+    }
+    QTreeWidget::mousePressEvent(event);
 }

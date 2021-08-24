@@ -11,6 +11,7 @@
 #define TEXT_USER_AGENTS_FILE "userAgentsFilePath"
 #define TEXT_GEOMETRY "geometry"
 #define TEXT_WINDOW_STATE "windowState"
+//#define TEXT_SCRAPE_LINKS_STRATEGY "scrapeLinksStrategy"
 
 #define TEXT_WORKSPACE "Workspace"
 #define TEXT_SETTINGS "Settings"

@@ -13,7 +13,7 @@ class ScrapeLinkskWorker final: public Worker
 
 public:
     ScrapeLinkskWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
-    ~ScrapeLinkskWorker();
+    ~ScrapeLinkskWorker() override;
 
 protected:
     void doWork(const QVariantMap &inputData) override;
@@ -21,6 +21,4 @@ protected:
 private:
     std::unique_ptr<SimpleDOM> m_dom;
     std::unique_ptr<TidyHtml> m_tidy;
-//    SimpleDOM* m_dom;
-//    TidyHtml* m_tidy;
 };

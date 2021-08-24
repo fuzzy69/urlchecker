@@ -277,6 +277,12 @@ void MainWindow::createConnections()
     connect(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows();});
 
     // Tools
+    connect(m_workspaceWidget->toolsWidget(), &ToolsWidget::toolSettingsRequested, [this](const Tool& tool){
+        if (m_settingsWidget->setCurrentSettingsPage(tool.name()))
+        {
+            m_sideBarWidget->setCurrentAction(1);
+        }
+    });
 
     // Filesystem
     connect(m_workspaceWidget->filesystemWidget(), &FilesystemWidget::urlFileDoubleClicked, [this](const QString& filePath){

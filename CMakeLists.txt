@@ -45,9 +45,13 @@ add_executable(
     src/application/tools/alexarank/utilities.cpp
     src/application/tools/dummy/dummyworker.cpp
     src/application/tools/dummy/dummytool.cpp
+
+    src/application/tools/scrapelinks/scrapelinkssettings.ui
+    src/application/tools/scrapelinks/scrapelinkssettingspage.cpp
     src/application/tools/scrapelinks/scrapelinkstool.cpp
     src/application/tools/scrapelinks/scrapelinksworker.cpp
     src/application/tools/scrapelinks/utilities.cpp
+
     src/application/tools/scrapeimages/scrapeimagestool.cpp
     src/application/tools/scrapeimages/scrapeimagesworker.cpp
     src/application/tools/scrapeimages/utilities.cpp

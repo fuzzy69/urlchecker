@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ScrapeLinksSettings</class>
+ <widget class="QWidget" name="ScrapeLinksSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>953</width>
+    <height>1394</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QGroupBox" name="scrapeLinksGroupBox">
+     <property name="title">
+      <string>Scrape links</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="scrapeInternalLinksRadioButton">
+        <property name="toolTip">
+         <string>Use random user agent from user agents list for each request.</string>
+        </property>
+        <property name="text">
+         <string>Scrape internal links</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="scrapeAllLinksRadioButton">
+        <property name="toolTip">
+         <string>Use one user agent for each request.</string>
+        </property>
+        <property name="text">
+         <string>Scrape all links</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="scrapeExternalLinksRadioButton">
+        <property name="toolTip">
+         <string>Use random user agent and for every subsequent request with the same proxie keep using the same user agent. </string>
+        </property>
+        <property name="text">
+         <string>Scrape external links</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>529</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

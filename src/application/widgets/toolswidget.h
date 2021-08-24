@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <QMap>
+#include <QMouseEvent>
 #include <QSet>
 #include <QTreeWidget>
 
@@ -21,6 +22,10 @@ public:
 signals:
     void toolSelected(const QString &toolText);
     void toolSelected(const Tool &tool);
+    void toolSettingsRequested(const Tool &tool);
+
+protected:
+    virtual void mousePressEvent(QMouseEvent *event);
 
 private:
     QMap<QString, Tool> m_tools;

@@ -17,6 +17,7 @@ public:
     /// Returns pointer to a created action from given text and icon
     QAction* addAction ( const QString& text, const QIcon& icon );
     QSize minimumSizeHint() const override;
+    void setCurrentAction(int index);
 
 Q_SIGNALS:
     void currentActionIndexChanged(int index);

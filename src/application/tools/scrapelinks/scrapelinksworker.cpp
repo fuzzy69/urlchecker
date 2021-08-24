@@ -7,6 +7,7 @@
 #include "my/text.h"
 
 #include "scrapelinksworker.h"
+#include "common.h"
 #include "utilities.h"
 #include "../../core/resultstatus.h"
 #include "../../config.h"
@@ -31,15 +32,13 @@ void ScrapeLinkskWorker::doWork(const QVariantMap& inputData)
 {
     QUrl url(inputData["url"].toString());
     int rowId = inputData["rowId"].toInt();
+    ScrapeLinksStrategy strategy(static_cast<ScrapeLinksStrategy>(m_settings[SCRAPE_LINKS_STRATEGY].toInt()));
 
     logMessage(QString("Scraping links from URL '%1'...").arg(url.toString()));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(url.toString().toStdString());
-//    TidyHtml tidy_html;
-//    std::string html = tidy_html.process(response.text);
     std::string html = m_tidy->process(response.text);
-//    SimpleDOM dom;
     m_dom->from_string(html);
     for (auto& element : m_dom->select_all("//a"))
     {
@@ -48,6 +47,16 @@ void ScrapeLinkskWorker::doWork(const QVariantMap& inputData)
         // TODO: Better URL filtering
         if (!starts_with(link, "http"))
             continue;
+        switch (strategy)
+        {
+            case ScrapeLinksStrategy::INTERNAL_LINKS:
+                // Filter internal links
+                break;
+            case ScrapeLinksStrategy::EXTERNAL_LINKS:
+                // Filter external links
+                break;
+        }
+
         auto data = QMap<QString, QVariant>{
             {QString("toolId"), QVariant(Tools::SCRAPE_LINKS)},
             {QString("toolName"), QVariant("Scrape Links")},

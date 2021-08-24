@@ -42,6 +42,18 @@ QSize SideBarWidget::minimumSizeHint() const
     return ACTION_HEIGHT * QSize(1, m_actions.size());
 }
 
+void SideBarWidget::setCurrentAction(int index)
+{
+    if (index >= 0 and index < m_actions.count())
+    {
+        auto* action = m_actions.at(index);
+        m_checkedAction = action;
+        update();
+        action->trigger();
+        Q_EMIT currentActionIndexChanged(index);
+    }
+}
+
 void SideBarWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
