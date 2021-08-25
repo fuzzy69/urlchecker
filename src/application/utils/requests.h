@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <QObject>
@@ -13,6 +13,7 @@ public:
 
     cpr::Response get(const std::string& url);
     cpr::Response head(const std::string& url);
+    cpr::Response download(const std::string& url, const std::string& filePath);
 
 private:
     QVariantMap m_settings;

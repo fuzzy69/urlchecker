@@ -1,4 +1,6 @@
-﻿#include "requests.h"
+﻿#include <fstream>
+
+#include "requests.h"
 
 #include "my/httpproxy.h"
 #include "my/proxymanager.h"
@@ -58,4 +60,18 @@ cpr::Response Requests::head(const std::string& url)
     {
         return cpr::Head(cpr::Url{url}, cpr::Timeout{m_timeout}, headers, cpr::VerifySsl{m_verifySsl});
     }
+}
+
+cpr::Response Requests::download(const std::string &url, const std::string &filePath)
+{
+    auto ofstream = std::ofstream(filePath);
+    auto headers = cpr::Header{
+        {"user-agent", UserAgentsManager<QString>::instance().get_user_agent().toStdString()}
+    };
+    auto session = cpr::Session();
+    session.SetUrl(cpr::Url(url));
+    session.SetTimeout(m_timeout);
+    session.SetVerifySsl(m_verifySsl);
+
+    return session.Download(ofstream);
 }

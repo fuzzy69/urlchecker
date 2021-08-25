@@ -25,6 +25,7 @@
 #include "proxiessettingspage.h"
 
 #include "../../tools/scrapelinks/scrapelinkssettingspage.h"
+#include "../../tools/scrapeimages/scrapeimagessettingspage.h"
 
 SettingsWidget::SettingsWidget ( QWidget* parent ) :
     QWidget(parent), m_itemsMap(QMap<QString, QListWidgetItem*>())
@@ -44,6 +45,7 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
     addItem(QIcon(ICON_NETWORK_IP), QStringLiteral("Connection"), new ConnectionSettingsPage);
     addItem(QIcon(ICON_USER_SILHOUETTE_QUESTION), QStringLiteral("User Agents"), new UserAgentsSettingsPage);
     addItem(QIcon(ICON_MASK), QStringLiteral("Proxies"), new ProxiesSettingsPage);
+    addItem(QIcon(ICON_IMAGES), QStringLiteral("Scrape Images"), new ScrapeImagesSettingsPage);
     addItem(QIcon(ICON_CHAIN), QStringLiteral("Scrape Links"), new ScrapeLinksSettingsPage);
 //    QListWidgetItem* generalItem = new QListWidgetItem;
 //    generalItem->setIcon(QIcon(ICON_DASHBOARD));

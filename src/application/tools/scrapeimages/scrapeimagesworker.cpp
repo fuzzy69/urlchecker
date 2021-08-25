@@ -2,11 +2,13 @@
 #include <string>
 #include <unordered_set>
 
+#include <QDir>
 #include <QUrl>
 #include <QDebug>
 
 #include "my/text.h"
 
+#include "common.h"
 #include "scrapeimagesworker.h"
 #include "utilities.h"
 #include "../../core/resultstatus.h"
@@ -32,6 +34,9 @@ void ScrapeImagesWorker::doWork(const QVariantMap& inputData)
 {
     QUrl url(inputData["url"].toString());
     int rowId = inputData["rowId"].toInt();
+    const QDir downloadImagesDirectory(m_settings[SCRAPE_IMAGES_DIRECTORY].toString());
+//    const QDir downloadImagesDirectory("/mnt/ramdisk/");
+    const bool shouldDownload(downloadImagesDirectory.isReadable());
 
     logMessage(QString("Scraping images from: '%1'...").arg(url.toString()));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
@@ -45,6 +50,16 @@ void ScrapeImagesWorker::doWork(const QVariantMap& inputData)
         std::string image = element.attribute("src");
         if (!starts_with(image, "http") or images.count(image) > 0)
             continue;
+        // Download image
+        if (shouldDownload)
+        {
+            QUrl imageUrl(image.c_str());
+            if (!imageUrl.fileName().isEmpty())
+            {
+                const QString imageFilePath = downloadImagesDirectory.filePath(imageUrl.fileName());
+                response = requests.download(image, imageFilePath.toStdString());
+            }
+        }
         images.insert(image);
         auto data = QMap<QString, QVariant>{
             {QString("toolId"), QVariant(Tools::SCRAPE_IMAGES)},
