@@ -67,9 +67,13 @@ add_executable(
     src/application/tools/urlstatus/urlstatustool.cpp
     src/application/tools/tool.cpp
     src/application/tools/workerfactory.cpp
+
+    src/application/tools/scrapesitemaps/scrapesitemapssettings.ui
+    src/application/tools/scrapesitemaps/scrapesitemapssettingspage.cpp
     src/application/tools/scrapesitemaps/scrapesitemapstool.cpp
     src/application/tools/scrapesitemaps/scrapesitemapsworker.cpp
     src/application/tools/scrapesitemaps/utilities.cpp
+
     src/application/tools/scrapeemails/scrapeemailstool.cpp
     src/application/tools/scrapeemails/scrapeemailsworker.cpp
     src/application/tools/scrapeemails/utilities.cpp

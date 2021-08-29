@@ -26,6 +26,7 @@
 
 #include "../../tools/scrapelinks/scrapelinkssettingspage.h"
 #include "../../tools/scrapeimages/scrapeimagessettingspage.h"
+#include "../../tools/scrapesitemaps/scrapesitemapssettingspage.h"
 
 SettingsWidget::SettingsWidget ( QWidget* parent ) :
     QWidget(parent), m_itemsMap(QMap<QString, QListWidgetItem*>())
@@ -47,6 +48,7 @@ SettingsWidget::SettingsWidget ( QWidget* parent ) :
     addItem(QIcon(ICON_MASK), QStringLiteral("Proxies"), new ProxiesSettingsPage);
     addItem(QIcon(ICON_IMAGES), QStringLiteral("Scrape Images"), new ScrapeImagesSettingsPage);
     addItem(QIcon(ICON_CHAIN), QStringLiteral("Scrape Links"), new ScrapeLinksSettingsPage);
+    addItem(QIcon(ICON_SITEMAP), QStringLiteral("Scrape Sitemaps"), new ScrapeSitemapsSettingsPage);
 //    QListWidgetItem* generalItem = new QListWidgetItem;
 //    generalItem->setIcon(QIcon(ICON_DASHBOARD));
 //    generalItem->setText(QStringLiteral("General"));

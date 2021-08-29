@@ -1,12 +1,14 @@
 ﻿#include <optional>
 #include <string>
 
+#include <QDir>
 #include <QThread>
 #include <QUrl>
 #include <QDebug>
 
 #include "my/text.h"
 
+#include "common.h"
 #include "scrapesitemapsworker.h"
 #include "utilities.h"
 #include "../../core/resultstatus.h"
@@ -14,8 +16,6 @@
 #include "../../constants.h"
 #include "../tools.h"
 #include "../../utils/requests.h"
-//#include "../../utils/simpledom.h"
-//#include "../../utils/tidyhtml.h"
 #include "utilities.h"
 
 using my::text::starts_with;
@@ -33,6 +33,8 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
 {
     QUrl url(inputData["url"].toString());
     int rowId = inputData["rowId"].toInt();
+    const QDir downloadSitemapsDirectory(m_settings[SCRAPE_SITEMAPS_DIRECTORY].toString());
+    const bool shouldDownload(downloadSitemapsDirectory.isReadable());
 
     // Trim URL to root URL
     QUrl rootUrl;
@@ -53,6 +55,20 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
         sitemapUrl = extract_sitemap_url(response.text);
         details = QStringLiteral("OK");
         status = ResultStatus::OK;
+        // Download sitemap
+        if (shouldDownload)
+        {
+            QUrl sitemapFileUrl(sitemapUrl.c_str());
+            if (!sitemapFileUrl.fileName().isEmpty())
+            {
+                const QString sitemapFilePath = downloadSitemapsDirectory.filePath(url.host() + "_" + sitemapFileUrl.fileName());
+                response = requests.download(sitemapUrl, sitemapFilePath.toStdString());
+                if (response.status_code == 200)
+                    logMessage(QString("Successfully downloaded sitemap '%1' to '%2'").arg(sitemapFileUrl.toString(), sitemapFilePath));
+                else
+                    logMessage(QString("Failed to download sitemap '%1'!").arg(sitemapFileUrl.toString()));
+            }
+        }
     }
     else
     {
