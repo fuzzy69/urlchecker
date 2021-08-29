@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // #include <QObject>
 // #include <QVariantMap>
@@ -30,6 +30,7 @@ public:
     * @return new constructed main window
     */
     void dump();
+    QVariantMap get() const;
 
 private:
     /// Disallow default public constructor

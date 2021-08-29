@@ -13,7 +13,7 @@
 #include "../texts.h"
 #include "../tools/workerfactory.h"
 
-WorkerManager::WorkerManager(QObject *parent) : QObject(parent), m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>()), m_mutex(QMutex()), m_itemsDone(0), m_totalItems(0)
+WorkerManager::WorkerManager(QObject *parent) : QObject(parent), m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>()), m_mutex(QMutex()), m_currentSettings(QVariantMap()), m_itemsDone(0), m_totalItems(0)
 {
 
 }
@@ -44,6 +44,7 @@ void WorkerManager::startJob()
     const int parallelTasks = Settings::instance().value(QStringLiteral(TEXT_THREADS)).toInt();
     assert(parallelTasks > 0);
     auto logWidget = ApplicationBridge::instance().logWidget();
+    m_currentSettings = Settings::instance().get();
     for (int i = 0; i < parallelTasks;++i)
     {
         int workerId(i+ 1);
@@ -51,10 +52,11 @@ void WorkerManager::startJob()
         Worker *worker;
 
         // TODO: Improve tool switching logic
-        QVariantMap settings;
-        settings.insert(QString("timeout"), Settings::instance().value(QStringLiteral(TEXT_TIMEOUT)));
-        settings.insert(QString("useProxies"), Settings::instance().value(QStringLiteral(TEXT_USE_PROXIES)));
-        worker = workerFactory(currentTool.id(), workerId, &m_inputDataQueue, &m_mutex, settings);
+//        QVariantMap settings;
+//        settings.insert(QString("timeout"), Settings::instance().value(QStringLiteral(TEXT_TIMEOUT)));
+//        settings.insert(QString("useProxies"), Settings::instance().value(QStringLiteral(TEXT_USE_PROXIES)));
+//        worker = workerFactory(currentTool.id(), workerId, &m_inputDataQueue, &m_mutex, settings);
+        worker = workerFactory(currentTool.id(), workerId, &m_inputDataQueue, &m_mutex, m_currentSettings);
 
         m_threads.append(thread);
         m_workers.append(worker);

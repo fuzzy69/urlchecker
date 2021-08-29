@@ -34,6 +34,7 @@ private:
     QList<Worker*> m_workers;
     QQueue<QVariantMap> m_inputDataQueue;
     QMutex m_mutex;
+    QVariantMap m_currentSettings;
 
     int m_itemsDone;
     int m_totalItems;

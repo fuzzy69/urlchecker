@@ -1,4 +1,4 @@
-// #include <QApplication>
+﻿// #include <QApplication>
 // #include <QDir>
 // #include <QScopedPointer>
 // #include <QSettings>
@@ -70,4 +70,9 @@ QVariant Settings::value(const QString& key) const
 
 void Settings::dump()
 {
+}
+
+QVariantMap Settings::get() const
+{
+    return m_settings;
 }
