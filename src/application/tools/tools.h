@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <QMetaType>
+
 #include "../config.h"
 
 enum class ToolCategory
@@ -30,3 +32,5 @@ enum Tools
 #endif
     NONE,
 };
+
+Q_DECLARE_METATYPE(Tools)

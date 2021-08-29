@@ -25,6 +25,7 @@ ToolsManager::ToolsManager()
     addTool(new ScrapePhoneNumbersTool);
     addTool(new CheckSearchEngineIndexTool);
     addTool(new ScrapeImagesTool);
+    // TODO: delete these heap objects in desctructor
 
     setCurrentTool(QStringLiteral("Check URL Status"));
 }
@@ -38,26 +39,13 @@ ToolsManager & ToolsManager::instance()
 
 ToolsManager::~ToolsManager()
 {
-
 }
 
 void ToolsManager::addTool(Tool *tool)
 {
-    m_tools.insert(tool->name(), tool);
+    m_toolNameToolMap.insert(tool->name(), tool);
+    m_toolIdToolMap.insert(tool->id(), tool);
 }
-
-//void ToolsManager::addTool(const Tool& tool, bool current)
-//{
-////    auto item = new QTreeWidgetItem(QStringList(tool.name()));
-////    item->setIcon(0, tool.icon());
-////    insertTopLevelItem(0, item);
-//    if (current)
-//    {
-////        setCurrentItem(item);
-//        m_currentTool = tool;
-//    }
-//    m_tools.insert(tool.name(), tool);
-//}
 
 Tool& ToolsManager::currentTool() const
 {
@@ -66,16 +54,21 @@ Tool& ToolsManager::currentTool() const
 
 void ToolsManager::setCurrentTool(const QString &toolName)
 {
-    if (m_tools.contains(toolName))
-        m_currentTool = m_tools[toolName];
+    if (m_toolNameToolMap.contains(toolName))
+        m_currentTool = m_toolNameToolMap[toolName];
 }
 
-Tool& ToolsManager::getTool(const QString& toolName) const
+Tool& ToolsManager::getTool(Tools toolId) const
 {
-    return *m_tools[toolName];
+    return *m_toolIdToolMap[toolId];
+}
+
+Tool& ToolsManager::getTool(const QString &toolName) const
+{
+    return *m_toolNameToolMap[toolName];
 }
 
 QMap<QString, Tool*> ToolsManager::tools() const
 {
-    return m_tools;
+    return m_toolNameToolMap;
 }

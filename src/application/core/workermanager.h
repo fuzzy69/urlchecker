@@ -6,9 +6,12 @@
 #include <QVariantMap>
 
 #include "../core/resultstatus.h"
+#include "../tools/tools.h"
 
 class Thread;
 class Worker;
+
+class Tool;
 
 class WorkerManager final : public QObject
 {
@@ -21,7 +24,8 @@ public:
 Q_SIGNALS:
     void jobStarted();
     void jobStopped();
-    void result(const QVariantMap &resultData);
+//    void result(const QVariantMap &resultData);
+    void result(Tools toolId, const QVariantMap &resultData);
     void status(const int rowId, const ResultStatus &resultStatus);
 
 public Q_SLOTS:

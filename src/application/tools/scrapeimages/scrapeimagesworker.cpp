@@ -23,6 +23,7 @@ using my::text::starts_with;
 
 ScrapeImagesWorker::ScrapeImagesWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent), m_dom(std::make_unique<SimpleDOM>()), m_tidy(std::make_unique<TidyHtml>())
 {
+    m_toolId = Tools::SCRAPE_IMAGES;
 }
 
 ScrapeImagesWorker::~ScrapeImagesWorker()
@@ -35,7 +36,6 @@ void ScrapeImagesWorker::doWork(const QVariantMap& inputData)
     QUrl url(inputData["url"].toString());
     int rowId = inputData["rowId"].toInt();
     const QDir downloadImagesDirectory(m_settings[SCRAPE_IMAGES_DIRECTORY].toString());
-//    const QDir downloadImagesDirectory("/mnt/ramdisk/");
     const bool shouldDownload(downloadImagesDirectory.isReadable());
 
     logMessage(QString("Scraping images from: '%1'...").arg(url.toString()));
@@ -69,10 +69,9 @@ void ScrapeImagesWorker::doWork(const QVariantMap& inputData)
             {QString("Source"), QVariant(url)},
             {QString("Details"), QVariant("")}
         };
-        Q_EMIT Worker::result(data);
+        Q_EMIT Worker::result(m_toolId, data);
     }
 
-    auto status = ResultStatus::OK;
     Q_EMIT Worker::itemDone();
-    Q_EMIT Worker::status(rowId, status);
+    Q_EMIT Worker::status(rowId, ResultStatus::OK);
 }

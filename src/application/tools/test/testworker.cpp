@@ -17,6 +17,7 @@ using my::text::trim_whitespaces;
 
 TestWorker::TestWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {
+    m_toolId = Tools::TEST;
 }
 
 void TestWorker::doWork(const QVariantMap& inputData)
@@ -35,15 +36,13 @@ void TestWorker::doWork(const QVariantMap& inputData)
     logMessage(QString::fromUtf8(text.c_str()));
 
     auto data = QMap<QString, QVariant>{
-        {QString("toolId"), QVariant(Tools::TEST)},
-        {QString("toolName"), QVariant("Test")},
         {QString("rowId"), QVariant(rowId)},
         {QString("URL"), QVariant(url)},
         {QString("Result"), QVariant(QString::fromUtf8(text.c_str()))},
         {QString("Details"), QVariant("")}
     };
 
-    Q_EMIT Worker::result(data);
+    Q_EMIT Worker::result(m_toolId, data);
     Q_EMIT Worker::itemDone();
     Q_EMIT Worker::status(rowId, status);
 }

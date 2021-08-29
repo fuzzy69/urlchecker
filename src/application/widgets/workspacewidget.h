@@ -5,6 +5,7 @@
 #include <QWidget>
 
 #include "../core/resultstatus.h"
+#include "../tools/tools.h"
 
 class QHBoxLayout;
 class QPushButton;
@@ -23,6 +24,8 @@ class TablesWidget;
 class ToolsWidget;
 //class Worker;
 class WorkerManager;
+
+class Tool;
 
 class WorkspaceWidget final: public QWidget
 {
@@ -60,7 +63,8 @@ protected:
 // //     void hideEvent(QHideEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
-    void onResult(const QVariantMap &resultData);
+//    void onResult(const QVariantMap &resultData);
+    void onResult(Tools toolId, const QVariantMap &resultData);
     void onStatus(const int rowId, const ResultStatus &resultStatus);
     void onItemDone();
 

@@ -13,7 +13,7 @@ DummyTool::DummyTool() : Tool(
     QList<float>() << 0.5f << 0.1f
 )
 {
-    m_contextMenu = new QMenu;
-    m_contextMenu->addAction(new QAction("Dummy action 1", nullptr));
-    m_contextMenu->addAction(new QAction("Dummy action 2", nullptr));
+//    m_contextMenu = new QMenu;
+//    m_contextMenu->addAction(new QAction("Dummy action 1", nullptr));
+//    m_contextMenu->addAction(new QAction("Dummy action 2", nullptr));
 }

@@ -21,6 +21,7 @@ using my::text::starts_with;
 
 ScrapeLinkskWorker::ScrapeLinkskWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent), m_dom(std::make_unique<SimpleDOM>()), m_tidy(std::make_unique<TidyHtml>())
 {
+    m_toolId = Tools::SCRAPE_LINKS;
 }
 
 ScrapeLinkskWorker::~ScrapeLinkskWorker()
@@ -58,17 +59,14 @@ void ScrapeLinkskWorker::doWork(const QVariantMap& inputData)
         }
 
         auto data = QMap<QString, QVariant>{
-            {QString("toolId"), QVariant(Tools::SCRAPE_LINKS)},
-            {QString("toolName"), QVariant("Scrape Links")},
             {QString("rowId"), QVariant(inputData["rowId"].toInt())},
             {QString("URL"), QVariant(QString::fromUtf8(link.c_str()))},
             {QString("Source"), QVariant(url)},
             {QString("Details"), QVariant("")}
         };
-        Q_EMIT Worker::result(data);
+        Q_EMIT Worker::result(m_toolId, data);
     }
 
-    auto status = ResultStatus::OK;
     Q_EMIT Worker::itemDone();
-    Q_EMIT Worker::status(rowId, status);
+    Q_EMIT Worker::status(rowId, ResultStatus::OK);
 }

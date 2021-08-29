@@ -6,6 +6,8 @@
 #include <QQueue>
 
 #include "resultstatus.h"
+//#include "../tools/tool.h"
+#include "../tools/tools.h"
 
 class QMutex;
 
@@ -17,9 +19,13 @@ public:
     explicit Worker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
 
     void logMessage(const QString& message);
+    int oid() const {
+        return m_id;
+    }
 
 Q_SIGNALS:
-    void result(const QVariantMap &resultData);
+//    void result(const QVariantMap &resultData);
+    void result(Tools toolId, const QVariantMap &resultData);
     void status(const int rowId, const ResultStatus &resultStatus);
     void itemDone();
     void finished();
@@ -38,5 +44,6 @@ protected:
     QQueue<QVariantMap>* m_inputDataQueue;
     QMutex* m_mutex;
     QVariantMap m_settings;
+    Tools m_toolId;
 };
 

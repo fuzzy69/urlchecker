@@ -22,6 +22,7 @@ using my::text::starts_with;
 
 ScrapeSitemapskWorker::ScrapeSitemapskWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {
+    m_toolId = Tools::SCRAPE_SITEMAPS;
 }
 
 ScrapeSitemapskWorker::~ScrapeSitemapskWorker()
@@ -78,15 +79,13 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
         details = QStringLiteral("Failed to locate sitemap file");
     auto data = QVariantMap
     {
-        {QString("toolId"), QVariant(Tools::SCRAPE_SITEMAPS)},
-        {QString("toolName"), QVariant("Scrape Sitemaps")},
         {QString("rowId"), QVariant(inputData["rowId"].toInt())},
         {QString("URL"), QVariant(QString::fromUtf8(sitemapUrl.c_str()))},
         {QString("Website"), QVariant(rootUrl.toString())},
         {QString("Details"), QVariant(details)}
     };
 
-    Q_EMIT Worker::result(data);
+    Q_EMIT Worker::result(m_toolId, data);
     Q_EMIT Worker::itemDone();
     Q_EMIT Worker::status(rowId, status);
 }

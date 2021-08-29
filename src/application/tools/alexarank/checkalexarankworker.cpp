@@ -13,6 +13,7 @@
 
 CheckAlexaRankWorker::CheckAlexaRankWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {
+    m_toolId = Tools::CHECK_ALEXA_RANK;
 }
 
 void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
@@ -21,7 +22,7 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
     QString alexaUrl("http://data.alexa.com/data?cli=10&url=" + url.host());
     int rowId = inputData["rowId"].toInt();
 
-    logMessage(QString("Checking URL '%1'...").arg(url.toString()));
+    logMessage(QString("Checking Alexa rank for '%1'...").arg(url.toString()));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(alexaUrl.toStdString());
@@ -38,19 +39,17 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
     }
     else
     {
-        details = QStringLiteral("Failed extracting rank value");
+        details = QStringLiteral("Failed to extract rank value");
     }
 
     auto data = QVariantMap
     {
-        {QString("toolId"), QVariant(Tools::CHECK_ALEXA_RANK)},
-        {QString("toolName"), QVariant("Check Alexa Rank")},
         {QString("rowId"), QVariant(inputData["rowId"].toInt())},
         {QString("URL"), QVariant(url)},
         {QString("Rank"), QVariant(rank)},
         {QString("Details"), QVariant(details)}
     };
 
-    Q_EMIT Worker::result(data);
+    Q_EMIT Worker::result(m_toolId, data);
     Q_EMIT Worker::status(rowId, status);
 }

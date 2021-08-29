@@ -18,6 +18,7 @@
 
 ScrapePhoneNumbersWorker::ScrapePhoneNumbersWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
 {
+    m_toolId = Tools::SCRAPE_PHONE_NUMBERS;
 }
 
 void ScrapePhoneNumbersWorker::doWork(const QVariantMap& inputData)
@@ -32,19 +33,16 @@ void ScrapePhoneNumbersWorker::doWork(const QVariantMap& inputData)
     // TODO: Better result status handling
     ResultStatus status((response.status_code == 200)? ResultStatus::OK : ResultStatus::FAILED);
     QString details(QStringLiteral("OK"));
-//    details = QStringLiteral("Failed to extract emails");
 
     for (const auto& item : extract_phone_numbers(response.text))
     {
         auto data = QMap<QString, QVariant>{
-            {QString("toolId"), QVariant(Tools::SCRAPE_PHONE_NUMBERS)},
-            {QString("toolName"), QVariant("Scrape Phone Numbers")},
             {QString("rowId"), QVariant(inputData["rowId"].toInt())},
             {QString("Phone Number"), QVariant(QString::fromUtf8(item.c_str()))},
             {QString("Source"), QVariant(url)},
             {QString("Details"), QVariant("")}
         };
-        Q_EMIT Worker::result(data);
+        Q_EMIT Worker::result(m_toolId, data);
     }
     Q_EMIT Worker::itemDone();
     Q_EMIT Worker::status(rowId, status);

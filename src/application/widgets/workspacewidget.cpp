@@ -29,6 +29,8 @@
 //#include "../core/worker.h"
 #include "../core/toolsmanager.h"
 
+#include "../core/worker.h"
+
 WorkspaceWidget::WorkspaceWidget(QWidget* parent) : 
     QWidget(parent)/*, m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>())*/
 {
@@ -81,6 +83,8 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent) :
 //    connect(m_testPushButton, &QPushButton::clicked, [] {
 //        qDebug() << "Test";
 //    });
+    qRegisterMetaType<ResultStatus>("ResultStatus");
+    qRegisterMetaType<Tools>("Tools");
 }
 
 void WorkspaceWidget::toggleTools()
@@ -180,7 +184,6 @@ void WorkspaceWidget::startJob()
         QMessageBox::warning(this, QStringLiteral("Start Job"), QStringLiteral("Nothing to do. Source URLs table is empty!"));
         return;
     }
-    qRegisterMetaType<ResultStatus>();
 //    auto currentTool = toolsWidget()->currentTool();
     auto& currentTool = ToolsManager::instance().currentTool();
     m_tablesWidget->resultsTable()->resetColumns(currentTool.columns());
@@ -255,12 +258,16 @@ void WorkspaceWidget::stopJob()
 //    Q_EMIT jobStopped();
 //}
 
-void WorkspaceWidget::onResult(const QVariantMap& resultData)
+void WorkspaceWidget::onResult(Tools toolId, const QVariantMap& resultData)
 {
+//    auto* worker = qobject_cast<Worker*>(sender());
+//    auto* worker = sender();
+//    qDebug() << worker->objectName();
     if (m_tablesWidget->focusedTable()->rowCount() == 1)
         m_tablesWidget->focusedTable()->resizeColumns();
-    auto currentToolName = resultData["toolName"].toString();
-    auto& currentTool = ToolsManager::instance().getTool(currentToolName);
+//    auto currentToolName = resultData["toolName"].toString();
+//    auto& currentTool = ToolsManager::instance().getTool(currentToolName);
+    auto& currentTool = ToolsManager::instance().getTool(toolId);
     QStringList row;
     for (const auto& column : currentTool.columns())
     {

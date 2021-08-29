@@ -15,7 +15,7 @@
 
 WorkerManager::WorkerManager(QObject *parent) : QObject(parent), m_threads(QList<Thread*>()), m_workers(QList<Worker*>()), m_inputDataQueue(QQueue<QMap<QString, QVariant>>()), m_mutex(QMutex()), m_currentSettings(QVariantMap()), m_itemsDone(0), m_totalItems(0)
 {
-
+    setObjectName("WorkerManager");
 }
 
 void WorkerManager::init()
