@@ -14,8 +14,11 @@ void createActions()
     ActionsManager::instance().createAction(QStringLiteral(ACTION_QUIT), QStringLiteral(ICON_CONTROL_POWER), QStringLiteral("Quit"));
     ActionsManager::instance().createAction(QStringLiteral(ACTION_REMOVE_ALL_ROWS), QStringLiteral(ICON_BROOM), QStringLiteral("Remove All Rows"));
     ActionsManager::instance().createAction(QStringLiteral(ACTION_REMOVE_DUPLICATE_ROWS), QStringLiteral(ICON_TABLE_DELETE_ROW), QStringLiteral("Remove Duplicates"));
+
     ActionsManager::instance().createAction(QStringLiteral(ACTION_SELECT_ALL_ROWS), QStringLiteral(ICON_TABLE_SELECT_ALL), QStringLiteral("Select All Rows"));
     ActionsManager::instance().createAction(QStringLiteral(ACTION_INVERT_ROWS_SELECTION), QStringLiteral(ICON_TABLE), QStringLiteral("Invert Rows Selection"));
+    ActionsManager::instance().createAction(QStringLiteral(ACTION_SELECT_GROUP), QStringLiteral(ICON_TABLE_SELECT_GROUP), QStringLiteral(TEXT_SELECT_GROUP));
+
     ActionsManager::instance().createAction(QStringLiteral(ACTION_REMOVE_SELECTED_ROWS), QStringLiteral(ICON_TABLE_DELETE_ROW), QStringLiteral("Remove Selected Rows"));
     ActionsManager::instance().createAction(QStringLiteral(ACTION_CENTER_WINDOW), QStringLiteral(ICON_RESIZE), QStringLiteral("Center Window"));
     ActionsManager::instance().createAction(QStringLiteral(ACTION_ABOUT), QStringLiteral(ICON_INFORMATION), QStringLiteral("About"));

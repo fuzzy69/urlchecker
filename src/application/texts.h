@@ -18,3 +18,5 @@
 #define TEXT_USER_AGENTS "User Agents"
 #define TEXT_PROXIES "Proxies"
 #define TEXT_HELP "Help"
+
+#define TEXT_SELECT_GROUP "Select a Group"

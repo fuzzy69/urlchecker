@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QHBoxLayout>
+#include <QInputDialog>
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
@@ -114,6 +115,7 @@ void MainWindow::createMenuBar()
     // Selection menu
     m_selectionMenu->addAction(ActionsManager::instance().action("selectAllRows"));
     m_selectionMenu->addAction(ActionsManager::instance().action("invertRowsSelection"));
+    m_selectionMenu->addAction(ActionsManager::instance().action("selectGroup"));
     // Edit menu
     m_editMenu->addAction(ActionsManager::instance().action("removeSelectedRows"));
     m_editMenu->addAction(ActionsManager::instance().action("removAllRows"));
@@ -142,6 +144,7 @@ void MainWindow::createToolBar()
     m_toolBar->addSeparator();
     m_toolBar->addAction(ActionsManager::instance().action("selectAllRows"));
     m_toolBar->addAction(ActionsManager::instance().action("invertRowsSelection"));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_SELECT_GROUP));
     m_toolBar->addSeparator();
     m_toolBar->addAction(ActionsManager::instance().action("quit"));
 }
@@ -236,6 +239,13 @@ void MainWindow::createConnections()
     // Table actions
     connect(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->selectAll(); });
     connect(ActionsManager::instance().action(ACTION_INVERT_ROWS_SELECTION), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->invertSelection(); });
+    connect(ActionsManager::instance().action(ACTION_SELECT_GROUP), &QAction::triggered, [this] {
+        bool ok;
+        QString maskText = QInputDialog::getText(this, tr(TEXT_SELECT_GROUP), tr("Input Mask:"), QLineEdit::Normal, "*", &ok);
+        if (ok and !maskText.isEmpty()) {
+            m_workspaceWidget->tablesWidget()->focusedTable()->selectByMask(0, maskText);
+        }
+    });
     connect(ActionsManager::instance().action(ACTION_REMOVE_SELECTED_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected(); });
     connect(ActionsManager::instance().action(ACTION_REMOVE_DUPLICATE_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates(); });
     connect(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows(); });

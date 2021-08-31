@@ -11,6 +11,7 @@
 #define ICON_TABLE_EXPORT ":assets/icons/table-export.png"
 #define ICON_TABLE_DELETE_ROW ":assets/icons/table-delete-row.png"
 #define ICON_TABLE_SELECT_ALL ":assets/icons/table-select-all.png"
+#define ICON_TABLE_SELECT_GROUP ":assets/icons/table-insert-row.png"
 #define ICON_BROOM ":assets/icons/broom.png"
 #define ICON_CROSS ":assets/icons/cross.png"
 #define ICON_CROSS_CIRCLE ":assets/icons/cross-circle.png"

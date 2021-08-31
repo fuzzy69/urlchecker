@@ -4,6 +4,7 @@
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QMenu>
+#include <QRegExp>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QTableView>
@@ -97,7 +98,6 @@ void Table::row(int rowIndex) const
     for (int colIndex = 0; colIndex < m_tableModel->columnCount(); ++colIndex) {
         rowCells << m_tableModel->data(m_tableModel->index(rowIndex, colIndex));
     }
-    qDebug() << rowCells.count();
 }
 
 void Table::appendRow(QStringList cells)
@@ -153,6 +153,26 @@ void Table::invertSelection()
                 }
             }
         }
+    }
+}
+
+void Table::selectByMask(int column, const QString& maskText)
+{
+    if (column < 0 or column >= m_columns.count())
+        return;
+    QRegExp regex(maskText, Qt::CaseSensitive, QRegExp::Wildcard);
+    for (int i = 0; i < rowCount(); ++i) {
+        QString cell = m_tableModel->data(m_tableModel->index(i, column)).toString();
+        if (regex.exactMatch(cell)) {
+            selectRow(i);
+        }
+    }
+}
+
+void Table::selectRow(int rowIndex)
+{
+    for (int i = 0; i < m_tableModel->columnCount(); ++i) {
+        m_tableView->selectionModel()->select(m_tableModel->index(rowIndex, i), QItemSelectionModel::Select);
     }
 }
 

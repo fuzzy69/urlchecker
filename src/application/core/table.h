@@ -30,6 +30,8 @@ public:
     void selectAll();
     void selectNone();
     void invertSelection();
+    void selectByMask(int column, const QString& maskText);
+    void selectRow(int rowIndex);
     QSet<int> selectedRows() const;
     void setRowColor(int rowIndex, const QColor& textColor, const QColor& backgroundColor);
     void name(const QString& name);

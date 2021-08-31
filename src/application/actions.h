@@ -11,5 +11,6 @@
 #define ACTION_REMOVE_SELECTED_ROWS "removeSelectedRows"
 #define ACTION_CENTER_WINDOW "centerWindow"
 #define ACTION_ABOUT "about"
+#define ACTION_SELECT_GROUP "selectGroup"
 
 void createActions();

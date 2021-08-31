@@ -39,5 +39,6 @@
         <file>assets/icons/network-ip.png</file>
         <file>assets/icons/user-silhouette.png</file>
         <file>assets/icons/user-silhouette-question.png</file>
+        <file>assets/icons/table-insert-row.png</file>
     </qresource>
 </RCC>
