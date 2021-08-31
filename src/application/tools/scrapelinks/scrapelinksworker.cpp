@@ -1,5 +1,6 @@
 ﻿#include <optional>
 #include <string>
+#include <unordered_set>
 
 #include <QDebug>
 #include <QUrl>
@@ -43,22 +44,25 @@ void ScrapeLinkskWorker::doWork(const QVariantMap& inputData)
     cpr::Response response = requests.get(url.toString().toStdString());
     std::string html = m_tidy->process(response.text);
     m_dom->from_string(html);
+    std::unordered_set<std::string> links;
     for (auto& element : m_dom->select_all("//a")) {
         // TODO: Validate link
         std::string link = element.attribute("href");
-        // TODO: Better URL filtering
-        if (!starts_with(link, "http"))
+        if (!starts_with(link, "http") or links.count(link) > 0)
             continue;
+        links.insert(link);
+        QUrl linkUrl(link.c_str());
         switch (strategy) {
         case ScrapeLinksStrategy::INTERNAL_LINKS:
-            // Filter internal links
+            if (linkUrl.host() != url.host())
+                continue;
             break;
         case ScrapeLinksStrategy::EXTERNAL_LINKS:
-            // Filter external links
+            if (linkUrl.host() == url.host())
+                continue;
             break;
-        case ScrapeLinksStrategy::ALL_LINKS:
-            //
-            break;
+            //        case ScrapeLinksStrategy::ALL_LINKS:
+            //            break;
         }
 
         auto data = QMap<QString, QVariant> {
