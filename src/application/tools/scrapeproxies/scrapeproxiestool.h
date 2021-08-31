@@ -8,8 +8,7 @@
 
 class QMenu;
 
-class ScrapeProxiesTool : public Tool
-{
+class ScrapeProxiesTool : public Tool {
 public:
     ScrapeProxiesTool();
 

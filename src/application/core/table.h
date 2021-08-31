@@ -8,8 +8,7 @@ class QTableView;
 class QStandardItemModel;
 class QMenu;
 
-class Table : public QObject
-{
+class Table : public QObject {
     Q_OBJECT
 public:
     explicit Table(const QStringList& columns, QObject* parent = nullptr);
@@ -32,19 +31,19 @@ public:
     void selectNone();
     void invertSelection();
     QSet<int> selectedRows() const;
-    void setRowColor(int rowIndex, const QColor &textColor, const QColor &backgroundColor);
+    void setRowColor(int rowIndex, const QColor& textColor, const QColor& backgroundColor);
     void name(const QString& name);
     QString name() const;
     QTableView* tableView() const;
     QStandardItemModel* tableModel() const;
-    void resetColumns(const QStringList &columns);
+    void resetColumns(const QStringList& columns);
     void setContextMenu(QMenu* contextMenu);
 
 Q_SIGNALS:
-    void doubleClicked(const QModelIndex &modelIndex);
+    void doubleClicked(const QModelIndex& modelIndex);
 
 public Q_SLOTS:
-    void onCustomContextMenuRequest(const QPoint &pos);
+    void onCustomContextMenuRequest(const QPoint& pos);
 
 private:
     QTableView* m_tableView;

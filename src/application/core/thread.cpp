@@ -1,17 +1,17 @@
-#include <QObject>
+﻿#include <QObject>
 #include <QThread>
 
 #include "thread.h"
 
-
 int Thread::m_count = 0;
 
-Thread::Thread(QObject* parent) : QThread(parent)
+Thread::Thread(QObject* parent)
+    : QThread(parent)
 {
-    connect(this, &Thread::started, []{
+    connect(this, &Thread::started, [] {
         ++Thread::m_count;
     });
-    connect(this, &Thread::finished, []{
+    connect(this, &Thread::finished, [] {
         --Thread::m_count;
     });
 }

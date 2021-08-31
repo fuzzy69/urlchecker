@@ -13,20 +13,18 @@ class Worker;
 
 class Tool;
 
-class WorkerManager final : public QObject
-{
+class WorkerManager final : public QObject {
     Q_OBJECT
 
 public:
-    explicit WorkerManager(QObject *parent = nullptr);
+    explicit WorkerManager(QObject* parent = nullptr);
     void init();
 
 Q_SIGNALS:
     void jobStarted();
     void jobStopped();
-//    void result(const QVariantMap &resultData);
-    void result(Tools toolId, const QVariantMap &resultData);
-    void status(const int rowId, const ResultStatus &resultStatus);
+    void result(Tools toolId, const QVariantMap& resultData);
+    void status(const int rowId, const ResultStatus& resultStatus);
 
 public Q_SLOTS:
     void startJob();

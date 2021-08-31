@@ -1,18 +1,20 @@
 ﻿#include "toolsmanager.h"
 #include "../icons.h"
-#include "../tools/dummy/dummytool.h"
-#include "../tools/scrapeproxies/scrapeproxiestool.h"
 #include "../tools/alexarank/alexaranktool.h"
-#include "../tools/test/testtool.h"
-#include "../tools/scrapelinks/scrapelinkstool.h"
-#include "../tools/urlstatus/urlstatustool.h"
-#include "../tools/scrapesitemaps/scrapesitemapstool.h"
-#include "../tools/scrapeemails/scrapeemailsstool.h"
-#include "../tools/scrapephonenumbers/scrapephonenumberstool.h"
 #include "../tools/checksearchengineindex/checksearchengineindextool.h"
+#include "../tools/dummy/dummytool.h"
+#include "../tools/scrapeemails/scrapeemailsstool.h"
 #include "../tools/scrapeimages/scrapeimagestool.h"
+#include "../tools/scrapelinks/scrapelinkstool.h"
+#include "../tools/scrapephonenumbers/scrapephonenumberstool.h"
+#include "../tools/scrapeproxies/scrapeproxiestool.h"
+#include "../tools/scrapesitemaps/scrapesitemapstool.h"
+#include "../tools/test/testtool.h"
+#include "../tools/urlstatus/urlstatustool.h"
 
-ToolsManager::ToolsManager() : m_toolIdToolMap(std::unordered_map<Tools, std::unique_ptr<Tool>>()), m_currentTool(Tools::NONE)
+ToolsManager::ToolsManager()
+    : m_toolIdToolMap(std::unordered_map<Tools, std::unique_ptr<Tool>>())
+    , m_currentTool(Tools::NONE)
 {
     addTool(std::unique_ptr<Tool>(new DummyTool));
     addTool(std::unique_ptr<Tool>(new TestTool));
@@ -29,17 +31,16 @@ ToolsManager::ToolsManager() : m_toolIdToolMap(std::unordered_map<Tools, std::un
     setCurrentTool(ToolsTexts.value(Tools::CHECK_URL_STATUS));
 }
 
-ToolsManager & ToolsManager::instance()
+ToolsManager& ToolsManager::instance()
 {
     static ToolsManager instance;
 
     return instance;
 }
 
-void ToolsManager::setCurrentTool(const QString &toolName)
+void ToolsManager::setCurrentTool(const QString& toolName)
 {
-    for (const auto& [toolId, tool] : m_toolIdToolMap)
-    {
+    for (const auto& [toolId, tool] : m_toolIdToolMap) {
         if (tool.get()->name() == toolName)
             m_currentTool = toolId;
     }
@@ -47,7 +48,7 @@ void ToolsManager::setCurrentTool(const QString &toolName)
 
 void ToolsManager::addTool(std::unique_ptr<Tool> tool)
 {
-    m_toolIdToolMap.insert({tool.get()->id(), std::move(tool)});
+    m_toolIdToolMap.insert({ tool.get()->id(), std::move(tool) });
 }
 
 Tool& ToolsManager::currentTool()
@@ -63,10 +64,9 @@ Tool* ToolsManager::getTool(Tools toolId)
     return m_toolIdToolMap[toolId].get();
 }
 
-Tool* ToolsManager::getTool(const QString &toolName)
+Tool* ToolsManager::getTool(const QString& toolName)
 {
-    for (const auto& [toolId, tool] : m_toolIdToolMap)
-    {
+    for (const auto& [toolId, tool] : m_toolIdToolMap) {
         if (tool.get()->name() == toolName)
             return tool.get();
     }
@@ -74,7 +74,7 @@ Tool* ToolsManager::getTool(const QString &toolName)
     return nullptr;
 }
 
-std::unordered_map<Tools, std::unique_ptr<Tool> > &ToolsManager::tools()
+std::unordered_map<Tools, std::unique_ptr<Tool>>& ToolsManager::tools()
 {
     return m_toolIdToolMap;
 }

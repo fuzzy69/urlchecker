@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QList>
 #include <QObject>
@@ -7,15 +7,14 @@
 class QAction;
 
 /// Manages recent files actions list
-class RecentFiles : public QObject
-{
+class RecentFiles : public QObject {
     Q_OBJECT
-    
+
 public:
-    explicit RecentFiles(int maxRecentFiles, QObject *parent = nullptr);
+    explicit RecentFiles(int maxRecentFiles, QObject* parent = nullptr);
 
     /// Adds a recent file path
-    void addFile(const QString &filePath);
+    void addFile(const QString& filePath);
     /// Returns collection of pointers to actions
     QList<QAction*> actions();
     /// Returns number of stored recent files
@@ -25,7 +24,7 @@ public:
 
 signals:
     /// Triggered when recent file action is clicked. Sends file path stored in clicked action instance
-    void filePathSelected(const QString &filePath);
+    void filePathSelected(const QString& filePath);
 
 private:
     void updateActions();

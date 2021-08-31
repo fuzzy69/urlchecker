@@ -8,8 +8,7 @@
 
 class QMenu;
 
-class DummyTool : public Tool
-{
+class DummyTool : public Tool {
 public:
     DummyTool();
 };

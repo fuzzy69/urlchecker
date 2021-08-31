@@ -6,8 +6,7 @@
 #include "../tool.h"
 #include "../tools.h"
 
-class TestTool : public Tool
-{
+class TestTool : public Tool {
 public:
     TestTool();
 };

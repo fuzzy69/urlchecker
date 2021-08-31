@@ -2,11 +2,10 @@
 
 #include <QAction>
 #include <QDebug>
-#include <QPainter>
 #include <QPaintEvent>
+#include <QPainter>
 #include <QRect>
 #include <QWidget>
-
 
 #define ACTION_HEIGHT 90
 #define ACTION_DEFAULT_COLOR QColor(100, 100, 100)
@@ -14,14 +13,15 @@
 #define ACTION_SELECTED_COLOR QColor(35, 35, 35)
 #define ACTION_TEXT_COLOR QColor(255, 255, 255)
 
-
-SideBarWidget::SideBarWidget(QWidget *parent) : QWidget(parent),
-    m_checkedAction(nullptr), m_hoveredAction(nullptr)
+SideBarWidget::SideBarWidget(QWidget* parent)
+    : QWidget(parent)
+    , m_checkedAction(nullptr)
+    , m_hoveredAction(nullptr)
 {
     setMouseTracking(true);
 }
 
-void SideBarWidget::addAction(QAction *action, bool selected)
+void SideBarWidget::addAction(QAction* action, bool selected)
 {
     m_actions.push_back(action);
     if (selected)
@@ -29,7 +29,7 @@ void SideBarWidget::addAction(QAction *action, bool selected)
     update();
 }
 
-QAction *SideBarWidget::addAction(const QString &text, const QIcon &icon)
+QAction* SideBarWidget::addAction(const QString& text, const QIcon& icon)
 {
     QAction* action = new QAction(icon, text, this);
     m_actions.push_back(action);
@@ -44,8 +44,7 @@ QSize SideBarWidget::minimumSizeHint() const
 
 void SideBarWidget::setCurrentAction(int index)
 {
-    if (index >= 0 and index < m_actions.count())
-    {
+    if (index >= 0 and index < m_actions.count()) {
         auto* action = m_actions.at(index);
         m_checkedAction = action;
         update();
@@ -54,7 +53,7 @@ void SideBarWidget::setCurrentAction(int index)
     }
 }
 
-void SideBarWidget::paintEvent(QPaintEvent *event)
+void SideBarWidget::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
     QFont textFont(painter.font());
@@ -66,34 +65,29 @@ void SideBarWidget::paintEvent(QPaintEvent *event)
         QRect actionRect(0, actionY, event->rect().width(), ACTION_HEIGHT);
         if (action == m_checkedAction) {
             painter.fillRect(actionRect, ACTION_SELECTED_COLOR);
-        }
-        else if (action == m_hoveredAction) {
+        } else if (action == m_hoveredAction) {
             painter.fillRect(actionRect, ACTION_HOVER_COLOR);
         }
         painter.setPen(ACTION_TEXT_COLOR);
         QSize actionTextSize = painter.fontMetrics().size(Qt::TextSingleLine, action->text());
-        QRect actionTextRect(QPoint(actionRect.width() / 2 - actionTextSize.width() / 2, actionRect.bottom() - 
-actionTextSize.height() - 5), actionTextSize);
+        QRect actionTextRect(QPoint(actionRect.width() / 2 - actionTextSize.width() / 2, actionRect.bottom() - actionTextSize.height() - 5), actionTextSize);
         painter.drawText(actionTextRect, Qt::AlignCenter, action->text());
-        QRect actionIconRect(0, actionY + 10, actionRect.width(), actionRect.height() - 2 * actionTextRect.height() - 
-10);
+        QRect actionIconRect(0, actionY + 10, actionRect.width(), actionRect.height() - 2 * actionTextRect.height() - 10);
         QIcon actionIcon(action->icon());
         actionIcon.paint(&painter, actionIconRect);
         actionY += actionRect.height();
     }
 }
 
-void SideBarWidget::mouseMoveEvent(QMouseEvent *event)
+void SideBarWidget::mouseMoveEvent(QMouseEvent* event)
 {
     QAction* action = actionAt(event->pos());
-    if (action == nullptr)
-    {
+    if (action == nullptr) {
         m_hoveredAction = nullptr;
         update();
         return;
     }
-    if (action == m_hoveredAction)
-    {
+    if (action == m_hoveredAction) {
         return;
     }
     m_hoveredAction = action;
@@ -101,13 +95,12 @@ void SideBarWidget::mouseMoveEvent(QMouseEvent *event)
     QWidget::mouseMoveEvent(event);
 }
 
-void SideBarWidget::mousePressEvent(QMouseEvent *event)
+void SideBarWidget::mousePressEvent(QMouseEvent* event)
 {
     QAction* action = actionAt(event->pos());
     if (action == m_checkedAction)
         return;
-    if (action != nullptr)
-    {
+    if (action != nullptr) {
         m_checkedAction = action;
         update();
         action->trigger();
@@ -116,14 +109,14 @@ void SideBarWidget::mousePressEvent(QMouseEvent *event)
     QWidget::mousePressEvent(event);
 }
 
-void SideBarWidget::leaveEvent(QEvent *event)
+void SideBarWidget::leaveEvent(QEvent* event)
 {
     m_hoveredAction = nullptr;
     update();
     QWidget::leaveEvent(event);
 }
 
-QAction *SideBarWidget::actionAt(const QPoint &point) const
+QAction* SideBarWidget::actionAt(const QPoint& point) const
 {
     int actionY = 0;
     for (QAction* action : m_actions) {

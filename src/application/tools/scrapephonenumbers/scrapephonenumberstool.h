@@ -6,8 +6,7 @@
 #include "../tool.h"
 #include "../tools.h"
 
-class ScrapePhoneNumbersTool : public Tool
-{
+class ScrapePhoneNumbersTool : public Tool {
 public:
     ScrapePhoneNumbersTool();
 };

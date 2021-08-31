@@ -3,7 +3,8 @@
 
 #include "logwidget.h"
 
-LogWidget::LogWidget(QWidget *parent) : QWidget(parent)
+LogWidget::LogWidget(QWidget* parent)
+    : QWidget(parent)
 {
     m_mainLayout = new QHBoxLayout(this);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -14,7 +15,7 @@ LogWidget::LogWidget(QWidget *parent) : QWidget(parent)
     m_mainLayout->addWidget(m_logPlainTextEdit);
 }
 
-void LogWidget::onLog(const QString &message)
+void LogWidget::onLog(const QString& message)
 {
     m_logPlainTextEdit->appendPlainText(message);
 }

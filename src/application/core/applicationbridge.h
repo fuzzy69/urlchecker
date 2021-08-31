@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-//#include <QObject>
-
 class QProgressBar;
 class QStatusBar;
 
@@ -11,8 +9,7 @@ class SettingsWidget;
 class TablesWidget;
 class ToolsWidget;
 
-class ApplicationBridge final
-{
+class ApplicationBridge final {
 public:
     ~ApplicationBridge() = default;
 
@@ -37,7 +34,7 @@ public:
 private:
     explicit ApplicationBridge() = default;
 
-    static ApplicationBridge *m_instance;
+    static ApplicationBridge* m_instance;
 
     TablesWidget* m_tablesWidget = nullptr;
     ToolsWidget* m_toolsWidget = nullptr;
@@ -45,5 +42,5 @@ private:
     ProxiesWidget* m_proxiesWidget = nullptr;
     SettingsWidget* m_settingsWidget = nullptr;
     QProgressBar* m_progressBar = nullptr;
-    QStatusBar* m_statusBar= nullptr;
+    QStatusBar* m_statusBar = nullptr;
 };

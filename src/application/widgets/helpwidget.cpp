@@ -1,28 +1,28 @@
 ﻿#include "helpwidget.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QDir>
 #include <QHBoxLayout>
+#include <QSplitter>
 #include <QTabWidget>
 #include <QTextBrowser>
-#include <QtHelp/QHelpEngine>
-#include <QtHelp/QHelpContentWidget>
-#include <QtHelp/QHelpIndexWidget>
 #include <QUrl>
-#include <QDebug>
-#include <QSplitter>
+#include <QtHelp/QHelpContentWidget>
+#include <QtHelp/QHelpEngine>
+#include <QtHelp/QHelpIndexWidget>
 
-#include "helpbrowser.h"
 #include "../icons.h"
+#include "helpbrowser.h"
 
-HelpWidget::HelpWidget(QWidget* parent) : QWidget(parent)
+HelpWidget::HelpWidget(QWidget* parent)
+    : QWidget(parent)
 {
     m_mainLayout = new QHBoxLayout(this);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(0);
 
     m_tabWidget = new QTabWidget;
-//     m_tabWidget->set
     m_tabWidget->setMinimumWidth(200);
     m_splitter = new QSplitter(Qt::Horizontal);
     auto documentPath = QString(QDir(QApplication::applicationDirPath()).filePath("docs/help.qhc"));
@@ -42,8 +42,7 @@ HelpWidget::HelpWidget(QWidget* parent) : QWidget(parent)
     m_splitter->addWidget(m_tabWidget);
     m_splitter->addWidget(m_helpBrowser);
     m_mainLayout->addWidget(m_splitter);
-    m_splitter->setSizes(QList<int>({300, 1000}));
-//     m_tabWidget->resize(300, m_tabWidget->height());
+    m_splitter->setSizes(QList<int>({ 300, 1000 }));
 
     connect(m_helpEngine->contentWidget(), &QHelpContentWidget::linkActivated, m_helpBrowser, &HelpBrowser::setSource);
     connect(m_helpEngine->indexWidget(), &QHelpIndexWidget::linkActivated, m_helpBrowser, &HelpBrowser::setSource);

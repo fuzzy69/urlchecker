@@ -1,4 +1,4 @@
-#include "misc.h"
+﻿#include "misc.h"
 
 #include <QFile>
 
@@ -11,19 +11,17 @@
 #include "../texts.h"
 
 using my::browser::UserAgentsManager;
-using my::filesystem::File;
 using my::data::USER_AGENTS_TEXT;
+using my::filesystem::File;
 using my::network::loadProxiesFromFile;
 using my::network::ProxyManager;
 
 void initUserAgents(const QString& userAgentsFilePath)
 {
-    if (!QFile::exists(userAgentsFilePath))
-    {
+    if (!QFile::exists(userAgentsFilePath)) {
         File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
     }
-    for (auto& line : File::readTextLines(userAgentsFilePath))
-    {
+    for (auto& line : File::readTextLines(userAgentsFilePath)) {
         UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
     }
 }

@@ -1,17 +1,18 @@
 ﻿#include <optional>
 
-#include <QUrl>
 #include <QDebug>
+#include <QUrl>
 
-#include "scrapeproxiesworker.h"
-#include "utilities.h"
-#include "../../core/resultstatus.h"
 #include "../../config.h"
 #include "../../constants.h"
-#include "../tools.h"
+#include "../../core/resultstatus.h"
 #include "../../utils/requests.h"
+#include "../tools.h"
+#include "scrapeproxiesworker.h"
+#include "utilities.h"
 
-ScrapeProxiesWorker::ScrapeProxiesWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
+ScrapeProxiesWorker::ScrapeProxiesWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
+    : Worker(id, inputDataQueue, mutex, settings, parent)
 {
     m_toolId = Tools::SCRAPE_PROXIES;
 }
@@ -26,15 +27,14 @@ void ScrapeProxiesWorker::doWork(const QVariantMap& inputData)
     Requests requests(m_settings);
     cpr::Response response = requests.get(url.toStdString());
     // TODO: Better result status handling
-    ResultStatus status((response.status_code == 200)? ResultStatus::OK : ResultStatus::FAILED);
+    ResultStatus status((response.status_code == 200) ? ResultStatus::OK : ResultStatus::FAILED);
 
-    for (const auto& proxy_string : extract_proxies(response.text))
-    {
-        auto data = QMap<QString, QVariant>{
-            {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-            {QString("Proxy"), QVariant(QString::fromUtf8(proxy_string.c_str()))},
-            {QString("Source"), QVariant(url)},
-            {QString("Details"), QVariant("")}
+    for (const auto& proxy_string : extract_proxies(response.text)) {
+        auto data = QMap<QString, QVariant> {
+            { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
+            { QString("Proxy"), QVariant(QString::fromUtf8(proxy_string.c_str())) },
+            { QString("Source"), QVariant(url) },
+            { QString("Details"), QVariant("") }
         };
         Q_EMIT Worker::result(m_toolId, data);
     }

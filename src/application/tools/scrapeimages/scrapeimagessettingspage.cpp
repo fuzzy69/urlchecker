@@ -1,20 +1,22 @@
-﻿#include <QPushButton>
-#include <QFileDialog>
+﻿#include <QFileDialog>
+#include <QPushButton>
 
+#include "common.h"
 #include "scrapeimagessettingspage.h"
 #include "ui_scrapeimagessettings.h"
-#include "common.h"
 
 #include "../../config.h"
 #include "../../constants.h"
-#include "../../texts.h"
 #include "../../core/settings.h"
 #include "../../icons.h"
+#include "../../texts.h"
 
-ScrapeImagesSettingsPage::ScrapeImagesSettingsPage(QWidget *parent) : QWidget(parent), m_ui(new Ui_ScrapeImagesSettings)
+ScrapeImagesSettingsPage::ScrapeImagesSettingsPage(QWidget* parent)
+    : QWidget(parent)
+    , m_ui(new Ui_ScrapeImagesSettings)
 {
     m_ui->setupUi(this);
-    connect(m_ui->browsePushButton, &QPushButton::clicked, [this]{
+    connect(m_ui->browsePushButton, &QPushButton::clicked, [this] {
         const QString downloadImagesDirectoryPath = QFileDialog::getExistingDirectory(this, tr("Choose Directory"), "/", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         QDir downloadImagesDirectory(downloadImagesDirectoryPath);
         if (!downloadImagesDirectory.isEmpty() and downloadImagesDirectory.isReadable())
@@ -27,13 +29,13 @@ ScrapeImagesSettingsPage::~ScrapeImagesSettingsPage()
     delete m_ui;
 }
 
-void ScrapeImagesSettingsPage::hideEvent(QHideEvent *event)
+void ScrapeImagesSettingsPage::hideEvent(QHideEvent* event)
 {
     Q_UNUSED(event)
     Settings::instance().setValue(QStringLiteral(SCRAPE_IMAGES_DIRECTORY), QVariant(m_ui->downloadImagesDirectoryLineEdit->text()));
 }
 
-void ScrapeImagesSettingsPage::showEvent(QShowEvent *event)
+void ScrapeImagesSettingsPage::showEvent(QShowEvent* event)
 {
     Q_UNUSED(event)
     const auto scrapeImagesDirectory = Settings::instance().value(QStringLiteral(SCRAPE_IMAGES_DIRECTORY)).toString();

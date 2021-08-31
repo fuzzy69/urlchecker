@@ -2,33 +2,35 @@
 #include <string>
 #include <unordered_set>
 
+#include <QDebug>
 #include <QDir>
 #include <QUrl>
-#include <QDebug>
 
 #include "my/text.h"
 
-#include "common.h"
-#include "scrapeimagesworker.h"
-#include "utilities.h"
-#include "../../core/resultstatus.h"
 #include "../../config.h"
 #include "../../constants.h"
-#include "../tools.h"
+#include "../../core/resultstatus.h"
 #include "../../utils/requests.h"
 #include "../../utils/simpledom.h"
 #include "../../utils/tidyhtml.h"
+#include "../tools.h"
+#include "common.h"
+#include "scrapeimagesworker.h"
+#include "utilities.h"
 
 using my::text::starts_with;
 
-ScrapeImagesWorker::ScrapeImagesWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent), m_dom(std::make_unique<SimpleDOM>()), m_tidy(std::make_unique<TidyHtml>())
+ScrapeImagesWorker::ScrapeImagesWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
+    : Worker(id, inputDataQueue, mutex, settings, parent)
+    , m_dom(std::make_unique<SimpleDOM>())
+    , m_tidy(std::make_unique<TidyHtml>())
 {
     m_toolId = Tools::SCRAPE_IMAGES;
 }
 
 ScrapeImagesWorker::~ScrapeImagesWorker()
 {
-
 }
 
 void ScrapeImagesWorker::doWork(const QVariantMap& inputData)
@@ -45,29 +47,26 @@ void ScrapeImagesWorker::doWork(const QVariantMap& inputData)
     std::string html = m_tidy->process(response.text);
     m_dom->from_string(html);
     std::unordered_set<std::string> images;
-    for (auto& element : m_dom->select_all("//img[@src]"))
-    {
+    for (auto& element : m_dom->select_all("//img[@src]")) {
         std::string image = element.attribute("src");
         if (!starts_with(image, "http") or images.count(image) > 0)
             continue;
         // Download image
-        if (shouldDownload)
-        {
+        if (shouldDownload) {
             QUrl imageUrl(image.c_str());
-            if (!imageUrl.fileName().isEmpty())
-            {
+            if (!imageUrl.fileName().isEmpty()) {
                 const QString imageFilePath = downloadImagesDirectory.filePath(imageUrl.fileName());
                 response = requests.download(image, imageFilePath.toStdString());
             }
         }
         images.insert(image);
-        auto data = QMap<QString, QVariant>{
-            {QString("toolId"), QVariant(Tools::SCRAPE_IMAGES)},
-            {QString("toolName"), QVariant("Scrape Images")},
-            {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-            {QString("Image Source"), QVariant(QString::fromUtf8(image.c_str()))},
-            {QString("Source"), QVariant(url)},
-            {QString("Details"), QVariant("")}
+        auto data = QMap<QString, QVariant> {
+            { QString("toolId"), QVariant(Tools::SCRAPE_IMAGES) },
+            { QString("toolName"), QVariant("Scrape Images") },
+            { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
+            { QString("Image Source"), QVariant(QString::fromUtf8(image.c_str())) },
+            { QString("Source"), QVariant(url) },
+            { QString("Details"), QVariant("") }
         };
         Q_EMIT Worker::result(m_toolId, data);
     }

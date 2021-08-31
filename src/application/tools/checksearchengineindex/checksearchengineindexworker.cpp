@@ -1,26 +1,28 @@
 ﻿#include <optional>
 
-#include <QUrl>
 #include <QDebug>
+#include <QUrl>
 
-#include "checksearchengineindexworker.h"
-#include "utilities.h"
-#include "../../core/resultstatus.h"
 #include "../../config.h"
 #include "../../constants.h"
-#include "../tools.h"
+#include "../../core/resultstatus.h"
 #include "../../utils/requests.h"
 #include "../../utils/simpledom.h"
 #include "../../utils/tidyhtml.h"
+#include "../tools.h"
+#include "checksearchengineindexworker.h"
+#include "utilities.h"
 
-CheckSearchEngineIndexWorker::CheckSearchEngineIndexWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent), m_dom(std::make_unique<SimpleDOM>()), m_tidy(std::make_unique<TidyHtml>())
+CheckSearchEngineIndexWorker::CheckSearchEngineIndexWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
+    : Worker(id, inputDataQueue, mutex, settings, parent)
+    , m_dom(std::make_unique<SimpleDOM>())
+    , m_tidy(std::make_unique<TidyHtml>())
 {
     m_toolId = Tools::CHECK_SEARCH_ENGINE_INDEX;
 }
 
 CheckSearchEngineIndexWorker::~CheckSearchEngineIndexWorker()
 {
-
 }
 
 void CheckSearchEngineIndexWorker::doWork(const QVariantMap& inputData)
@@ -42,21 +44,18 @@ void CheckSearchEngineIndexWorker::doWork(const QVariantMap& inputData)
     std::string html = m_tidy->process(response.text);
     m_dom->from_string(html);
     std::string urlString = url.toString().toStdString();
-    for (auto& element : m_dom->select_all("//div/a"))
-    {
+    for (auto& element : m_dom->select_all("//div/a")) {
         qDebug() << element.attribute("href").c_str();
-        if (element.attribute("href") == urlString)
-        {
+        if (element.attribute("href") == urlString) {
             indexStatus = QStringLiteral("Indexed");
             break;
         }
     }
-    auto data = QVariantMap
-    {
-        {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-        {QString("URL"), QVariant(url)},
-        {QString("Index Status"), QVariant(indexStatus)},
-        {QString("Details"), QVariant(details)}
+    auto data = QVariantMap {
+        { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
+        { QString("URL"), QVariant(url) },
+        { QString("Index Status"), QVariant(indexStatus) },
+        { QString("Details"), QVariant(details) }
     };
 
     Q_EMIT Worker::result(m_toolId, data);

@@ -7,20 +7,17 @@
 class SimpleDOM;
 class TidyHtml;
 
-class ScrapeImagesWorker final: public Worker
-{
+class ScrapeImagesWorker final : public Worker {
     Q_OBJECT
 
 public:
-    ScrapeImagesWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
+    ScrapeImagesWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent = nullptr);
     ~ScrapeImagesWorker();
 
 protected:
-    void doWork(const QVariantMap &inputData) override;
+    void doWork(const QVariantMap& inputData) override;
 
 private:
     std::unique_ptr<SimpleDOM> m_dom;
     std::unique_ptr<TidyHtml> m_tidy;
-//    SimpleDOM* m_dom;
-//    TidyHtml* m_tidy;
 };

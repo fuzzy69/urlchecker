@@ -1,12 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include <QStateMachine>
 
-
 class QState;
 
-enum class ApplicationState
-{
+enum class ApplicationState {
     NONE = 0,
     APPLICATION_STARTED = 1 << 0,
     APPLICATION_IDLING = 1 << 1,
@@ -14,18 +12,16 @@ enum class ApplicationState
     JOB_STARTING = 1 << 3,
     JOB_STOPPING = 1 << 4,
     JOB_FINISHING = 1 << 5,
-    JOB_RUNNING= 1 << 6,
+    JOB_RUNNING = 1 << 6,
     JOB_DONE = 1 << 7,
 };
 
-class ApplicationStateMachine : public QStateMachine
-{
+class ApplicationStateMachine : public QStateMachine {
     Q_OBJECT
 
 public:
-    ApplicationStateMachine(QObject *parent = nullptr);
+    ApplicationStateMachine(QObject* parent = nullptr);
 
-//     QString currentState() const;
     ApplicationState currentState() const;
 
 Q_SIGNALS:
@@ -47,12 +43,12 @@ Q_SIGNALS:
     void jobDone();
 
 private:
-    QState *m_applicationStartingState;
-    QState *m_applicationIdlingState;
-    QState *m_applicationExitingState;
-    QState *m_jobStartingState;
-    QState *m_jobRunningState;
-    QState *m_jobStoppingState;
-    QState *m_jobFinishingState;
-    QState *m_jobDoneState;
+    QState* m_applicationStartingState;
+    QState* m_applicationIdlingState;
+    QState* m_applicationExitingState;
+    QState* m_jobStartingState;
+    QState* m_jobRunningState;
+    QState* m_jobStoppingState;
+    QState* m_jobFinishingState;
+    QState* m_jobDoneState;
 };

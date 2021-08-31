@@ -6,20 +6,18 @@
 
 #include "pugixml.hpp"
 
-struct HTMLElement
-{
+struct HTMLElement {
     explicit HTMLElement(const pugi::xpath_node& node);
     ///
     std::string text() const;
     ///
     std::string attribute(const std::string& name);
-    
+
 private:
     pugi::xpath_node m_node;
 };
 
-class SimpleDOM
-{
+class SimpleDOM {
 public:
     explicit SimpleDOM();
     ///
@@ -28,7 +26,7 @@ public:
     std::vector<HTMLElement> select_all(const std::string& query) const;
     ///
     std::optional<HTMLElement> select_first(const std::string& query) const;
-    
+
 private:
     pugi::xml_document m_doc;
 };

@@ -7,72 +7,72 @@ ApplicationBridge& ApplicationBridge::instance()
     return instance;
 }
 
-TablesWidget *ApplicationBridge::tablesWidget()
+TablesWidget* ApplicationBridge::tablesWidget()
 {
     return m_tablesWidget;
 }
 
-ToolsWidget *ApplicationBridge::toolsWidget()
+ToolsWidget* ApplicationBridge::toolsWidget()
 {
     return m_toolsWidget;
 }
 
-LogWidget *ApplicationBridge::logWidget()
+LogWidget* ApplicationBridge::logWidget()
 {
     return m_logWidget;
 }
 
-ProxiesWidget *ApplicationBridge::proxiesWidget()
+ProxiesWidget* ApplicationBridge::proxiesWidget()
 {
     return m_proxiesWidget;
 }
 
-SettingsWidget *ApplicationBridge::settingsWidget()
+SettingsWidget* ApplicationBridge::settingsWidget()
 {
     return m_settingsWidget;
 }
 
-QProgressBar *ApplicationBridge::progressBar()
+QProgressBar* ApplicationBridge::progressBar()
 {
     return m_progressBar;
 }
 
-QStatusBar *ApplicationBridge::statusBar()
+QStatusBar* ApplicationBridge::statusBar()
 {
     return m_statusBar;
 }
 
-void ApplicationBridge::setTablesWidget(TablesWidget *tablesWidget)
+void ApplicationBridge::setTablesWidget(TablesWidget* tablesWidget)
 {
-    m_tablesWidget= tablesWidget;
+    m_tablesWidget = tablesWidget;
 }
 
-void ApplicationBridge::setToolsWidget(ToolsWidget *toolsWidget)
+void ApplicationBridge::setToolsWidget(ToolsWidget* toolsWidget)
 {
     m_toolsWidget = toolsWidget;
 }
 
-void ApplicationBridge::setLogWidget(LogWidget *logWidget)
+void ApplicationBridge::setLogWidget(LogWidget* logWidget)
 {
     m_logWidget = logWidget;
 }
 
-void ApplicationBridge::setProxiesWidget(ProxiesWidget *proxiesWidget)
+void ApplicationBridge::setProxiesWidget(ProxiesWidget* proxiesWidget)
 {
     m_proxiesWidget = proxiesWidget;
 }
 
-void ApplicationBridge::setSettingsWidget(SettingsWidget *settingsWidget)
+void ApplicationBridge::setSettingsWidget(SettingsWidget* settingsWidget)
 {
     m_settingsWidget = settingsWidget;
 }
 
-void ApplicationBridge::setProgressBar(QProgressBar *progressBar)
+void ApplicationBridge::setProgressBar(QProgressBar* progressBar)
 {
     m_progressBar = progressBar;
 }
 
-void ApplicationBridge::setStatusBar(QStatusBar *statusBar)
+void ApplicationBridge::setStatusBar(QStatusBar* statusBar)
 {
     m_statusBar = statusBar;
 }

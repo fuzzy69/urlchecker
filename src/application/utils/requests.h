@@ -1,13 +1,12 @@
 ﻿#pragma once
 
-#include <string>
 #include <QObject>
 #include <QVariantMap>
+#include <string>
 
 #include "cpr/cpr.h"
 
-class Requests
-{
+class Requests {
 public:
     explicit Requests(const QVariantMap& settings);
 

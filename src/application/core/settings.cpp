@@ -1,20 +1,14 @@
-﻿// #include <QApplication>
-// #include <QDir>
-// #include <QScopedPointer>
-// #include <QSettings>
-#include <QJsonObject>
+﻿#include <QFile>
 #include <QJsonDocument>
-#include <QFile>
+#include <QJsonObject>
 #include <QVariantMap>
 
 #include "settings.h"
 
 Settings::Settings()
+    : m_settings(QVariantMap())
+    , m_settingsFilePath(QStringLiteral(""))
 {
-//     QDir applicationDir(QApplication::applicationDirPath());
-//     m_settingsFilePath = applicationDir.absoluteFilePath("settings.json");
-    m_settings = QVariantMap();
-//     load();
 }
 
 Settings::~Settings()
@@ -22,7 +16,7 @@ Settings::~Settings()
     save();
 }
 
-Settings & Settings::instance()
+Settings& Settings::instance()
 {
     static Settings instance;
 
@@ -36,9 +30,9 @@ void Settings::setFilePath(const QString& filePath)
 
 void Settings::load(const QString& filePath)
 {
-    if (!QFile::exists((filePath.isEmpty()? m_settingsFilePath : filePath)))
+    if (!QFile::exists((filePath.isEmpty() ? m_settingsFilePath : filePath)))
         return;
-    QFile file((filePath.isEmpty()? m_settingsFilePath : filePath));
+    QFile file((filePath.isEmpty() ? m_settingsFilePath : filePath));
     file.open(QFile::ReadOnly);
     QByteArray buffer = file.readAll();
     file.close();
@@ -52,7 +46,7 @@ void Settings::save(const QString& filePath)
     QJsonDocument jsonDocument;
     jsonDocument.setObject(jsonObject);
     QFile file;
-    file.setFileName((filePath.isEmpty()? m_settingsFilePath : filePath));
+    file.setFileName((filePath.isEmpty() ? m_settingsFilePath : filePath));
     file.open(QFile::WriteOnly);
     file.write(jsonDocument.toJson());
     file.close();

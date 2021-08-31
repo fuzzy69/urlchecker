@@ -1,17 +1,17 @@
 ﻿#include <optional>
 
-#include <QUrl>
 #include <QDebug>
+#include <QUrl>
 
-#include "checkurlstatusworker.h"
-#include "../../core/resultstatus.h"
 #include "../../config.h"
 #include "../../constants.h"
-#include "../tools.h"
+#include "../../core/resultstatus.h"
 #include "../../utils/requests.h"
+#include "../tools.h"
+#include "checkurlstatusworker.h"
 
-
-CheckUrlStatusWorker::CheckUrlStatusWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
+CheckUrlStatusWorker::CheckUrlStatusWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
+    : Worker(id, inputDataQueue, mutex, settings, parent)
 {
     m_toolId = Tools::CHECK_URL_STATUS;
 }
@@ -26,12 +26,11 @@ void CheckUrlStatusWorker::doWork(const QVariantMap& inputData)
     Requests requests(m_settings);
     cpr::Response response = requests.head(url.toStdString());
 
-    auto data = QVariantMap
-    {
-        {QString("rowId"), QVariant(rowId)},
-        {QString("URL"), QVariant(url)},
-        {QString("Result"), QVariant(static_cast<qlonglong>(response.status_code))},
-        {QString("Details"), QVariant(QString::fromUtf8(response.status_line.c_str()))}
+    auto data = QVariantMap {
+        { QString("rowId"), QVariant(rowId) },
+        { QString("URL"), QVariant(url) },
+        { QString("Result"), QVariant(static_cast<qlonglong>(response.status_code)) },
+        { QString("Details"), QVariant(QString::fromUtf8(response.status_line.c_str())) }
     };
 
     Q_EMIT Worker::result(m_toolId, data);

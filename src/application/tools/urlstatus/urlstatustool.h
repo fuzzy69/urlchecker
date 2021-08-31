@@ -6,8 +6,7 @@
 #include "../tool.h"
 #include "../tools.h"
 
-class UrlStatusTool : public Tool
-{
+class UrlStatusTool : public Tool {
 public:
     UrlStatusTool();
 };

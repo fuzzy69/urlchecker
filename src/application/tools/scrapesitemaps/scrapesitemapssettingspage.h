@@ -6,11 +6,10 @@
 
 class Ui_ScrapeSitemapsSettings;
 
-class ScrapeSitemapsSettingsPage : public QWidget
-{
+class ScrapeSitemapsSettingsPage : public QWidget {
     Q_OBJECT
 public:
-    explicit ScrapeSitemapsSettingsPage(QWidget *parent = nullptr);
+    explicit ScrapeSitemapsSettingsPage(QWidget* parent = nullptr);
     ~ScrapeSitemapsSettingsPage() override;
 
 protected:
@@ -18,8 +17,5 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
-//    void setScrapeLinksStrategy(ScrapeLinksStrategy scrapeLinksStrategy);
-//    ScrapeLinksStrategy scrapeLinksStrategy();
-
     Ui_ScrapeSitemapsSettings* m_ui;
 };

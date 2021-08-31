@@ -1,33 +1,32 @@
 ﻿#include <optional>
 #include <string>
 
+#include <QDebug>
 #include <QDir>
 #include <QThread>
 #include <QUrl>
-#include <QDebug>
 
 #include "my/text.h"
 
-#include "common.h"
-#include "scrapesitemapsworker.h"
-#include "utilities.h"
-#include "../../core/resultstatus.h"
 #include "../../config.h"
 #include "../../constants.h"
-#include "../tools.h"
+#include "../../core/resultstatus.h"
 #include "../../utils/requests.h"
+#include "../tools.h"
+#include "common.h"
+#include "scrapesitemapsworker.h"
 #include "utilities.h"
 
 using my::text::starts_with;
 
-ScrapeSitemapskWorker::ScrapeSitemapskWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
+ScrapeSitemapskWorker::ScrapeSitemapskWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
+    : Worker(id, inputDataQueue, mutex, settings, parent)
 {
     m_toolId = Tools::SCRAPE_SITEMAPS;
 }
 
 ScrapeSitemapskWorker::~ScrapeSitemapskWorker()
 {
-
 }
 
 void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
@@ -51,17 +50,14 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
     std::string sitemapUrl("");
     auto status = ResultStatus::FAILED;
     QString details;
-    if (response.status_code == 200)
-    {
+    if (response.status_code == 200) {
         sitemapUrl = extract_sitemap_url(response.text);
         details = QStringLiteral("OK");
         status = ResultStatus::OK;
         // Download sitemap
-        if (shouldDownload)
-        {
+        if (shouldDownload) {
             QUrl sitemapFileUrl(sitemapUrl.c_str());
-            if (!sitemapFileUrl.fileName().isEmpty())
-            {
+            if (!sitemapFileUrl.fileName().isEmpty()) {
                 const QString sitemapFilePath = downloadSitemapsDirectory.filePath(url.host() + "_" + sitemapFileUrl.fileName());
                 response = requests.download(sitemapUrl, sitemapFilePath.toStdString());
                 if (response.status_code == 200)
@@ -70,19 +66,16 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
                     logMessage(QString("Failed to download sitemap '%1'!").arg(sitemapFileUrl.toString()));
             }
         }
-    }
-    else
-    {
+    } else {
         details = QStringLiteral("Failed to locate sitemap file");
     }
     if (sitemapUrl == "")
         details = QStringLiteral("Failed to locate sitemap file");
-    auto data = QVariantMap
-    {
-        {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-        {QString("URL"), QVariant(QString::fromUtf8(sitemapUrl.c_str()))},
-        {QString("Website"), QVariant(rootUrl.toString())},
-        {QString("Details"), QVariant(details)}
+    auto data = QVariantMap {
+        { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
+        { QString("URL"), QVariant(QString::fromUtf8(sitemapUrl.c_str())) },
+        { QString("Website"), QVariant(rootUrl.toString()) },
+        { QString("Details"), QVariant(details) }
     };
 
     Q_EMIT Worker::result(m_toolId, data);

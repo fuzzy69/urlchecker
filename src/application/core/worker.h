@@ -1,32 +1,30 @@
 ﻿#pragma once
 
-#include <QObject>
-#include <QVariant>
 #include <QMap>
+#include <QObject>
 #include <QQueue>
+#include <QVariant>
 
-#include "resultstatus.h"
-//#include "../tools/tool.h"
 #include "../tools/tools.h"
+#include "resultstatus.h"
 
 class QMutex;
 
-class Worker : public QObject
-{
+class Worker : public QObject {
     Q_OBJECT
-    
+
 public:
-    explicit Worker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent = nullptr);
+    explicit Worker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent = nullptr);
 
     void logMessage(const QString& message);
-    int oid() const {
+    int oid() const
+    {
         return m_id;
     }
 
 Q_SIGNALS:
-//    void result(const QVariantMap &resultData);
-    void result(Tools toolId, const QVariantMap &resultData);
-    void status(const int rowId, const ResultStatus &resultStatus);
+    void result(Tools toolId, const QVariantMap& resultData);
+    void status(const int rowId, const ResultStatus& resultStatus);
     void itemDone();
     void finished();
     void requestStop();
@@ -46,4 +44,3 @@ protected:
     QVariantMap m_settings;
     Tools m_toolId;
 };
-

@@ -1,17 +1,18 @@
 ﻿#include <optional>
 
-#include <QUrl>
 #include <QDebug>
+#include <QUrl>
 
-#include "checkalexarankworker.h"
-#include "utilities.h"
-#include "../../core/resultstatus.h"
 #include "../../config.h"
 #include "../../constants.h"
-#include "../tools.h"
+#include "../../core/resultstatus.h"
 #include "../../utils/requests.h"
+#include "../tools.h"
+#include "checkalexarankworker.h"
+#include "utilities.h"
 
-CheckAlexaRankWorker::CheckAlexaRankWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
+CheckAlexaRankWorker::CheckAlexaRankWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
+    : Worker(id, inputDataQueue, mutex, settings, parent)
 {
     m_toolId = Tools::CHECK_ALEXA_RANK;
 }
@@ -31,23 +32,19 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
     auto status = ResultStatus::FAILED;
     QString details;
     std::optional<int> rank_result = extract_alexa_rank(response.text);
-    if (rank_result)
-    {
+    if (rank_result) {
         status = ResultStatus::OK;
         rank = QString::number(rank_result.value());
         details = QStringLiteral("OK");
-    }
-    else
-    {
+    } else {
         details = QStringLiteral("Failed to extract rank value");
     }
 
-    auto data = QVariantMap
-    {
-        {QString("rowId"), QVariant(inputData["rowId"].toInt())},
-        {QString("URL"), QVariant(url)},
-        {QString("Rank"), QVariant(rank)},
-        {QString("Details"), QVariant(details)}
+    auto data = QVariantMap {
+        { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
+        { QString("URL"), QVariant(url) },
+        { QString("Rank"), QVariant(rank) },
+        { QString("Details"), QVariant(details) }
     };
 
     Q_EMIT Worker::result(m_toolId, data);

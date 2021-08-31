@@ -1,10 +1,10 @@
+﻿#include <QState>
 #include <QStateMachine>
-#include <QState>
 
 #include "applicationstatemachine.h"
 
-
-ApplicationStateMachine::ApplicationStateMachine(QObject *parent) : QStateMachine(parent)
+ApplicationStateMachine::ApplicationStateMachine(QObject* parent)
+    : QStateMachine(parent)
 {
     // States
     m_applicationStartingState = new QState;
@@ -43,28 +43,6 @@ ApplicationStateMachine::ApplicationStateMachine(QObject *parent) : QStateMachin
 
     setInitialState(m_applicationStartingState);
 }
-
-// QString ApplicationStateMachine::currentState() const
-// {
-//     if (configuration().contains(m_applicationStartingState))
-//         return "Application started";
-//     else if (configuration().contains(m_applicationIdlingState))
-//         return "Application idling";
-//     else if (configuration().contains(m_applicationExitingState))
-//         return "Application exiting";
-//     else if (configuration().contains(m_jobStartingState))
-//         return "Job starting";
-//     else if (configuration().contains(m_jobStoppingState))
-//         return "Job stopping";
-//     else if (configuration().contains(m_jobFinishingState))
-//         return "Job finishing";
-//     else if (configuration().contains(m_jobRunningState))
-//         return "Job running";
-//     else if (configuration().contains(m_jobDoneState))
-//         return "Job done";
-//     else
-//         return "None";
-// }
 
 ApplicationState ApplicationStateMachine::currentState() const
 {

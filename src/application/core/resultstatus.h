@@ -2,8 +2,7 @@
 
 #include <QMetaObject>
 
-enum class ResultStatus : qint8
-{
+enum class ResultStatus : qint8 {
     OK,
     PROCESSING,
     FAILED

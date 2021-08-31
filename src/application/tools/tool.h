@@ -7,14 +7,12 @@
 
 class QMenu;
 
-class Tool : public QObject
-{
+class Tool : public QObject {
     Q_OBJECT
 
 public:
     Tool();
-    Tool(Tools toolId, ToolCategory category, const QIcon &icon, const QString &name, const QStringList &columns, const QList<float> &columnRatios);
-//    virtual ~Tool();
+    Tool(Tools toolId, ToolCategory category, const QIcon& icon, const QString& name, const QStringList& columns, const QList<float>& columnRatios);
 
     Tools id() const;
     ToolCategory category() const;

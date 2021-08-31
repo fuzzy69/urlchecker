@@ -1,19 +1,19 @@
-#include <QAction>
+﻿#include <QAction>
 #include <QApplication>
 #include <QClipboard>
 #include <QCursor>
 #include <QDebug>
 #include <QIcon>
+#include <QMenu>
 #include <QPoint>
 #include <QRegularExpression>
-#include <QMenu>
 #include <QTextEdit>
 
-#include "proxieswidget.h"
 #include "../icons.h"
+#include "proxieswidget.h"
 
-
-ProxiesWidget::ProxiesWidget(QTextEdit* parent) : QTextEdit(parent)
+ProxiesWidget::ProxiesWidget(QTextEdit* parent)
+    : QTextEdit(parent)
 {
     setReadOnly(true);
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -23,22 +23,18 @@ ProxiesWidget::ProxiesWidget(QTextEdit* parent) : QTextEdit(parent)
 
 void ProxiesWidget::showCustomContextMenu(const QPoint& point)
 {
-    QPoint globalPoint= this->mapToGlobal(point);
+    QPoint globalPoint = this->mapToGlobal(point);
     QMenu menu(this);
-    QAction *pasteProxiesAction = menu.addAction(QIcon(ICON_CLIPBOARD_PASTE), "Paste Proxies");
-    QAction *removeAllProxiesAction = menu.addAction(QIcon(ICON_CROSS), "Remove All Proxies");
-    QAction *action = menu.exec(globalPoint);
-    if (action == pasteProxiesAction)
-    {
-        for (auto &line : QApplication::clipboard()->text().trimmed().split(QRegularExpression("\n|\r\n|\r"), QString::SkipEmptyParts))
-        {
+    QAction* pasteProxiesAction = menu.addAction(QIcon(ICON_CLIPBOARD_PASTE), "Paste Proxies");
+    QAction* removeAllProxiesAction = menu.addAction(QIcon(ICON_CROSS), "Remove All Proxies");
+    QAction* action = menu.exec(globalPoint);
+    if (action == pasteProxiesAction) {
+        for (auto& line : QApplication::clipboard()->text().trimmed().split(QRegularExpression("\n|\r\n|\r"), QString::SkipEmptyParts)) {
             QStringList chunks = line.split(":");
             if (chunks.length() == 2 || chunks.length() == 4)
                 append(line);
         }
-    }
-    else if (action == removeAllProxiesAction)
-    {
+    } else if (action == removeAllProxiesAction) {
         clear();
     }
 }

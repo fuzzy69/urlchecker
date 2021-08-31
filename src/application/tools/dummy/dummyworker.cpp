@@ -1,18 +1,19 @@
 ﻿#include <optional>
 
 #include <QDebug>
-#include <QUrl>
 #include <QThread>
+#include <QUrl>
 
-#include "dummyworker.h"
-#include "../../core/resultstatus.h"
 #include "../../config.h"
 #include "../../constants.h"
-#include "../tools.h"
+#include "../../core/resultstatus.h"
 #include "../../utils/requests.h"
+#include "../tools.h"
 #include "dummytool.h"
+#include "dummyworker.h"
 
-DummyWorker::DummyWorker(int id, QQueue<QVariantMap> *inputDataQueue, QMutex* mutex, const QVariantMap &settings, QObject *parent) : Worker(id, inputDataQueue, mutex, settings, parent)
+DummyWorker::DummyWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
+    : Worker(id, inputDataQueue, mutex, settings, parent)
 {
     m_toolId = Tools::DUMMY;
 }
@@ -25,12 +26,11 @@ void DummyWorker::doWork(const QVariantMap& inputData)
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     QThread::sleep(1);
 
-    auto data = QVariantMap
-    {
-        {QString("rowId"), QVariant(rowId)},
-        {QString("URL"), QVariant(url)},
-        {QString("Result"), QVariant("OK")},
-        {QString("Details"), QVariant("")},
+    auto data = QVariantMap {
+        { QString("rowId"), QVariant(rowId) },
+        { QString("URL"), QVariant(url) },
+        { QString("Result"), QVariant("OK") },
+        { QString("Details"), QVariant("") },
     };
 
     Q_EMIT Worker::result(m_toolId, data);

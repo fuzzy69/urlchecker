@@ -1,12 +1,13 @@
-#include <QtHelp/QHelpEngine>
-#include <QTextBrowser>
+﻿#include <QTextBrowser>
 #include <QVariant>
 #include <QWidget>
+#include <QtHelp/QHelpEngine>
 
 #include "helpbrowser.h"
 
-
-HelpBrowser::HelpBrowser(QHelpEngine* helpEngine, QWidget* parent) : QTextBrowser(parent), m_helpEngine(helpEngine)
+HelpBrowser::HelpBrowser(QHelpEngine* helpEngine, QWidget* parent)
+    : QTextBrowser(parent)
+    , m_helpEngine(helpEngine)
 {
 }
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QWidget>
 
@@ -7,11 +7,10 @@ class QVBoxLayout;
 
 class Table;
 
-class TablesWidget final: public QWidget
-{
+class TablesWidget final : public QWidget {
     Q_OBJECT
 public:
-    explicit TablesWidget(QWidget *parent = nullptr);
+    explicit TablesWidget(QWidget* parent = nullptr);
 
     Table* inputTable();
     Table* resultsTable();
@@ -31,9 +30,9 @@ public Q_SLOTS:
     void removeSelectedRows();
 
 private:
-    QVBoxLayout *m_mainLayout;
+    QVBoxLayout* m_mainLayout;
 
-    Table *m_inputTable;
-    Table *m_resultsTable;
-    QTabWidget *m_tabWidget;
+    Table* m_inputTable;
+    Table* m_resultsTable;
+    QTabWidget* m_tabWidget;
 };

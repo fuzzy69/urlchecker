@@ -6,11 +6,10 @@
 
 class Ui_ScrapeLinksSettings;
 
-class ScrapeLinksSettingsPage : public QWidget
-{
+class ScrapeLinksSettingsPage : public QWidget {
     Q_OBJECT
 public:
-    explicit ScrapeLinksSettingsPage(QWidget *parent = nullptr);
+    explicit ScrapeLinksSettingsPage(QWidget* parent = nullptr);
     ~ScrapeLinksSettingsPage() override;
 
 protected:

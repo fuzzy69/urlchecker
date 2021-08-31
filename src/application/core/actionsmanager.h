@@ -7,20 +7,17 @@
 
 class QAction;
 
-class ActionsManager final : public QObject
-{
+class ActionsManager final : public QObject {
     Q_OBJECT
     Q_DISABLE_COPY(ActionsManager)
 public:
-    explicit ActionsManager(QObject *parent = nullptr);
-//    ~ActionsManager() override;
+    explicit ActionsManager(QObject* parent = nullptr);
 
     static ActionsManager& instance();
     void addAction(const QString& actionName, QAction* action);
     QAction* action(const QString& actionName) const;
-//    QAction* createAction(const QString& actionName, const QString& iconFile, const QString& actionText, const QObject* receiver, const QMetaMethod& method);
     QAction* createAction(const QString& actionName, const QString& iconFile, const QString& actionText);
-    template<typename Receiver, typename Slot>
+    template <typename Receiver, typename Slot>
     QAction* createAction(const QString& actionName, const QString& iconFile, const QString& actionText, const Receiver* receiver, const Slot& slot)
     {
         auto* action = new QAction(QIcon(iconFile), actionText, this);
@@ -29,9 +26,6 @@ public:
 
         return action;
     }
-
-//Q_SIGNALS:
-//    void currentActionIndexChanged(int index);
 
 private:
     static ActionsManager* m_instance;

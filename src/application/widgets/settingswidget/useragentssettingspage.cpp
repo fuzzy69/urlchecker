@@ -2,13 +2,15 @@
 #include "ui_useragentssettings.h"
 
 #include "../../config.h"
-#include "../../texts.h"
 #include "../../core/settings.h"
 #include "../../icons.h"
+#include "../../texts.h"
 
 using my::browser::UserAgentsManager;
 
-UserAgentsSettingsPage::UserAgentsSettingsPage(QWidget *parent) : QWidget(parent), m_ui(new Ui_UserAgentsSettings)
+UserAgentsSettingsPage::UserAgentsSettingsPage(QWidget* parent)
+    : QWidget(parent)
+    , m_ui(new Ui_UserAgentsSettings)
 {
     m_ui->setupUi(this);
 }
@@ -18,7 +20,7 @@ UserAgentsSettingsPage::~UserAgentsSettingsPage()
     delete m_ui;
 }
 
-void UserAgentsSettingsPage::hideEvent(QHideEvent *event)
+void UserAgentsSettingsPage::hideEvent(QHideEvent* event)
 {
     Q_UNUSED(event)
     const auto defaultUserAgent = m_ui->globalUserAgentLineEdit->text();
@@ -28,7 +30,7 @@ void UserAgentsSettingsPage::hideEvent(QHideEvent *event)
     UserAgentsManager<QString>::instance().set_rotation_strategy(rotationStrategy());
 }
 
-void UserAgentsSettingsPage::showEvent(QShowEvent *event)
+void UserAgentsSettingsPage::showEvent(QShowEvent* event)
 {
     Q_UNUSED(event)
     auto userAgent = Settings::instance().value(QStringLiteral(USER_AGENT)).toString();
@@ -40,17 +42,16 @@ void UserAgentsSettingsPage::showEvent(QShowEvent *event)
 
 void UserAgentsSettingsPage::setRotationStrategy(RotationStrategy rotationStrategy)
 {
-    switch (rotationStrategy)
-    {
-        case RotationStrategy::DEFAULT_USER_AGENT:
-            m_ui->useGlobalUserAgentRadioButton->setChecked(true);
-            break;
-        case RotationStrategy::RANDOM_USER_AGENT:
-            m_ui->useRandomUserAgentRadioButton->setChecked(true);
-            break;
-        case RotationStrategy::TIE_USER_AGENT_TO_PROXY:
-            m_ui->tieUserAgentToProxyRadioButton->setChecked(true);
-            break;
+    switch (rotationStrategy) {
+    case RotationStrategy::DEFAULT_USER_AGENT:
+        m_ui->useGlobalUserAgentRadioButton->setChecked(true);
+        break;
+    case RotationStrategy::RANDOM_USER_AGENT:
+        m_ui->useRandomUserAgentRadioButton->setChecked(true);
+        break;
+    case RotationStrategy::TIE_USER_AGENT_TO_PROXY:
+        m_ui->tieUserAgentToProxyRadioButton->setChecked(true);
+        break;
     }
 }
 

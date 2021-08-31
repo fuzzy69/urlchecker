@@ -22,10 +22,6 @@
 
 #include "config.h"
 #include "constants.h"
-#include "icons.h"
-#include "mainwindow.h"
-#include "texts.h"
-#include "version.h"
 #include "core/applicationbridge.h"
 #include "core/applicationstatemachine.h"
 #include "core/misc.h"
@@ -33,10 +29,13 @@
 #include "core/settings.h"
 #include "core/table.h"
 #include "core/thread.h"
+#include "icons.h"
+#include "mainwindow.h"
+#include "texts.h"
 #include "tools/tool.h"
+#include "version.h"
 #include "widgets/filesystemwidget.h"
 #include "widgets/helpwidget.h"
-//#include "widgets/logwidget.h"
 #include "widgets/proxieswidget.h"
 #include "widgets/settingswidget/settingswidget.h"
 #include "widgets/sidebarwidget.h"
@@ -49,17 +48,15 @@
 #include "core/actionsmanager.h"
 #include "core/workermanager.h"
 
-using my::filesystem::File;
-// using my::network::HttpProxy;
-using my::network::ProxyManager;
 using my::browser::UserAgentsManager;
 using my::data::USER_AGENTS_TEXT;
+using my::filesystem::File;
+using my::network::ProxyManager;
 
-MainWindow::MainWindow ( QWidget* parent ) : 
-    MainWindowBase(parent)
+MainWindow::MainWindow(QWidget* parent)
+    : MainWindowBase(parent)
 {
-    setWindowTitle(QStringLiteral("%1 - %2").arg( QStringLiteral(APPLICATION_TITLE) ).arg(QStringLiteral( 
-APPLICATION_VERSION )));
+    setWindowTitle(QStringLiteral("%1 - %2").arg(QStringLiteral(APPLICATION_TITLE)).arg(QStringLiteral(APPLICATION_VERSION)));
 
     QDir applicationDir(QApplication::applicationDirPath());
     applicationDir.mkdir("data");
@@ -67,28 +64,26 @@ APPLICATION_VERSION )));
     m_applicationStateMachine = new ApplicationStateMachine(this);
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(MAX_RECENT_FILES, this);
-    //
+
     createActions();
     createMenuBar();
     createToolBar();
     createWidgets();
     createStatusBar();
     createConnections();
-    //
-//     QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
+
     initSettings(applicationDir);
-//    initUserAgents(applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE)));
     initUserAgents(applicationDir);
     initProxies(applicationDir);
+
     // Init recent files
-    for (QAction *action : m_recentFiles->actions())
-    {
+    for (QAction* action : m_recentFiles->actions()) {
         m_recentUrlFilesMenu->addAction(action);
     }
-    //
+
     m_applicationStateMachine->start();
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
-    QTimer::singleShot(3 * MILLIS_IN_SECOND, [this](){
+    QTimer::singleShot(3 * MILLIS_IN_SECOND, [this]() {
         Q_EMIT m_applicationStateMachine->applicationReady();
     });
 }
@@ -96,28 +91,6 @@ APPLICATION_VERSION )));
 MainWindow::~MainWindow()
 {
 }
-
-//void MainWindow::createActions()
-//{
-//    m_importUrlsAction = new QAction(QIcon(ICON_TABLE_IMPORT), tr("Import URLs"), this);
-//    m_recentUrlFilesMenu = new QMenu(tr("Open Recent URL File"), this);
-//    m_clearRecentUrlFilesAction = new QAction(QIcon(ICON_BROOM), tr("Clear List"), this);
-//    m_exportResultsAction = new QAction(QIcon(ICON_TABLE_EXPORT), tr("Export Results"), this);
-//    m_quitAction = new QAction(QIcon(ICON_CONTROL_POWER), tr("Quit"), this);
-//    m_removeAllAction = new QAction(QIcon(ICON_BROOM), tr("Remove All Rows"), this);
-//    m_removeDuplicatesAction = new QAction(QIcon(ICON_TABLE_DELETE_ROW), tr("Remove Duplicates"), this);
-//    m_selectAllAction = new QAction(QIcon(ICON_TABLE_SELECT_ALL), tr("Select All Rows"), this);
-//    m_invertSelectionAction = new QAction(QIcon(ICON_TABLE), tr("Invert Selection"), this);
-//    m_removeSelectedAction= new QAction(QIcon(ICON_TABLE_DELETE_ROW), tr("Remove Selected Rows"), this);
-//    m_centerWindowAction = new QAction(QIcon(ICON_RESIZE), tr("Center Window"), this);
-//    m_aboutAction = new QAction(QIcon(ICON_INFORMATION), tr("About"), this);
-
-//    // Sidebar
-//    m_workspaceAction = new QAction(QIcon(ICON_DESKTOP), tr("Workspace"), this);
-//    m_settingsAction = new QAction(QIcon(ICON_GEAR), tr("Settings"), this);
-//    m_proxiesAction = new QAction(QIcon(ICON_MASK), tr("Proxies"), this);
-//    m_helpAction = new QAction(QIcon(ICON_QUESTION), tr("Help"), this);
-//}
 
 void MainWindow::createMenuBar()
 {
@@ -132,7 +105,7 @@ void MainWindow::createMenuBar()
     m_fileMenu->addAction(ActionsManager::instance().action("importUrls"));
     m_recentUrlFilesMenu = new QMenu(tr("Open Recent URL File"), this);
     m_fileMenu->addMenu(m_recentUrlFilesMenu);
-//    m_recentUrlFilesMenu->addAction(m_clearRecentUrlFilesAction);
+    //    m_recentUrlFilesMenu->addAction(m_clearRecentUrlFilesAction);
     m_recentUrlFilesMenu->addAction(ActionsManager::instance().action("clearRecentUrlFiles"));
     m_recentUrlFilesMenu->addSeparator();
     m_fileMenu->addAction(ActionsManager::instance().action("exportResults"));
@@ -186,7 +159,6 @@ void MainWindow::createWidgets()
     m_mainStackedWidget = new QStackedWidget;
     m_workspaceWidget = new WorkspaceWidget;
     // FIXME: Application sometimes crashes on exit, possible ownership issue with SettingsWidget?
-//    m_settingsWidget = new SettingsWidget(this);
     m_settingsWidget = new SettingsWidget;
     m_userAgentsWidget = new UserAgentsWidget;
     m_proxiesWidget = new ProxiesWidget;
@@ -214,14 +186,12 @@ void MainWindow::createStatusBar()
     m_statusBar = new QStatusBar;
     setStatusBar(m_statusBar);
 
-//    m_sidebarPushButton = new QPushButton(QIcon(ICON_BOOK_OPEN_LIST), QStringLiteral(" Sidebar"));
     m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), QStringLiteral(" Tools"));
     m_logPushButton = new QPushButton(QIcon(ICON_DOCUMENT_LIST), QStringLiteral(" Log"));
     m_statusBarLabel = new QLabel;
     m_activeThreadsLabel = new QLabel(tr(TEXT_ACTIVE_THREADS));
 
     m_statusBar->addPermanentWidget(m_toolsPushButton);
-//    m_statusBar->addPermanentWidget(m_sidebarPushButton);
     m_statusBar->addPermanentWidget(m_logPushButton);
     m_statusBar->addPermanentWidget(m_statusBarLabel, 1);
     m_statusBar->addPermanentWidget(m_activeThreadsLabel);
@@ -235,7 +205,7 @@ void MainWindow::createConnections()
     connect(ActionsManager::instance().action(ACTION_IMPORT_URLS), &QAction::triggered, this, &MainWindow::importUrls);
     connect(ActionsManager::instance().action(ACTION_EXPORT_RESULTS), &QAction::triggered, this, &MainWindow::exportResults);
     connect(m_recentFiles, &RecentFiles::filePathSelected, this, &MainWindow::importRecentFileUrls);
-    connect(ActionsManager::instance().action(ACTION_CLEAR_RECENT_URL_FILES), &QAction::triggered, [this]{
+    connect(ActionsManager::instance().action(ACTION_CLEAR_RECENT_URL_FILES), &QAction::triggered, [this] {
         m_recentFiles->clear();
     });
     connect(ActionsManager::instance().action(ACTION_QUIT), &QAction::triggered, this, &MainWindow::close);
@@ -244,22 +214,16 @@ void MainWindow::createConnections()
     connect(ActionsManager::instance().action(ACTION_CENTER_WINDOW), &QAction::triggered, this, &MainWindow::centerWindow);
 
     //Help menu
-    connect(ActionsManager::instance().action(ACTION_ABOUT), &QAction::triggered, [&] {QMessageBox::about(this,
-        QString("About %1").arg(APPLICATION_TITLE),
-        QString(
-            "<h3>%1 %2</h3><br/>"
-            "%3<br/>"
-            "Fugue icons are provided by <a href='http://p.yusukekamiyamane.com/'>Yusuke"
-        "Kamiyamane</a>"
-        ).arg(APPLICATION_TITLE, APPLICATION_VERSION, APPLICATION_DESCRIPTION)
-    );});
+    connect(ActionsManager::instance().action(ACTION_ABOUT), &QAction::triggered, [&] { QMessageBox::about(this,
+                                                                                            QString("About %1").arg(APPLICATION_TITLE),
+                                                                                            QString(
+                                                                                                "<h3>%1 %2</h3><br/>"
+                                                                                                "%3<br/>"
+                                                                                                "Fugue icons are provided by <a href='http://p.yusukekamiyamane.com/'>Yusuke"
+                                                                                                "Kamiyamane</a>")
+                                                                                                .arg(APPLICATION_TITLE, APPLICATION_VERSION, APPLICATION_DESCRIPTION)); });
 
     // Sidebar
-//    connect(ActionsManager::instance().action("workspace"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(0);});
-//    connect(ActionsManager::instance().action("settings"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(1);});
-//    connect(ActionsManager::instance().action("userAgents"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(2);});
-//    connect(ActionsManager::instance().action("proxies"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(3);});
-//    connect(ActionsManager::instance().action("help"), &QAction::triggered, [this]{m_mainStackedWidget->setCurrentIndex(4);});
     connect(m_sideBarWidget, &SideBarWidget::currentActionIndexChanged, m_mainStackedWidget, &QStackedWidget::setCurrentIndex);
 
     // Misc
@@ -270,55 +234,51 @@ void MainWindow::createConnections()
     connect(m_workspaceWidget->workerManager(), &WorkerManager::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStop);
 
     // Table actions
-    connect(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->selectAll();});
-    connect(ActionsManager::instance().action(ACTION_INVERT_ROWS_SELECTION), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->invertSelection();});
-    connect(ActionsManager::instance().action(ACTION_REMOVE_SELECTED_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected();});
-    connect(ActionsManager::instance().action(ACTION_REMOVE_DUPLICATE_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates();});
-    connect(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS), &QAction::triggered, [this]{m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows();});
+    connect(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->selectAll(); });
+    connect(ActionsManager::instance().action(ACTION_INVERT_ROWS_SELECTION), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->invertSelection(); });
+    connect(ActionsManager::instance().action(ACTION_REMOVE_SELECTED_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected(); });
+    connect(ActionsManager::instance().action(ACTION_REMOVE_DUPLICATE_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates(); });
+    connect(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows(); });
 
     // Tools
-    connect(m_workspaceWidget->toolsWidget(), &ToolsWidget::toolSettingsRequested, [this](const Tool& tool){
-        if (m_settingsWidget->setCurrentSettingsPage(tool.name()))
-        {
+    connect(m_workspaceWidget->toolsWidget(), &ToolsWidget::toolSettingsRequested, [this](const Tool& tool) {
+        if (m_settingsWidget->setCurrentSettingsPage(tool.name())) {
             m_sideBarWidget->setCurrentAction(1);
         }
     });
 
     // Filesystem
-    connect(m_workspaceWidget->filesystemWidget(), &FilesystemWidget::urlFileDoubleClicked, [this](const QString& filePath){
+    connect(m_workspaceWidget->filesystemWidget(), &FilesystemWidget::urlFileDoubleClicked, [this](const QString& filePath) {
         importUrlFile(filePath);
         m_recentFiles->addFile(filePath);
     });
 
     // Statusbar
-//    connect(m_sidebarPushButton, &QPushButton::clicked, [this](){
-//        m_sideBarWidget->setVisible(!m_sideBarWidget->isVisible());
-//    });
-    connect(m_toolsPushButton, &QPushButton::clicked, [this](){
+    connect(m_toolsPushButton, &QPushButton::clicked, [this]() {
         m_workspaceWidget->toggleSideTabWidget();
     });
-    connect(m_logPushButton, &QPushButton::clicked, [this](){
+    connect(m_logPushButton, &QPushButton::clicked, [this]() {
         m_workspaceWidget->toggleLogWidget();
     });
 
     // Application states
-    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationStarted, [this](){
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationStarted, [this]() {
         m_workspaceWidget->onApplicationStart();
     });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationIdling, [this](){
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationIdling, [this]() {
         m_workspaceWidget->onApplicationReady();
         m_statusBarLabel->setText("Ready.");
     });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationExiting, [this](){
+    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationExiting, [this]() {
         m_workspaceWidget->onApplicationExit();
     });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStarted, [this](){
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStarted, [this]() {
         m_workspaceWidget->onJobStart();
     });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStopping, [this](){
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStopping, [this]() {
         m_workspaceWidget->onJobStop();
     });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::jobFinished, [this](){
+    connect(m_applicationStateMachine, &ApplicationStateMachine::jobFinished, [this]() {
         m_workspaceWidget->onJobDone();
     });
 }
@@ -342,12 +302,10 @@ void MainWindow::saveSettings()
 // Events
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING)
-    {
-        auto reply = QMessageBox::question(this, QStringLiteral("Close Confirmation"), QStringLiteral("Some jobs are stil running, close anyway?"), 
-QMessageBox::Yes | QMessageBox::No);
-        if (reply == QMessageBox::No)
-        {
+    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING) {
+        auto reply = QMessageBox::question(this, QStringLiteral("Close Confirmation"), QStringLiteral("Some jobs are stil running, close anyway?"),
+            QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::No) {
             event->ignore();
             return;
         }
@@ -371,15 +329,15 @@ void MainWindow::onPulse()
         emit m_applicationStateMachine->jobDone();
 }
 
-void MainWindow::importUrlFile(const QString &filePath)
+void MainWindow::importUrlFile(const QString& filePath)
 {
     if (!QFile::exists(filePath))
         return;
     Table* inputTable = m_workspaceWidget->tablesWidget()->inputTable();
-    if (inputTable->rowCount() != 0)
-    {
+    if (inputTable->rowCount() != 0) {
         QMessageBox messageBox(QMessageBox::Question, QStringLiteral("Import URLs"), QStringLiteral("Input table not empty! Append to existing rows or"
-        " replace current rows?"), QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+                                                                                                    " replace current rows?"),
+            QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         messageBox.setButtonText(QMessageBox::Yes, "Append");
         messageBox.setButtonText(QMessageBox::No, "Replace");
         int pushedButton = messageBox.exec();
@@ -388,8 +346,7 @@ void MainWindow::importUrlFile(const QString &filePath)
         if (pushedButton == QMessageBox::No)
             inputTable->removeAllRows();
     }
-    for (auto& line : File::readTextLines(filePath))
-    {
+    for (auto& line : File::readTextLines(filePath)) {
         line = line.trimmed();
         // TODO: validate URL
         if (line.length() > 0)
@@ -414,43 +371,29 @@ void MainWindow::importRecentFileUrls(const QString& filePath)
 void MainWindow::exportResults()
 {
     Table* resultsTable = m_workspaceWidget->tablesWidget()->resultsTable();
-    if (resultsTable->rowCount() == 0)
-    {
+    if (resultsTable->rowCount() == 0) {
         QMessageBox::information(this, QStringLiteral("Export Results"), QStringLiteral("Nothing to export!"));
         return;
     }
-//    QString filePath(QDir(m_lastDirectory).absoluteFilePath(QStringLiteral("results")));
     QString filePath(QDir(m_lastDirectory).absoluteFilePath(""));
     filePath = QFileDialog::getSaveFileName(this, QStringLiteral("Export Results"), filePath, QStringLiteral("Text files (*.txt);;CSV files (*.csv)"));
-    if (filePath.length() > 0)
-    {
+    if (filePath.length() > 0) {
         QFileInfo fileInfo(filePath);
         QStringList lines;
-        if (fileInfo.suffix().toLower() == QStringLiteral("csv"))
-        {
+        if (fileInfo.suffix().toLower() == QStringLiteral("csv")) {
             lines << resultsTable->columnNames().join(QStringLiteral(","));
-            for (int i = 0; i < resultsTable->rowCount(); ++i)
-            {
+            for (int i = 0; i < resultsTable->rowCount(); ++i) {
                 QStringList cells;
-                for (int j = 0; j < resultsTable->columnCount(); ++j)
-                {
+                for (int j = 0; j < resultsTable->columnCount(); ++j) {
                     cells.append(resultsTable->cell(i, j).toString());
                 }
                 lines << cells.join(QStringLiteral(","));
             }
-        }
-        else if (fileInfo.suffix().toLower() == QStringLiteral("txt"))
-    //    else
-        {
-    //        if (fileInfo.suffix().toLower() != QStringLiteral("txt"))
-    //            filePath += QStringLiteral(".txt");
-            for (int i = 0; i < resultsTable->rowCount(); ++i)
-            {
+        } else if (fileInfo.suffix().toLower() == QStringLiteral("txt")) {
+            for (int i = 0; i < resultsTable->rowCount(); ++i) {
                 lines << resultsTable->cell(i, 0).toString();
             }
-        }
-        else
-        {
+        } else {
             QMessageBox::warning(this, QStringLiteral("Export Results"), QStringLiteral("Unsupported file type!"));
             return;
         }
@@ -463,50 +406,42 @@ void MainWindow::initSettings(const QDir& applicationDir)
 {
     m_settingsFilePath = applicationDir.filePath(QStringLiteral(SETTINGS_FILE));
     Settings::instance().setFilePath(m_settingsFilePath);
-    Settings::instance().setValue(QStringLiteral( TEXT_THREADS ), QVariant( THREADS ));
-    Settings::instance().setValue(QStringLiteral( TEXT_TIMEOUT ), QVariant( HTTP_REQUEST_TIMEOUT_ ));
-    Settings::instance().setValue(QStringLiteral( TEXT_USE_PROXIES ), QVariant(USE_PROXIES));
-    Settings::instance().setValue(QStringLiteral( TEXT_LAST_DIRECTORY ), QVariant(applicationDir.absolutePath()));
-    Settings::instance().setValue(QStringLiteral( TEXT_PROXIES_FILE ), QVariant(applicationDir.filePath(QStringLiteral( 
-PROXIES_FILE ))));
-    Settings::instance().setValue(QStringLiteral( TEXT_USER_AGENTS_FILE ), 
-QVariant(applicationDir.filePath(QStringLiteral( USER_AGENTS_FILE ))));
+    Settings::instance().setValue(QStringLiteral(TEXT_THREADS), QVariant(THREADS));
+    Settings::instance().setValue(QStringLiteral(TEXT_TIMEOUT), QVariant(HTTP_REQUEST_TIMEOUT_));
+    Settings::instance().setValue(QStringLiteral(TEXT_USE_PROXIES), QVariant(USE_PROXIES));
+    Settings::instance().setValue(QStringLiteral(TEXT_LAST_DIRECTORY), QVariant(applicationDir.absolutePath()));
+    Settings::instance().setValue(QStringLiteral(TEXT_PROXIES_FILE), QVariant(applicationDir.filePath(QStringLiteral(PROXIES_FILE))));
+    Settings::instance().setValue(QStringLiteral(TEXT_USER_AGENTS_FILE),
+        QVariant(applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE))));
     //
-    if (QFile::exists(m_settingsFilePath))
-    {
+    if (QFile::exists(m_settingsFilePath)) {
         loadSettings();
-    }
-    else
-    {
+    } else {
         resize(800, 600);
         centerWindow();
     }
 }
 
- void MainWindow::initUserAgents(const QDir& applicationDir)
- {
-     QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
-     if (!QFile::exists(userAgentsFilePath))
-     {
-         File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
-     }
-     for (auto& line : File::readTextLines(userAgentsFilePath))
-     {
-         UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
-         m_userAgentsWidget->append(line);
-     }
-     UserAgentsManager<QString>::instance().set_default_user_agent(USER_AGENT);
- }
+void MainWindow::initUserAgents(const QDir& applicationDir)
+{
+    QString userAgentsFilePath = applicationDir.filePath(QStringLiteral(USER_AGENTS_FILE));
+    if (!QFile::exists(userAgentsFilePath)) {
+        File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
+    }
+    for (auto& line : File::readTextLines(userAgentsFilePath)) {
+        UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
+        m_userAgentsWidget->append(line);
+    }
+    UserAgentsManager<QString>::instance().set_default_user_agent(USER_AGENT);
+}
 
-void MainWindow::initProxies ( const QDir& applicationDir )
+void MainWindow::initProxies(const QDir& applicationDir)
 {
     QString proxiesFilePath = applicationDir.filePath(QStringLiteral(PROXIES_FILE));
-     if (!QFile::exists(proxiesFilePath))
-     {
-         File::writeTextFile(proxiesFilePath, QStringLiteral(""));
-     }
-    for (auto& proxy : my::network::loadProxiesFromFile(proxiesFilePath))
-    {
+    if (!QFile::exists(proxiesFilePath)) {
+        File::writeTextFile(proxiesFilePath, QStringLiteral(""));
+    }
+    for (auto& proxy : my::network::loadProxiesFromFile(proxiesFilePath)) {
         ProxyManager::instance().add_proxy(proxy);
         m_proxiesWidget->append(QString::fromStdString(proxy));
     }

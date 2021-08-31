@@ -4,11 +4,10 @@
 
 class Ui_ProxiesSettings;
 
-class ProxiesSettingsPage : public QWidget
-{
+class ProxiesSettingsPage : public QWidget {
     Q_OBJECT
 public:
-    explicit ProxiesSettingsPage(QWidget *parent = nullptr);
+    explicit ProxiesSettingsPage(QWidget* parent = nullptr);
     ~ProxiesSettingsPage() override;
 
 protected:

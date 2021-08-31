@@ -6,11 +6,10 @@
 
 class Ui_ScrapeImagesSettings;
 
-class ScrapeImagesSettingsPage : public QWidget
-{
+class ScrapeImagesSettingsPage : public QWidget {
     Q_OBJECT
 public:
-    explicit ScrapeImagesSettingsPage(QWidget *parent = nullptr);
+    explicit ScrapeImagesSettingsPage(QWidget* parent = nullptr);
     ~ScrapeImagesSettingsPage() override;
 
 protected:
@@ -18,8 +17,5 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
-//    void setScrapeLinksStrategy(ScrapeLinksStrategy scrapeLinksStrategy);
-//    ScrapeLinksStrategy scrapeLinksStrategy();
-
     Ui_ScrapeImagesSettings* m_ui;
 };

@@ -1,4 +1,4 @@
-#include <QAction>
+﻿#include <QAction>
 #include <QDebug>
 #include <QList>
 #include <QObject>
@@ -6,13 +6,14 @@
 
 #include "recentfiles.h"
 
-
-RecentFiles::RecentFiles(int maxRecentFiles, QObject* parent) : QObject(parent), m_maxRecentFiles(maxRecentFiles), m_recentFilesCount(0)
+RecentFiles::RecentFiles(int maxRecentFiles, QObject* parent)
+    : QObject(parent)
+    , m_maxRecentFiles(maxRecentFiles)
+    , m_recentFilesCount(0)
+    , m_recentFiles((QList<QString>()))
+    , m_recentFilesActions(QList<QAction*>())
 {
-    m_recentFiles = QList<QString>();
-    m_recentFilesActions = QList<QAction*>();
-    for (int i = 0; i < m_maxRecentFiles; ++i)
-    {
+    for (int i = 0; i < m_maxRecentFiles; ++i) {
         QString filePath("");
         m_recentFiles.append(filePath);
         auto action = new QAction(filePath, this);
@@ -28,13 +29,10 @@ void RecentFiles::addFile(const QString& filePath)
 {
     if (m_recentFiles.contains(filePath))
         return;
-    if (m_recentFilesCount == m_maxRecentFiles)
-    {
+    if (m_recentFilesCount == m_maxRecentFiles) {
         m_recentFiles.insert(0, filePath);
         m_recentFiles.removeLast();
-    }
-    else
-    {
+    } else {
         m_recentFiles[m_recentFilesCount] = filePath;
         ++m_recentFilesCount;
     }
@@ -43,24 +41,20 @@ void RecentFiles::addFile(const QString& filePath)
 
 void RecentFiles::updateActions()
 {
-    for (int i = 0; i < m_maxRecentFiles; ++i)
-    {
-        const QString &filePath = m_recentFiles[i];
-        QAction *action = m_recentFilesActions[i];
-        if (filePath.isEmpty())
-        {
+    for (int i = 0; i < m_maxRecentFiles; ++i) {
+        const QString& filePath = m_recentFiles[i];
+        QAction* action = m_recentFilesActions[i];
+        if (filePath.isEmpty()) {
             action->setText("");
             action->setVisible(false);
-        }
-        else
-        {
+        } else {
             action->setText(filePath);
             action->setVisible(true);
         }
     }
 }
 
-QList<QAction *> RecentFiles::actions()
+QList<QAction*> RecentFiles::actions()
 {
     return m_recentFilesActions;
 }
@@ -72,9 +66,8 @@ int RecentFiles::count() const
 
 void RecentFiles::clear()
 {
-    for (int i = 0; i < m_recentFilesCount; ++i)
-    {
-        QAction *action = m_recentFilesActions[i];
+    for (int i = 0; i < m_recentFilesCount; ++i) {
+        QAction* action = m_recentFilesActions[i];
         action->setText("");
         action->setVisible(false);
     }

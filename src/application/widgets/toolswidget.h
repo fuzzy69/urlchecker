@@ -18,18 +18,15 @@ class ToolsWidget : public QTreeWidget
 public:
     explicit ToolsWidget(QWidget *parent = nullptr);
 
-//    void addTool(const Tool &tool, bool current = false);
-//    void addTool(Tool &tool, bool current = false);
     void addTool(const std::unique_ptr<Tool>& tool, bool current = false);
 
 signals:
     void toolSelected(const QString &toolText);
     void toolSelected(const Tool &tool);
     void toolSettingsRequested(const Tool &tool);
-//    void toolSettingsRequested(const Tool* tool);
 
 protected:
-    virtual void mousePressEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     QMap<QString, Tool> m_tools;

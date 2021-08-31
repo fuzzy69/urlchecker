@@ -2,14 +2,13 @@
 
 #include "tidyhtml.h"
 
-TidyHtml::TidyHtml() : m_doc(tidyCreate())
+TidyHtml::TidyHtml()
+    : m_doc(tidyCreate())
 {
     tidyOptSetBool(m_doc, TidyXhtmlOut, yes)
-    and tidyOptSetBool(m_doc, TidyQuiet, yes)
-    and tidyOptSetBool(m_doc, TidyShowWarnings, no)
-    and tidyOptSetBool(m_doc, TidyForceOutput, yes)
-//    and tidyOptSetBool(m_doc, TidyCustomTags, yes);
-    ;
+        and tidyOptSetBool(m_doc, TidyQuiet, yes)
+        and tidyOptSetBool(m_doc, TidyShowWarnings, no)
+        and tidyOptSetBool(m_doc, TidyForceOutput, yes);
 }
 
 TidyHtml::~TidyHtml()
@@ -20,7 +19,7 @@ TidyHtml::~TidyHtml()
 std::string TidyHtml::process(const std::string& html)
 {
     std::string result;
-    TidyBuffer buffer = {nullptr, nullptr, 0, 0, 0};
+    TidyBuffer buffer = { nullptr, nullptr, 0, 0, 0 };
     // TODO: Improve this and add error handling
     tidyParseString(m_doc, html.c_str());
     tidyCleanAndRepair(m_doc);
@@ -33,6 +32,6 @@ std::string TidyHtml::process(const std::string& html)
         tidyBufFree(&buffer);
     else
         result = "";
-    
+
     return result;
 }

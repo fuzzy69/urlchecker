@@ -6,15 +6,14 @@
 #include "../tools/tool.h"
 #include "../tools/tools.h"
 
-class ToolsManager final
-{
+class ToolsManager final {
 public:
-    static ToolsManager &instance();
+    static ToolsManager& instance();
 
     void addTool(std::unique_ptr<Tool> tool);
     Tool& currentTool();
-    void setCurrentTool(const QString &toolName);
-    Tool* getTool(const QString &toolName);
+    void setCurrentTool(const QString& toolName);
+    Tool* getTool(const QString& toolName);
     Tool* getTool(Tools toolId);
     std::unordered_map<Tools, std::unique_ptr<Tool>>& tools();
 

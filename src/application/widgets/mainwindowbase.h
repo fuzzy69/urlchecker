@@ -2,14 +2,12 @@
 
 #include <QMainWindow>
 
-
-class MainWindowBase : public QMainWindow
-{
+class MainWindowBase : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindowBase(QWidget *parent = nullptr);
-    virtual ~MainWindowBase();
+    explicit MainWindowBase(QWidget* parent = nullptr);
+    //    ~MainWindowBase();
 
 protected:
     void centerWindow();

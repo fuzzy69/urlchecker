@@ -4,11 +4,10 @@
 
 class Ui_ConnectionSettings;
 
-class ConnectionSettingsPage : public QWidget
-{
+class ConnectionSettingsPage : public QWidget {
     Q_OBJECT
 public:
-    explicit ConnectionSettingsPage(QWidget *parent = nullptr);
+    explicit ConnectionSettingsPage(QWidget* parent = nullptr);
     ~ConnectionSettingsPage() override;
 
 protected:
@@ -17,5 +16,4 @@ protected:
 
 private:
     Ui_ConnectionSettings* m_ui;
-
 };

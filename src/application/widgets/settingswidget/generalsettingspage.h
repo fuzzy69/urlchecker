@@ -2,17 +2,12 @@
 
 #include <QWidget>
 
-//class QHBoxLayout;
-//class QGridLayout;
-
-//namespace Ui { class GeneralSettingsPage; }
 class Ui_GeneralSettings;
 
-class GeneralSettingsPage : public QWidget
-{
+class GeneralSettingsPage : public QWidget {
     Q_OBJECT
 public:
-    explicit GeneralSettingsPage(QWidget *parent = nullptr);
+    explicit GeneralSettingsPage(QWidget* parent = nullptr);
     ~GeneralSettingsPage() override;
 
 protected:
@@ -20,7 +15,5 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
-//    QVBoxLayout *m_mainLayout;
-//    Ui::GeneralSettingsPage* ui;
     Ui_GeneralSettings* m_ui;
 };

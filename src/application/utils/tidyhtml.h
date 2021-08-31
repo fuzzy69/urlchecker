@@ -1,11 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 
 #include "tidy.h"
 
-class TidyHtml
-{
+class TidyHtml {
 public:
     TidyHtml();
     ~TidyHtml();

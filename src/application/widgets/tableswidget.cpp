@@ -1,44 +1,43 @@
 ﻿#include "tableswidget.h"
 
 #include <QDesktopServices>
-#include <QTableView>
 #include <QTabWidget>
+#include <QTableView>
 #include <QUrl>
 #include <QVBoxLayout>
 
-#include"../icons.h"
-#include"../core/table.h"
+#include "../core/table.h"
+#include "../icons.h"
 
-TablesWidget::TablesWidget ( QWidget* parent ) : 
-    QWidget(parent)
+TablesWidget::TablesWidget(QWidget* parent)
+    : QWidget(parent)
 {
     m_tabWidget = new QTabWidget;
     m_inputTable = new Table(QStringList() << QStringLiteral("URL") << QStringLiteral("Status"), this);
     m_inputTable->setColumnRatios(QList<float>() << 0.8f);
     m_resultsTable = new Table(QStringList() << QStringLiteral("Result"), this);
-//     m_resultsTable->setColumnRatios(m_toolsWidget->currentTool().columnRatios());
-    m_tabWidget->addTab(m_inputTable->tableView(), QIcon(QStringLiteral(ICON_DOCUMENT_LIST)), 
-QStringLiteral("Source URLs"));
+    m_tabWidget->addTab(m_inputTable->tableView(), QIcon(QStringLiteral(ICON_DOCUMENT_LIST)),
+        QStringLiteral("Source URLs"));
     m_tabWidget->addTab(m_resultsTable->tableView(), QIcon(QStringLiteral(ICON_ODATA)), QStringLiteral("Results"));
     m_mainLayout = new QVBoxLayout(this);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(0);
     m_mainLayout->addWidget(m_tabWidget);
 
-    connect(m_inputTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
+    connect(m_inputTable, &Table::doubleClicked, [this](const QModelIndex& modelIndex) {
         QDesktopServices::openUrl(QUrl(m_inputTable->cell(modelIndex.row(), 0).toString()));
     });
-    connect(m_resultsTable, &Table::doubleClicked, [this] (const QModelIndex &modelIndex) {
+    connect(m_resultsTable, &Table::doubleClicked, [this](const QModelIndex& modelIndex) {
         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
     });
 }
 
-Table * TablesWidget::inputTable()
+Table* TablesWidget::inputTable()
 {
     return m_inputTable;
 }
 
-Table * TablesWidget::resultsTable()
+Table* TablesWidget::resultsTable()
 {
     return m_resultsTable;
 }
@@ -80,9 +79,9 @@ void TablesWidget::selectAllRows()
     currentTable->selectAll();
 }
 
-Table * TablesWidget::focusedTable()
+Table* TablesWidget::focusedTable()
 {
-    return (m_tabWidget->currentIndex() == 0)? m_inputTable : m_resultsTable;
+    return (m_tabWidget->currentIndex() == 0) ? m_inputTable : m_resultsTable;
 }
 
 void TablesWidget::createResultsTable(const QStringList& columns, const QList<float>& columnRatios)
@@ -94,8 +93,6 @@ void TablesWidget::createResultsTable(const QStringList& columns, const QList<fl
 void TablesWidget::clearResultsTable()
 {
     // TODO: Improve table creation, eg. skip creating new table if tool is not changed
-//     m_resultsTable = new Table(m_toolsWidget->currentTool().columns(), this);
-//     m_resultsTable->setColumnRatios(m_toolsWidget->currentTool().columnRatios());
 }
 
 void TablesWidget::switchToResultsTab()
