@@ -31,6 +31,7 @@ void WorkerManager::init()
 void WorkerManager::startJob()
 {
     init();
+//    auto& currentTool = ToolsManager::instance().currentTool();
     auto& currentTool = ToolsManager::instance().currentTool();
     Table* inputTable = ApplicationBridge::instance().tablesWidget()->inputTable();
     for (int i = 0; i < inputTable->rowCount(); ++i)

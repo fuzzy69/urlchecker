@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-#include <QMap>
+#include <memory>
+#include <unordered_map>
 
 #include "../tools/tool.h"
 #include "../tools/tools.h"
@@ -9,19 +10,17 @@ class ToolsManager final
 {
 public:
     static ToolsManager &instance();
-    ~ToolsManager();
-    void addTool(Tool* tool);
-    Tool& currentTool() const;
+
+    void addTool(std::unique_ptr<Tool> tool);
+    Tool& currentTool();
     void setCurrentTool(const QString &toolName);
-    Tool& getTool(const QString &toolName) const;
-    Tool& getTool(Tools toolId) const;
-    QMap<QString, Tool*> tools() const;
+    Tool* getTool(const QString &toolName);
+    Tool* getTool(Tools toolId);
+    std::unordered_map<Tools, std::unique_ptr<Tool>>& tools();
 
 private:
-    /// Disallow default public constructor
     explicit ToolsManager();
 
-    QMap<QString, Tool*> m_toolNameToolMap;
-    QMap<Tools, Tool*> m_toolIdToolMap;
-    Tool* m_currentTool = nullptr;
+    std::unordered_map<Tools, std::unique_ptr<Tool>> m_toolIdToolMap;
+    Tools m_currentTool;
 };

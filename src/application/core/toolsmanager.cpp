@@ -12,22 +12,21 @@
 #include "../tools/checksearchengineindex/checksearchengineindextool.h"
 #include "../tools/scrapeimages/scrapeimagestool.h"
 
-ToolsManager::ToolsManager()
+ToolsManager::ToolsManager() : m_toolIdToolMap(std::unordered_map<Tools, std::unique_ptr<Tool>>()), m_currentTool(Tools::NONE)
 {
-    addTool(new DummyTool);
-    addTool(new TestTool);
-    addTool(new ScrapeProxiesTool);
-    addTool(new ScrapeLinksTool);
-    addTool(new UrlStatusTool);
-    addTool(new AlexaRankTool);
-    addTool(new ScrapeSitemapsTool);
-    addTool(new ScrapeEmailsTool);
-    addTool(new ScrapePhoneNumbersTool);
-    addTool(new CheckSearchEngineIndexTool);
-    addTool(new ScrapeImagesTool);
-    // TODO: delete these heap objects in desctructor
+    addTool(std::unique_ptr<Tool>(new DummyTool));
+    addTool(std::unique_ptr<Tool>(new TestTool));
+    addTool(std::unique_ptr<Tool>(new ScrapeProxiesTool));
+    addTool(std::unique_ptr<Tool>(new ScrapeLinksTool));
+    addTool(std::unique_ptr<Tool>(new UrlStatusTool));
+    addTool(std::unique_ptr<Tool>(new AlexaRankTool));
+    addTool(std::unique_ptr<Tool>(new ScrapeSitemapsTool));
+    addTool(std::unique_ptr<Tool>(new ScrapeEmailsTool));
+    addTool(std::unique_ptr<Tool>(new ScrapePhoneNumbersTool));
+    addTool(std::unique_ptr<Tool>(new CheckSearchEngineIndexTool));
+    addTool(std::unique_ptr<Tool>(new ScrapeImagesTool));
 
-    setCurrentTool(QStringLiteral("Check URL Status"));
+    setCurrentTool(ToolsTexts.value(Tools::CHECK_URL_STATUS));
 }
 
 ToolsManager & ToolsManager::instance()
@@ -37,38 +36,45 @@ ToolsManager & ToolsManager::instance()
     return instance;
 }
 
-ToolsManager::~ToolsManager()
-{
-}
-
-void ToolsManager::addTool(Tool *tool)
-{
-    m_toolNameToolMap.insert(tool->name(), tool);
-    m_toolIdToolMap.insert(tool->id(), tool);
-}
-
-Tool& ToolsManager::currentTool() const
-{
-    return *m_currentTool;
-}
-
 void ToolsManager::setCurrentTool(const QString &toolName)
 {
-    if (m_toolNameToolMap.contains(toolName))
-        m_currentTool = m_toolNameToolMap[toolName];
+    for (const auto& [toolId, tool] : m_toolIdToolMap)
+    {
+        if (tool.get()->name() == toolName)
+            m_currentTool = toolId;
+    }
 }
 
-Tool& ToolsManager::getTool(Tools toolId) const
+void ToolsManager::addTool(std::unique_ptr<Tool> tool)
 {
-    return *m_toolIdToolMap[toolId];
+    m_toolIdToolMap.insert({tool.get()->id(), std::move(tool)});
 }
 
-Tool& ToolsManager::getTool(const QString &toolName) const
+Tool& ToolsManager::currentTool()
 {
-    return *m_toolNameToolMap[toolName];
+    return *m_toolIdToolMap[m_currentTool].get();
 }
 
-QMap<QString, Tool*> ToolsManager::tools() const
+Tool* ToolsManager::getTool(Tools toolId)
 {
-    return m_toolNameToolMap;
+    if (m_toolIdToolMap.count(toolId) == 0)
+        return nullptr;
+
+    return m_toolIdToolMap[toolId].get();
+}
+
+Tool* ToolsManager::getTool(const QString &toolName)
+{
+    for (const auto& [toolId, tool] : m_toolIdToolMap)
+    {
+        if (tool.get()->name() == toolName)
+            return tool.get();
+    }
+
+    return nullptr;
+}
+
+std::unordered_map<Tools, std::unique_ptr<Tool> > &ToolsManager::tools()
+{
+    return m_toolIdToolMap;
 }

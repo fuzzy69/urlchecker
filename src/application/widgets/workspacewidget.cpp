@@ -267,9 +267,9 @@ void WorkspaceWidget::onResult(Tools toolId, const QVariantMap& resultData)
         m_tablesWidget->focusedTable()->resizeColumns();
 //    auto currentToolName = resultData["toolName"].toString();
 //    auto& currentTool = ToolsManager::instance().getTool(currentToolName);
-    auto& currentTool = ToolsManager::instance().getTool(toolId);
+    auto* currentTool = ToolsManager::instance().getTool(toolId);
     QStringList row;
-    for (const auto& column : currentTool.columns())
+    for (const auto& column : currentTool->columns())
     {
         row << resultData[column].toString();
     }
