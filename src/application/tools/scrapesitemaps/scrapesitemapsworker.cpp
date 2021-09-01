@@ -50,6 +50,7 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
     std::string sitemapUrl("");
     auto status = ResultStatus::FAILED;
     QString details;
+    bool itemSuccess(false);
     if (response.status_code == 200) {
         sitemapUrl = extract_sitemap_url(response.text);
         details = QStringLiteral("OK");
@@ -60,9 +61,10 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
             if (!sitemapFileUrl.fileName().isEmpty()) {
                 const QString sitemapFilePath = downloadSitemapsDirectory.filePath(url.host() + "_" + sitemapFileUrl.fileName());
                 response = requests.download(sitemapUrl, sitemapFilePath.toStdString());
-                if (response.status_code == 200)
+                if (response.status_code == 200) {
                     logMessage(QString("Successfully downloaded sitemap '%1' to '%2'").arg(sitemapFileUrl.toString(), sitemapFilePath));
-                else
+                    itemSuccess = true;
+                } else
                     logMessage(QString("Failed to download sitemap '%1'!").arg(sitemapFileUrl.toString()));
             }
         }
@@ -79,6 +81,6 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
     };
 
     Q_EMIT Worker::result(m_toolId, data);
-    Q_EMIT Worker::itemDone();
+    Q_EMIT Worker::itemDone(itemSuccess);
     Q_EMIT Worker::status(rowId, status);
 }

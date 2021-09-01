@@ -84,6 +84,8 @@ private:
     QPushButton* m_logPushButton;
     QLabel* m_activeThreadsLabel;
     QLabel* m_statusBarLabel;
+    QLabel* m_jobStatsLabel;
+    QLabel* m_jobRuntimeLabel;
 
     ApplicationStateMachine* m_applicationStateMachine;
     QTimer* m_pulseTimer;

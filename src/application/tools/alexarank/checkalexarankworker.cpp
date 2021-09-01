@@ -48,5 +48,6 @@ void CheckAlexaRankWorker::doWork(const QVariantMap& inputData)
     };
 
     Q_EMIT Worker::result(m_toolId, data);
+    Q_EMIT Worker::itemDone(status != ResultStatus::FAILED);
     Q_EMIT Worker::status(rowId, status);
 }

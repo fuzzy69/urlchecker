@@ -59,6 +59,6 @@ void CheckSearchEngineIndexWorker::doWork(const QVariantMap& inputData)
     };
 
     Q_EMIT Worker::result(m_toolId, data);
-    Q_EMIT Worker::itemDone();
+    Q_EMIT Worker::itemDone(true);
     Q_EMIT Worker::status(rowId, status);
 }

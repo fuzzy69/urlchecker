@@ -193,10 +193,17 @@ void MainWindow::createStatusBar()
     m_logPushButton = new QPushButton(QIcon(ICON_DOCUMENT_LIST), QStringLiteral(" Log"));
     m_statusBarLabel = new QLabel;
     m_activeThreadsLabel = new QLabel(tr(TEXT_ACTIVE_THREADS));
+    m_jobStatsLabel = new QLabel(" Completed 0/0 of 0 items. Success ratio 0.0% ");
+    m_jobStatsLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
+    m_jobRuntimeLabel = new QLabel(" Job runtime: ");
+    m_jobRuntimeLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
 
     m_statusBar->addPermanentWidget(m_toolsPushButton);
     m_statusBar->addPermanentWidget(m_logPushButton);
     m_statusBar->addPermanentWidget(m_statusBarLabel, 1);
+
+    m_statusBar->addPermanentWidget(m_jobRuntimeLabel);
+    m_statusBar->addPermanentWidget(m_jobStatsLabel);
     m_statusBar->addPermanentWidget(m_activeThreadsLabel);
 
     ApplicationBridge::instance().setStatusBar(m_statusBar);
@@ -235,6 +242,11 @@ void MainWindow::createConnections()
     // Workspace widget
     connect(m_workspaceWidget->workerManager(), &WorkerManager::jobStarted, m_applicationStateMachine, &ApplicationStateMachine::jobStart);
     connect(m_workspaceWidget->workerManager(), &WorkerManager::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStop);
+    connect(m_workspaceWidget->workerManager(), &WorkerManager::progress, [this](const int itemsSuccessfullyDone, const int itemsDone, const int totalItems, const double progressPercentage) {
+        m_workspaceWidget->setCurrentProgress(static_cast<int>(progressPercentage));
+        double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
+        m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
+    });
 
     // Table actions
     connect(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->selectAll(); });
@@ -337,6 +349,9 @@ void MainWindow::onPulse()
     m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
     if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING && Thread::count() == 0)
         emit m_applicationStateMachine->jobDone();
+    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING) {
+        m_jobRuntimeLabel->setText(QString(" Job runtime: %1 sec(s) ").arg(m_workspaceWidget->workerManager()->jobRuntime()));
+    }
 }
 
 void MainWindow::importUrlFile(const QString& filePath)

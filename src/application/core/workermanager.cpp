@@ -1,4 +1,5 @@
-﻿#include <QDebug>
+﻿#include <QDateTime>
+#include <QDebug>
 #include <QProgressBar>
 
 #include "../texts.h"
@@ -29,8 +30,11 @@ WorkerManager::WorkerManager(QObject* parent)
 void WorkerManager::init()
 {
     Table* inputTable = ApplicationBridge::instance().tablesWidget()->inputTable();
+    m_itemsSuccessfullyDone = 0;
     m_itemsDone = 0;
     m_totalItems = inputTable->rowCount();
+    m_jobStartTimestamp = QDateTime::currentSecsSinceEpoch();
+    m_jobEndTimestamp = 0;
     m_threads.clear();
     m_workers.clear();
 }
@@ -67,8 +71,9 @@ void WorkerManager::startJob()
         connect(worker, &Worker::itemDone, this, &WorkerManager::onItemDone);
         connect(worker, &Worker::finished, thread, &Thread::quit);
         connect(worker, &Worker::finished, worker, &Worker::deleteLater);
-        connect(worker, &Worker::finished, [] {
+        connect(worker, &Worker::finished, [this] {
             qDebug() << "Worker finished";
+            m_jobEndTimestamp = QDateTime::currentSecsSinceEpoch();
         });
         connect(worker, &Worker::requestStop, worker, &Worker::stop);
         connect(worker, &Worker::log, logWidget, &LogWidget::onLog);
@@ -90,9 +95,19 @@ void WorkerManager::stopJob()
     Q_EMIT jobStopped();
 }
 
-void WorkerManager::onItemDone()
+void WorkerManager::onItemDone(bool itemSuccess)
 {
     ++m_itemsDone;
+    if (itemSuccess)
+        ++m_itemsSuccessfullyDone;
     int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
-    ApplicationBridge::instance().progressBar()->setValue(progresPercentage);
+    //    ApplicationBridge::instance().progressBar()->setValue(progresPercentage);
+    Q_EMIT progress(m_itemsSuccessfullyDone, m_itemsDone, m_totalItems, progresPercentage);
+}
+
+qint64 WorkerManager::jobRuntime()
+{
+    const qint64 runtime = (m_jobEndTimestamp == 0) ? QDateTime::currentSecsSinceEpoch() - m_jobStartTimestamp : m_jobEndTimestamp - m_jobStartTimestamp;
+
+    return runtime;
 }

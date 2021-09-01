@@ -25,11 +25,13 @@ Q_SIGNALS:
     void jobStopped();
     void result(Tools toolId, const QVariantMap& resultData);
     void status(const int rowId, const ResultStatus& resultStatus);
+    void progress(const int itemsSuccessfullyDone, const int itemsDone, const int totalItems, const double progressPercentage);
 
 public Q_SLOTS:
     void startJob();
     void stopJob();
-    void onItemDone();
+    void onItemDone(bool itemSuccess);
+    qint64 jobRuntime();
 
 private:
     QList<Thread*> m_threads;
@@ -38,6 +40,9 @@ private:
     QMutex m_mutex;
     QVariantMap m_currentSettings;
 
+    int m_itemsSuccessfullyDone;
     int m_itemsDone;
     int m_totalItems;
+    qint64 m_jobStartTimestamp;
+    qint64 m_jobEndTimestamp;
 };
