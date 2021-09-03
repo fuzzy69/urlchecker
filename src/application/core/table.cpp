@@ -33,10 +33,14 @@ Table::Table(const QStringList& columns, QObject* parent)
 
 Table::~Table()
 {
-    if (m_tableModel)
+    if (m_tableModel) {
         delete m_tableModel;
-    if (m_tableView)
+        m_tableModel = nullptr;
+    }
+    if (m_tableView) {
         delete m_tableView;
+        m_tableView = nullptr;
+    }
 }
 
 void Table::resetColumns(const QStringList& columns)
@@ -67,7 +71,7 @@ void Table::resizeColumns()
 
 int Table::rowCount() const
 {
-    return m_tableModel->rowCount();
+    return (m_tableModel) ? m_tableModel->rowCount() : 0;
 }
 
 int Table::columnCount() const
