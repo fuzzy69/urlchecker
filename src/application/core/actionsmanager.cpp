@@ -3,6 +3,7 @@
 ActionsManager::ActionsManager(QObject* parent)
     : QObject(parent)
     , m_actions(QMap<QString, QAction*>())
+    , m_actionGroups(QMultiMap<ActionGroup, QAction*>())
 {
 }
 
@@ -26,10 +27,33 @@ QAction* ActionsManager::action(const QString& actionName) const
     return m_actions[actionName];
 }
 
-QAction* ActionsManager::createAction(const QString& actionName, const QString& iconFile, const QString& actionText)
+QAction* ActionsManager::createAction(const QString& actionName, ActionGroup actionGroup, const QString& iconFile, const QString& actionText)
 {
     auto* action = new QAction(QIcon(iconFile), actionText, this);
     m_actions.insert(actionName, action);
+    m_actionGroups.insert(actionGroup, action);
 
     return action;
+}
+
+void ActionsManager::disableActions(ActionGroup actionGroups)
+{
+    for (const auto& actionGroup : m_actionGroups.keys()) {
+        if (actionGroups & actionGroup) {
+            for (auto* action : m_actionGroups.values(actionGroup)) {
+                action->setEnabled(false);
+            }
+        }
+    }
+}
+
+void ActionsManager::enableActions(ActionGroup actionGroups)
+{
+    for (const auto& actionGroup : m_actionGroups.keys()) {
+        if (actionGroups & actionGroup) {
+            for (auto* action : m_actionGroups.values(actionGroup)) {
+                action->setEnabled(true);
+            }
+        }
+    }
 }

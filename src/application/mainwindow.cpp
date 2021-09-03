@@ -247,6 +247,12 @@ void MainWindow::createConnections()
         double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
         m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
+    connect(m_workspaceWidget->tablesWidget(), &TablesWidget::focusedTableEmpty, [] {
+        ActionsManager::instance().disableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
+    });
+    connect(m_workspaceWidget->tablesWidget(), &TablesWidget::focusedTableNotEmpty, [] {
+        ActionsManager::instance().enableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
+    });
 
     // Table actions
     connect(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->selectAll(); });

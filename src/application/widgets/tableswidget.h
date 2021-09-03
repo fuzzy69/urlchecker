@@ -16,6 +16,10 @@ public:
     Table* resultsTable();
     Table* focusedTable();
 
+Q_SIGNALS:
+    void focusedTableEmpty();
+    void focusedTableNotEmpty();
+
 public Q_SLOTS:
     void updateResultsRow(const QVariantMap& resultData);
     void createResultsTable(const QStringList& columns, const QList<float>& columnRatios);

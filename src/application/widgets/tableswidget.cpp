@@ -1,5 +1,6 @@
 ﻿#include "tableswidget.h"
 
+#include <QDebug>
 #include <QDesktopServices>
 #include <QTabWidget>
 #include <QTableView>
@@ -30,6 +31,10 @@ TablesWidget::TablesWidget(QWidget* parent)
     connect(m_resultsTable, &Table::doubleClicked, [this](const QModelIndex& modelIndex) {
         QDesktopServices::openUrl(QUrl(m_resultsTable->cell(modelIndex.row(), 0).toString()));
     });
+    connect(m_tabWidget, &QTabWidget::currentChanged, [this](int index) {
+        Q_UNUSED(index)
+        focusedTable();
+    });
 }
 
 Table* TablesWidget::inputTable()
@@ -59,18 +64,24 @@ void TablesWidget::removeAllRows()
 {
     auto currentTable = focusedTable();
     currentTable->removeAllRows();
+    // TODO: better approach to signal if the focused table is empty
+    focusedTable();
 }
 
 void TablesWidget::removeDuplicatedRows()
 {
     auto currentTable = focusedTable();
     currentTable->removeDuplicates();
+    // TODO: better approach to signal if the focused table is empty
+    focusedTable();
 }
 
 void TablesWidget::removeSelectedRows()
 {
     auto currentTable = focusedTable();
     currentTable->removeSelected();
+    // TODO: better approach to signal if the focused table is empty
+    focusedTable();
 }
 
 void TablesWidget::selectAllRows()
@@ -81,7 +92,15 @@ void TablesWidget::selectAllRows()
 
 Table* TablesWidget::focusedTable()
 {
-    return (m_tabWidget->currentIndex() == 0) ? m_inputTable : m_resultsTable;
+    auto* table = (m_tabWidget->currentIndex() == 0) ? m_inputTable : m_resultsTable;
+    if (table) {
+        if (table->rowCount() == 0)
+            Q_EMIT focusedTableEmpty();
+        else
+            Q_EMIT focusedTableNotEmpty();
+    }
+
+    return table;
 }
 
 void TablesWidget::createResultsTable(const QStringList& columns, const QList<float>& columnRatios)
