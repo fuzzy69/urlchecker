@@ -77,6 +77,8 @@ MainWindow::MainWindow(QWidget* parent)
     initUserAgents(applicationDir);
     initProxies(applicationDir);
 
+    ActionsManager::instance().disableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
+
     // Init recent files
     for (QAction* action : m_recentFiles->actions()) {
         m_recentUrlFilesMenu->addAction(action);
@@ -247,10 +249,12 @@ void MainWindow::createConnections()
         double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
         m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
-    connect(m_workspaceWidget->tablesWidget(), &TablesWidget::focusedTableEmpty, [] {
+    //    connect(m_workspaceWidget->tablesWidget(), &TablesWidget::focusedTableEmpty, [] {
+    connect(m_workspaceWidget->tablesWidget()->focusedTable(), &Table::emptied, [] {
         ActionsManager::instance().disableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
     });
-    connect(m_workspaceWidget->tablesWidget(), &TablesWidget::focusedTableNotEmpty, [] {
+    //    connect(m_workspaceWidget->tablesWidget(), &TablesWidget::focusedTableNotEmpty, [] {
+    connect(m_workspaceWidget->tablesWidget()->focusedTable(), &Table::populated, [] {
         ActionsManager::instance().enableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
     });
 

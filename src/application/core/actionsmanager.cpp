@@ -39,7 +39,7 @@ QAction* ActionsManager::createAction(const QString& actionName, ActionGroup act
 void ActionsManager::disableActions(ActionGroup actionGroups)
 {
     for (const auto& actionGroup : m_actionGroups.keys()) {
-        if (actionGroups & actionGroup) {
+        if (static_cast<bool>(actionGroups & actionGroup)) {
             for (auto* action : m_actionGroups.values(actionGroup)) {
                 action->setEnabled(false);
             }
@@ -50,7 +50,7 @@ void ActionsManager::disableActions(ActionGroup actionGroups)
 void ActionsManager::enableActions(ActionGroup actionGroups)
 {
     for (const auto& actionGroup : m_actionGroups.keys()) {
-        if (actionGroups & actionGroup) {
+        if (static_cast<bool>(actionGroups & actionGroup)) {
             for (auto* action : m_actionGroups.values(actionGroup)) {
                 action->setEnabled(true);
             }

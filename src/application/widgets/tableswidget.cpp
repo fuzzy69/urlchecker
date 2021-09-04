@@ -33,7 +33,7 @@ TablesWidget::TablesWidget(QWidget* parent)
     });
     connect(m_tabWidget, &QTabWidget::currentChanged, [this](int index) {
         Q_UNUSED(index)
-        focusedTable();
+        updateStatus();
     });
 }
 
@@ -65,7 +65,7 @@ void TablesWidget::removeAllRows()
     auto currentTable = focusedTable();
     currentTable->removeAllRows();
     // TODO: better approach to signal if the focused table is empty
-    focusedTable();
+    updateStatus();
 }
 
 void TablesWidget::removeDuplicatedRows()
@@ -73,7 +73,7 @@ void TablesWidget::removeDuplicatedRows()
     auto currentTable = focusedTable();
     currentTable->removeDuplicates();
     // TODO: better approach to signal if the focused table is empty
-    focusedTable();
+    updateStatus();
 }
 
 void TablesWidget::removeSelectedRows()
@@ -81,7 +81,18 @@ void TablesWidget::removeSelectedRows()
     auto currentTable = focusedTable();
     currentTable->removeSelected();
     // TODO: better approach to signal if the focused table is empty
-    focusedTable();
+    updateStatus();
+}
+
+void TablesWidget::updateStatus()
+{
+    auto* table = (m_tabWidget->currentIndex() == 0) ? m_inputTable : m_resultsTable;
+    if (table) {
+        if (table->rowCount() == 0)
+            Q_EMIT focusedTableEmpty();
+        else
+            Q_EMIT focusedTableNotEmpty();
+    }
 }
 
 void TablesWidget::selectAllRows()
@@ -93,12 +104,12 @@ void TablesWidget::selectAllRows()
 Table* TablesWidget::focusedTable()
 {
     auto* table = (m_tabWidget->currentIndex() == 0) ? m_inputTable : m_resultsTable;
-    if (table) {
-        if (table->rowCount() == 0)
-            Q_EMIT focusedTableEmpty();
-        else
-            Q_EMIT focusedTableNotEmpty();
-    }
+    //    if (table) {
+    //        if (table->rowCount() == 0)
+    //            Q_EMIT focusedTableEmpty();
+    //        else
+    //            Q_EMIT focusedTableNotEmpty();
+    //    }
 
     return table;
 }
@@ -117,9 +128,11 @@ void TablesWidget::clearResultsTable()
 void TablesWidget::switchToResultsTab()
 {
     m_tabWidget->setCurrentIndex(1);
+    updateStatus();
 }
 
 void TablesWidget::switchToSourcesTab()
 {
     m_tabWidget->setCurrentIndex(0);
+    updateStatus();
 }

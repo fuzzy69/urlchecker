@@ -43,6 +43,8 @@ public:
 
 Q_SIGNALS:
     void doubleClicked(const QModelIndex& modelIndex);
+    void emptied();
+    void populated();
 
 public Q_SLOTS:
     void onCustomContextMenuRequest(const QPoint& pos);

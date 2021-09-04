@@ -94,6 +94,7 @@ void Table::removeAllRows()
     for (int i = m_tableModel->rowCount() - 1; i >= 0; --i) {
         m_tableModel->removeRow(i);
     }
+    Q_EMIT emptied();
 }
 
 void Table::row(int rowIndex) const
@@ -106,6 +107,8 @@ void Table::row(int rowIndex) const
 
 void Table::appendRow(QStringList cells)
 {
+    if (rowCount() == 0)
+        Q_EMIT populated();
     QList<QStandardItem*> rowCells;
     for (QString cell : cells) {
         rowCells << new QStandardItem(cell);
@@ -234,6 +237,8 @@ void Table::removeDuplicates()
         if (duplicateIndexes.contains(i))
             removeRow(i);
     }
+    if (rowCount() == 0)
+        Q_EMIT emptied();
 }
 
 void Table::removeSelected()
@@ -243,6 +248,8 @@ void Table::removeSelected()
         if (selectedIndexes.contains(i))
             removeRow(i);
     }
+    if (rowCount() == 0)
+        Q_EMIT emptied();
 }
 
 void Table::onCustomContextMenuRequest(const QPoint& pos)

@@ -34,6 +34,9 @@ public Q_SLOTS:
     void removeSelectedRows();
 
 private:
+    // TODO: choose better name for function
+    void updateStatus();
+
     QVBoxLayout* m_mainLayout;
 
     Table* m_inputTable;

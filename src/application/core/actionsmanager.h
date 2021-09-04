@@ -6,10 +6,12 @@
 #include <QMultiMap>
 #include <QObject>
 
+#include "enumbitmask.h"
+
 class QAction;
 
-enum ActionGroup {
-    NONE_ = 1 << 0,
+enum class ActionGroup {
+    NONE = 1 << 0,
     FILE_GROUP = 1 << 1,
     SELECTION = 1 << 2,
     EDIT = 1 << 3,
@@ -20,10 +22,10 @@ enum ActionGroup {
     ALL = 1 << 8
 };
 
-inline ActionGroup operator|(ActionGroup x, ActionGroup y)
-{
-    return static_cast<ActionGroup>(static_cast<int>(x) | static_cast<int>(y));
-}
+//inline ActionGroup operator|(ActionGroup x, ActionGroup y)
+//{
+//    return static_cast<ActionGroup>(static_cast<int>(x) | static_cast<int>(y));
+//}
 
 class ActionsManager final : public QObject {
     Q_OBJECT
