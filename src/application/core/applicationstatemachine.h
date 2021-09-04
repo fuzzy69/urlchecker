@@ -2,6 +2,8 @@
 
 #include <QStateMachine>
 
+#include "enumbitmask.h"
+
 class QState;
 
 enum class ApplicationState {
@@ -16,13 +18,28 @@ enum class ApplicationState {
     JOB_DONE = 1 << 7,
 };
 
-class ApplicationStateMachine : public QStateMachine {
+static const ApplicationState JobActiveStates = ApplicationState::JOB_STARTING | ApplicationState::JOB_RUNNING | ApplicationState::JOB_STOPPING | ApplicationState::JOB_FINISHING;
+
+static const QMap<ApplicationState, QString> ApplicationStates {
+    { ApplicationState::NONE, QStringLiteral("None") },
+    { ApplicationState::APPLICATION_STARTED, QStringLiteral("Application started") },
+    { ApplicationState::APPLICATION_IDLING, QStringLiteral("Ready") },
+    { ApplicationState::APPLICATION_EXITING, QStringLiteral("Exiting application ...") },
+    { ApplicationState::JOB_STARTING, QStringLiteral("Job starting ...") },
+    { ApplicationState::JOB_STOPPING, QStringLiteral("Job stopping ...") },
+    { ApplicationState::JOB_FINISHING, QStringLiteral("Job finishing ...") },
+    { ApplicationState::JOB_RUNNING, QStringLiteral("Job running ...") },
+    { ApplicationState::JOB_DONE, QStringLiteral("Job done") }
+};
+
+class ApplicationStateMachine final : public QStateMachine {
     Q_OBJECT
 
 public:
     ApplicationStateMachine(QObject* parent = nullptr);
 
     ApplicationState currentState() const;
+    QString currentStateText() const;
 
 Q_SIGNALS:
     void applicationStarted();

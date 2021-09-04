@@ -40,6 +40,7 @@ public:
     QStandardItemModel* tableModel() const;
     void resetColumns(const QStringList& columns);
     void setContextMenu(QMenu* contextMenu);
+    void setColumn(int columnIndex, QVariant value);
 
 Q_SIGNALS:
     void doubleClicked(const QModelIndex& modelIndex);

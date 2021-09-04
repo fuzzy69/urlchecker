@@ -20,20 +20,22 @@ DummyWorker::DummyWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mu
 
 void DummyWorker::doWork(const QVariantMap& inputData)
 {
-    QString url = inputData["url"].toString();
-    int rowId = inputData["rowId"].toInt();
-
+    int rowId = inputData[FIELD_ROW_ID].toInt();
+    QString url(inputData[FIELD_URL].toString());
+    logMessage(QString("Dummy job for URL '%1'...").arg(url));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     QThread::sleep(1);
-
+    ResultStatus status(ResultStatus::OK);
+    QString details(QStringLiteral("Some details ..."));
     auto data = QVariantMap {
-        { QString("rowId"), QVariant(rowId) },
-        { QString("URL"), QVariant(url) },
-        { QString("Result"), QVariant("OK") },
-        { QString("Details"), QVariant("") },
+        { QStringLiteral(FIELD_ROW_ID), inputData[FIELD_ROW_ID] },
+        { QStringLiteral("URL"), inputData[FIELD_URL] },
+        { QStringLiteral("Details"), QVariant(details) },
+
+        { QString("Result"), QVariant(QStringLiteral("OK")) }
     };
 
     Q_EMIT Worker::result(m_toolId, data);
-    Q_EMIT Worker::itemDone(true);
-    Q_EMIT Worker::status(rowId, ResultStatus::OK);
+    Q_EMIT Worker::itemDone(status == ResultStatus::OK);
+    Q_EMIT Worker::status(rowId, status);
 }

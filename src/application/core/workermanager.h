@@ -23,6 +23,7 @@ public:
 Q_SIGNALS:
     void jobStarted();
     void jobStopped();
+    void jobStopRequested();
     void result(Tools toolId, const QVariantMap& resultData);
     void status(const int rowId, const ResultStatus& resultStatus);
     void progress(const int itemsSuccessfullyDone, const int itemsDone, const int totalItems, const double progressPercentage);

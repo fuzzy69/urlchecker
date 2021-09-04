@@ -21,8 +21,11 @@ WorkerManager::WorkerManager(QObject* parent)
     , m_inputDataQueue(QQueue<QMap<QString, QVariant>>())
     , m_mutex(QMutex())
     , m_currentSettings(QVariantMap())
+    , m_itemsSuccessfullyDone(0)
     , m_itemsDone(0)
     , m_totalItems(0)
+    , m_jobStartTimestamp(0)
+    , m_jobEndTimestamp(0)
 {
     setObjectName("WorkerManager");
 }
@@ -30,13 +33,14 @@ WorkerManager::WorkerManager(QObject* parent)
 void WorkerManager::init()
 {
     Table* inputTable = ApplicationBridge::instance().tablesWidget()->inputTable();
+    m_totalItems = inputTable->rowCount();
     m_itemsSuccessfullyDone = 0;
     m_itemsDone = 0;
-    m_totalItems = inputTable->rowCount();
     m_jobStartTimestamp = QDateTime::currentSecsSinceEpoch();
     m_jobEndTimestamp = 0;
     m_threads.clear();
     m_workers.clear();
+    m_inputDataQueue.clear();
 }
 
 void WorkerManager::startJob()
@@ -72,7 +76,7 @@ void WorkerManager::startJob()
         connect(worker, &Worker::finished, thread, &Thread::quit);
         connect(worker, &Worker::finished, worker, &Worker::deleteLater);
         connect(worker, &Worker::finished, [this] {
-            qDebug() << "Worker finished";
+            //            qDebug() << "Worker finished";
             m_jobEndTimestamp = QDateTime::currentSecsSinceEpoch();
         });
         connect(worker, &Worker::requestStop, worker, &Worker::stop);
@@ -93,6 +97,7 @@ void WorkerManager::stopJob()
         }
     }
     Q_EMIT jobStopped();
+    Q_EMIT jobStopRequested();
 }
 
 void WorkerManager::onItemDone(bool itemSuccess)
@@ -101,7 +106,6 @@ void WorkerManager::onItemDone(bool itemSuccess)
     if (itemSuccess)
         ++m_itemsSuccessfullyDone;
     int progresPercentage = static_cast<int>(static_cast<double>(m_itemsDone) / m_totalItems * 100);
-    //    ApplicationBridge::instance().progressBar()->setValue(progresPercentage);
     Q_EMIT progress(m_itemsSuccessfullyDone, m_itemsDone, m_totalItems, progresPercentage);
 }
 

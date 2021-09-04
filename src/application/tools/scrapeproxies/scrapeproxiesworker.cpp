@@ -19,25 +19,24 @@ ScrapeProxiesWorker::ScrapeProxiesWorker(int id, QQueue<QVariantMap>* inputDataQ
 
 void ScrapeProxiesWorker::doWork(const QVariantMap& inputData)
 {
-    QString url = inputData["url"].toString();
-    int rowId = inputData["rowId"].toInt();
-
+    int rowId = inputData[FIELD_ROW_ID].toInt();
+    QString url(inputData[FIELD_URL].toString());
     logMessage(QString("Scraping proxies from: '%1'...").arg(url));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(url.toStdString());
-    // TODO: Better result status handling
     ResultStatus status((response.status_code == 200) ? ResultStatus::OK : ResultStatus::FAILED);
-
+    QString details(QStringLiteral("OK"));
     for (const auto& proxy_string : extract_proxies(response.text)) {
         auto data = QMap<QString, QVariant> {
-            { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
-            { QString("Proxy"), QVariant(QString::fromUtf8(proxy_string.c_str())) },
-            { QString("Source"), QVariant(url) },
-            { QString("Details"), QVariant("") }
+            { QStringLiteral(FIELD_ROW_ID), inputData[FIELD_ROW_ID] },
+            { QStringLiteral("Source"), inputData[FIELD_URL] },
+            { QStringLiteral("Details"), QVariant(details) },
+
+            { QString("Proxy"), QVariant(QString::fromUtf8(proxy_string.c_str())) }
         };
         Q_EMIT Worker::result(m_toolId, data);
     }
-    Q_EMIT Worker::itemDone(true);
+    Q_EMIT Worker::itemDone(status == ResultStatus::OK);
     Q_EMIT Worker::status(rowId, status);
 }

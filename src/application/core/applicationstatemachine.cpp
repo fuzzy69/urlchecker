@@ -65,3 +65,8 @@ ApplicationState ApplicationStateMachine::currentState() const
     else
         return ApplicationState::NONE;
 }
+
+QString ApplicationStateMachine::currentStateText() const
+{
+    return ApplicationStates.value(currentState());
+}

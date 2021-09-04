@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_set>
 
+#include <QApplication>
 #include <QDebug>
 #include <QDir>
 #include <QUrl>
@@ -35,42 +36,56 @@ ScrapeImagesWorker::~ScrapeImagesWorker()
 
 void ScrapeImagesWorker::doWork(const QVariantMap& inputData)
 {
-    QUrl url(inputData["url"].toString());
-    int rowId = inputData["rowId"].toInt();
+    int rowId = inputData[FIELD_ROW_ID].toInt();
+    QUrl url(inputData[FIELD_URL].toString());
     const QDir downloadImagesDirectory(m_settings[SCRAPE_IMAGES_DIRECTORY].toString());
-    const bool shouldDownload(downloadImagesDirectory.isReadable());
-
+    const bool downloadImages(m_settings[DOWNLOAD_IMAGES].toBool());
     logMessage(QString("Scraping images from: '%1'...").arg(url.toString()));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(url.toString().toStdString());
     std::string html = m_tidy->process(response.text);
     m_dom->from_string(html);
-    std::unordered_set<std::string> images;
-    for (auto& element : m_dom->select_all("//img[@src]")) {
-        std::string image = element.attribute("src");
-        if (!starts_with(image, "http") or images.count(image) > 0)
-            continue;
-        // Download image
-        if (shouldDownload) {
-            QUrl imageUrl(image.c_str());
-            if (!imageUrl.fileName().isEmpty()) {
-                const QString imageFilePath = downloadImagesDirectory.filePath(imageUrl.fileName());
-                response = requests.download(image, imageFilePath.toStdString());
+    ResultStatus status((response.status_code == 200) ? ResultStatus::OK : ResultStatus::FAILED);
+    QString details(QStringLiteral("OK"));
+    if (status == ResultStatus::OK) {
+        std::unordered_set<std::string> images;
+        for (auto& element : m_dom->select_all("//img[@src]")) {
+            QApplication::processEvents();
+            if (!m_running)
+                break;
+            std::string image = element.attribute("src");
+            if (!starts_with(image, "http") or images.count(image) > 0)
+                continue;
+            // Download image
+            if (downloadImages) {
+                QUrl imageUrl(image.c_str());
+                logMessage(QString("Downloading image '%1'...").arg(imageUrl.toString()));
+                if (!imageUrl.fileName().isEmpty()) {
+                    const QString imageFilePath = downloadImagesDirectory.filePath(imageUrl.fileName());
+                    response = requests.download(image, imageFilePath.toStdString());
+                    status = (response.status_code == 200) ? ResultStatus::OK : ResultStatus::FAILED;
+                    if (status == ResultStatus::OK) {
+                        details = QString("Downloaded to '%1'...").arg(imageFilePath);
+                    } else {
+                        details = QString::fromUtf8(response.status_line.c_str());
+                    }
+                }
             }
+            images.insert(image);
+            auto data = QMap<QString, QVariant> {
+                { QStringLiteral(FIELD_ROW_ID), inputData[FIELD_ROW_ID] },
+                { QStringLiteral("Source"), inputData[FIELD_URL] },
+                { QStringLiteral("Details"), QVariant(details) },
+
+                { QStringLiteral("Image Source"), QVariant(QString::fromUtf8(image.c_str())) }
+            };
+            Q_EMIT Worker::result(m_toolId, data);
         }
-        images.insert(image);
-        auto data = QMap<QString, QVariant> {
-            { QString("toolId"), QVariant(Tools::SCRAPE_IMAGES) },
-            { QString("toolName"), QVariant("Scrape Images") },
-            { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
-            { QString("Image Source"), QVariant(QString::fromUtf8(image.c_str())) },
-            { QString("Source"), QVariant(url) },
-            { QString("Details"), QVariant("") }
-        };
-        Q_EMIT Worker::result(m_toolId, data);
+    } else {
+        details = QString::fromUtf8(response.status_line.c_str());
     }
 
-    Q_EMIT Worker::itemDone(true);
-    Q_EMIT Worker::status(rowId, ResultStatus::OK);
+    Q_EMIT Worker::itemDone(status == ResultStatus::OK);
+    Q_EMIT Worker::status(rowId, status);
 }

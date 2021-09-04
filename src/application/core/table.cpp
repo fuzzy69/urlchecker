@@ -56,6 +56,15 @@ void Table::setContextMenu(QMenu* contextMenu)
     m_contextMenu = contextMenu;
 }
 
+void Table::setColumn(int columnIndex, QVariant value)
+{
+    if (columnIndex >= 0 and columnIndex < columnCount()) {
+        for (int i = 0; i < rowCount(); ++i) {
+            m_tableModel->setData(m_tableModel->index(i, columnIndex), value);
+        }
+    }
+}
+
 void Table::setColumnRatios(const QList<float>& columnRatios)
 {
     m_columnRatios = columnRatios;

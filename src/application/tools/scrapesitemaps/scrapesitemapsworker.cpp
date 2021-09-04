@@ -31,11 +31,10 @@ ScrapeSitemapskWorker::~ScrapeSitemapskWorker()
 
 void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
 {
-    QUrl url(inputData["url"].toString());
-    int rowId = inputData["rowId"].toInt();
+    int rowId = inputData[FIELD_ROW_ID].toInt();
+    QUrl url(inputData[FIELD_URL].toString());
     const QDir downloadSitemapsDirectory(m_settings[SCRAPE_SITEMAPS_DIRECTORY].toString());
-    const bool shouldDownload(downloadSitemapsDirectory.isReadable());
-
+    const bool downloadSitemaps(m_settings[DOWNLOAD_SITEMAPS].toBool());
     // Trim URL to root URL
     QUrl rootUrl;
     rootUrl.setScheme(url.scheme());
@@ -48,39 +47,45 @@ void ScrapeSitemapskWorker::doWork(const QVariantMap& inputData)
     Requests requests(m_settings);
     cpr::Response response = requests.get(robotsUrl.toString().toStdString());
     std::string sitemapUrl("");
-    auto status = ResultStatus::FAILED;
-    QString details;
-    bool itemSuccess(false);
+    ResultStatus status((response.status_code == 200) ? ResultStatus::OK : ResultStatus::FAILED);
+    QString details(QStringLiteral("OK"));
     if (response.status_code == 200) {
         sitemapUrl = extract_sitemap_url(response.text);
-        details = QStringLiteral("OK");
-        status = ResultStatus::OK;
-        // Download sitemap
-        if (shouldDownload) {
-            QUrl sitemapFileUrl(sitemapUrl.c_str());
-            if (!sitemapFileUrl.fileName().isEmpty()) {
-                const QString sitemapFilePath = downloadSitemapsDirectory.filePath(url.host() + "_" + sitemapFileUrl.fileName());
-                response = requests.download(sitemapUrl, sitemapFilePath.toStdString());
-                if (response.status_code == 200) {
-                    logMessage(QString("Successfully downloaded sitemap '%1' to '%2'").arg(sitemapFileUrl.toString(), sitemapFilePath));
-                    itemSuccess = true;
-                } else
-                    logMessage(QString("Failed to download sitemap '%1'!").arg(sitemapFileUrl.toString()));
+        if (sitemapUrl == "") {
+            status = ResultStatus::FAILED;
+            details = QStringLiteral("Failed to locate sitemap file");
+        } else {
+            // Download sitemap
+            if (downloadSitemaps) {
+                QUrl sitemapFileUrl(sitemapUrl.c_str());
+                logMessage(QString("Downloading sitemap '%1'...").arg(sitemapUrl.c_str()));
+                if (!sitemapFileUrl.fileName().isEmpty()) {
+                    const QString sitemapFilePath = downloadSitemapsDirectory.filePath(url.host() + "_" + sitemapFileUrl.fileName());
+                    response = requests.download(sitemapUrl, sitemapFilePath.toStdString());
+                    status = (response.status_code == 200) ? ResultStatus::OK : ResultStatus::FAILED;
+                    if (status == ResultStatus::OK) {
+                        logMessage(QString("Successfully downloaded sitemap '%1' to '%2'").arg(sitemapFileUrl.toString(), sitemapFilePath));
+                        details = QString("Downloaded to '%1'...").arg(sitemapFilePath);
+                    } else {
+                        logMessage(QString("Failed to download sitemap '%1'!").arg(sitemapFileUrl.toString()));
+                        details = QString::fromUtf8(response.status_line.c_str());
+                    }
+                }
             }
         }
     } else {
-        details = QStringLiteral("Failed to locate sitemap file");
+        details = QString::fromUtf8(response.status_line.c_str());
     }
-    if (sitemapUrl == "")
-        details = QStringLiteral("Failed to locate sitemap file");
+
     auto data = QVariantMap {
-        { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
+        { QStringLiteral(FIELD_ROW_ID), inputData[FIELD_ROW_ID] },
+        { QStringLiteral("Website"), QVariant(rootUrl.toString()) },
+        { QStringLiteral("Details"), QVariant(details) },
+
         { QString("URL"), QVariant(QString::fromUtf8(sitemapUrl.c_str())) },
-        { QString("Website"), QVariant(rootUrl.toString()) },
-        { QString("Details"), QVariant(details) }
     };
 
     Q_EMIT Worker::result(m_toolId, data);
-    Q_EMIT Worker::itemDone(itemSuccess);
+    Q_EMIT Worker::itemDone(status == ResultStatus::OK);
     Q_EMIT Worker::status(rowId, status);
 }

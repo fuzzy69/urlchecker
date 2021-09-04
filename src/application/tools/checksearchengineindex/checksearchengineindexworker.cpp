@@ -27,38 +27,42 @@ CheckSearchEngineIndexWorker::~CheckSearchEngineIndexWorker()
 
 void CheckSearchEngineIndexWorker::doWork(const QVariantMap& inputData)
 {
-    QUrl url(inputData["url"].toString());
+    int rowId = inputData[FIELD_ROW_ID].toInt();
+    QUrl url(inputData[FIELD_URL].toString());
     QUrl searchUrl("https://www.google.com/search");
     searchUrl.setQuery("q=" + QUrl::toPercentEncoding("site:" + url.toString()));
-    int rowId = inputData["rowId"].toInt();
-
     logMessage(QString("Checking search engine index for: '%1'...").arg(url.toString()));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(searchUrl.toString().toStdString());
-
-    QString indexStatus("Not Indexed");
-    auto status = ResultStatus::FAILED;
-    QString details;
-
-    std::string html = m_tidy->process(response.text);
-    m_dom->from_string(html);
-    std::string urlString = url.toString().toStdString();
-    for (auto& element : m_dom->select_all("//div/a")) {
-        qDebug() << element.attribute("href").c_str();
-        if (element.attribute("href") == urlString) {
-            indexStatus = QStringLiteral("Indexed");
-            break;
+    ResultStatus status((response.status_code == 200) ? ResultStatus::OK : ResultStatus::FAILED);
+    QString details(QStringLiteral("OK"));
+    QString indexStatus("");
+    if (status == ResultStatus::OK) {
+        indexStatus = QStringLiteral("Not Indexed");
+        std::string html = m_tidy->process(response.text);
+        m_dom->from_string(html);
+        std::string urlString = url.toString().toStdString();
+        for (auto& element : m_dom->select_all("//div/a")) {
+            //            qDebug() << element.attribute("href").c_str();
+            if (element.attribute("href") == urlString) {
+                indexStatus = QStringLiteral("Indexed");
+                break;
+            }
         }
+    } else {
+        details = QString::fromUtf8(response.status_line.c_str());
     }
+
     auto data = QVariantMap {
-        { QString("rowId"), QVariant(inputData["rowId"].toInt()) },
-        { QString("URL"), QVariant(url) },
-        { QString("Index Status"), QVariant(indexStatus) },
-        { QString("Details"), QVariant(details) }
+        { QStringLiteral(FIELD_ROW_ID), inputData[FIELD_ROW_ID] },
+        { QStringLiteral("URL"), inputData[FIELD_URL] },
+        { QStringLiteral("Details"), QVariant(details) },
+
+        { QString("Index Status"), QVariant(indexStatus) }
     };
 
     Q_EMIT Worker::result(m_toolId, data);
-    Q_EMIT Worker::itemDone(true);
+    Q_EMIT Worker::itemDone(status == ResultStatus::OK);
     Q_EMIT Worker::status(rowId, status);
 }

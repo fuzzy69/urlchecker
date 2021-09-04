@@ -19,7 +19,7 @@ ScrapeImagesSettingsPage::ScrapeImagesSettingsPage(QWidget* parent)
     connect(m_ui->browsePushButton, &QPushButton::clicked, [this] {
         const QString downloadImagesDirectoryPath = QFileDialog::getExistingDirectory(this, tr("Choose Directory"), "/", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
         QDir downloadImagesDirectory(downloadImagesDirectoryPath);
-        if (!downloadImagesDirectory.isEmpty() and downloadImagesDirectory.isReadable())
+        if (downloadImagesDirectory.isReadable())
             m_ui->downloadImagesDirectoryLineEdit->setText(downloadImagesDirectoryPath);
     });
 }
@@ -32,13 +32,15 @@ ScrapeImagesSettingsPage::~ScrapeImagesSettingsPage()
 void ScrapeImagesSettingsPage::hideEvent(QHideEvent* event)
 {
     Q_UNUSED(event)
+    Settings::instance().setValue(QStringLiteral(DOWNLOAD_IMAGES), QVariant(m_ui->downloadImagesToDirectoryCheckBox->isChecked()));
     Settings::instance().setValue(QStringLiteral(SCRAPE_IMAGES_DIRECTORY), QVariant(m_ui->downloadImagesDirectoryLineEdit->text()));
 }
 
 void ScrapeImagesSettingsPage::showEvent(QShowEvent* event)
 {
     Q_UNUSED(event)
+    const auto downloadImages = Settings::instance().value(QStringLiteral(DOWNLOAD_IMAGES)).toBool();
+    m_ui->downloadImagesToDirectoryCheckBox->setChecked(downloadImages);
     const auto scrapeImagesDirectory = Settings::instance().value(QStringLiteral(SCRAPE_IMAGES_DIRECTORY)).toString();
-    m_ui->downloadImagesToDirectoryCheckBox->setChecked(!scrapeImagesDirectory.isEmpty());
     m_ui->downloadImagesDirectoryLineEdit->setText(scrapeImagesDirectory);
 }

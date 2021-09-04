@@ -130,6 +130,11 @@ void WorkspaceWidget::setCurrentProgress(int value)
     m_progressBar->setValue(value);
 }
 
+QTabWidget* WorkspaceWidget::sideTabWidget()
+{
+    return m_sideTabWidget;
+}
+
 void WorkspaceWidget::onApplicationStart()
 {
     m_startPushButton->setEnabled(false);
@@ -175,12 +180,16 @@ void WorkspaceWidget::resizeEvent(QResizeEvent* event)
 void WorkspaceWidget::startJob()
 {
     if (m_tablesWidget->inputTable()->rowCount() == 0) {
-        QMessageBox::warning(this, QStringLiteral("Start Job"), QStringLiteral("Nothing to do. Source URLs table is empty!"));
+        QMessageBox::warning(this, QStringLiteral("Start Job"), QStringLiteral("Nothing to do, source URLs table is empty!"));
         return;
     }
     auto& currentTool = ToolsManager::instance().currentTool();
+    // Clear input's table status column
+    m_tablesWidget->inputTable()->setColumn(1, QVariant(QStringLiteral("")));
+    //
     m_tablesWidget->resultsTable()->resetColumns(currentTool.columns());
     m_tablesWidget->resultsTable()->setColumnRatios(currentTool.columnRatios());
+
     m_workerManager->startJob();
 
     m_tablesWidget->switchToResultsTab();
@@ -194,29 +203,18 @@ void WorkspaceWidget::stopJob()
 
 void WorkspaceWidget::onResult(Tools toolId, const QVariantMap& resultData)
 {
-    if (m_tablesWidget->focusedTable()->rowCount() == 1)
-        m_tablesWidget->focusedTable()->resizeColumns();
     auto* currentTool = ToolsManager::instance().getTool(toolId);
     QStringList row;
     for (const auto& column : currentTool->columns()) {
         row << resultData[column].toString();
     }
     m_tablesWidget->resultsTable()->appendRow(row);
+    if (m_tablesWidget->focusedTable()->rowCount() == 1)
+        m_tablesWidget->focusedTable()->resizeColumns();
 }
 
 void WorkspaceWidget::onStatus(const int rowId, const ResultStatus& resultStatus)
 {
-    QVariant status;
-    switch (resultStatus) {
-    case ResultStatus::OK:
-        status = QVariant(QStringLiteral("Done"));
-        break;
-    case ResultStatus::PROCESSING:
-        status = QVariant(QStringLiteral("Processing ..."));
-        break;
-    case ResultStatus::FAILED:
-        status = QVariant(QStringLiteral("Failed"));
-        break;
-    }
+    QVariant status(ResultStatusText.value(resultStatus));
     m_tablesWidget->inputTable()->setCell(rowId, 1, status);
 }

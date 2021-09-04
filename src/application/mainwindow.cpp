@@ -1,6 +1,8 @@
 ﻿#include <QAction>
 #include <QApplication>
+#include <QDateTime>
 #include <QDebug>
+#include <QDesktopWidget>
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QInputDialog>
@@ -37,6 +39,7 @@
 #include "version.h"
 #include "widgets/filesystemwidget.h"
 #include "widgets/helpwidget.h"
+#include "widgets/logwidget.h"
 #include "widgets/proxieswidget.h"
 #include "widgets/settingswidget/settingswidget.h"
 #include "widgets/sidebarwidget.h"
@@ -84,9 +87,16 @@ MainWindow::MainWindow(QWidget* parent)
         m_recentUrlFilesMenu->addAction(action);
     }
 
+    m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
+
     m_applicationStateMachine->start();
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
     QTimer::singleShot(3 * MILLIS_IN_SECOND, [this]() {
+        //
+        m_toolsPushButton->setEnabled(true);
+        m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
+        m_logPushButton->setEnabled(true);
+        m_logPushButton->setChecked(m_workspaceWidget->logWidget()->isVisible());
         Q_EMIT m_applicationStateMachine->applicationReady();
     });
 }
@@ -192,7 +202,11 @@ void MainWindow::createStatusBar()
     setStatusBar(m_statusBar);
 
     m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), QStringLiteral(" Tools"));
+    m_toolsPushButton->setCheckable(true);
+    m_toolsPushButton->setEnabled(false);
     m_logPushButton = new QPushButton(QIcon(ICON_DOCUMENT_LIST), QStringLiteral(" Log"));
+    m_logPushButton->setCheckable(true);
+    m_logPushButton->setEnabled(false);
     m_statusBarLabel = new QLabel;
     m_activeThreadsLabel = new QLabel(tr(TEXT_ACTIVE_THREADS));
     m_jobStatsLabel = new QLabel(" Completed 0/0 of 0 items. Success ratio 0.0% ");
@@ -249,11 +263,9 @@ void MainWindow::createConnections()
         double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
         m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
-    //    connect(m_workspaceWidget->tablesWidget(), &TablesWidget::focusedTableEmpty, [] {
     connect(m_workspaceWidget->tablesWidget()->focusedTable(), &Table::emptied, [] {
         ActionsManager::instance().disableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
     });
-    //    connect(m_workspaceWidget->tablesWidget(), &TablesWidget::focusedTableNotEmpty, [] {
     connect(m_workspaceWidget->tablesWidget()->focusedTable(), &Table::populated, [] {
         ActionsManager::instance().enableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
     });
@@ -288,9 +300,11 @@ void MainWindow::createConnections()
     // Statusbar
     connect(m_toolsPushButton, &QPushButton::clicked, [this]() {
         m_workspaceWidget->toggleSideTabWidget();
+        m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
     });
     connect(m_logPushButton, &QPushButton::clicked, [this]() {
         m_workspaceWidget->toggleLogWidget();
+        m_logPushButton->setChecked(m_workspaceWidget->logWidget()->isVisible());
     });
 
     // Application states
@@ -299,7 +313,7 @@ void MainWindow::createConnections()
     });
     connect(m_applicationStateMachine, &ApplicationStateMachine::applicationIdling, [this]() {
         m_workspaceWidget->onApplicationReady();
-        m_statusBarLabel->setText("Ready.");
+        m_statusBarLabel->setText(ApplicationStates.value(ApplicationState::APPLICATION_IDLING));
     });
     connect(m_applicationStateMachine, &ApplicationStateMachine::applicationExiting, [this]() {
         m_workspaceWidget->onApplicationExit();
@@ -357,11 +371,13 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::onPulse()
 {
     m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
-    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING && Thread::count() == 0)
+    if (static_cast<bool>(m_applicationStateMachine->currentState() & JobActiveStates) and Thread::count() == 0)
         emit m_applicationStateMachine->jobDone();
-    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING) {
-        m_jobRuntimeLabel->setText(QString(" Job runtime: %1 sec(s) ").arg(m_workspaceWidget->workerManager()->jobRuntime()));
+    if (static_cast<bool>(m_applicationStateMachine->currentState() & JobActiveStates)) {
+        QString jobRuntime = QDateTime::fromTime_t(static_cast<uint>(m_workspaceWidget->workerManager()->jobRuntime())).toUTC().toString("hh:mm:ss");
+        m_jobRuntimeLabel->setText(QString(" Job runtime: %1 ").arg(jobRuntime));
     }
+    m_statusBarLabel->setText(m_applicationStateMachine->currentStateText());
 }
 
 void MainWindow::importUrlFile(const QString& filePath)
@@ -370,8 +386,7 @@ void MainWindow::importUrlFile(const QString& filePath)
         return;
     Table* inputTable = m_workspaceWidget->tablesWidget()->inputTable();
     if (inputTable->rowCount() != 0) {
-        QMessageBox messageBox(QMessageBox::Question, QStringLiteral("Import URLs"), QStringLiteral("Input table not empty! Append to existing rows or"
-                                                                                                    " replace current rows?"),
+        QMessageBox messageBox(QMessageBox::Question, QStringLiteral("Import URLs"), QStringLiteral("Input table not empty! Append to existing rows or replace current rows?"),
             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         messageBox.setButtonText(QMessageBox::Yes, "Append");
         messageBox.setButtonText(QMessageBox::No, "Replace");
@@ -452,7 +467,8 @@ void MainWindow::initSettings(const QDir& applicationDir)
     if (QFile::exists(m_settingsFilePath)) {
         loadSettings();
     } else {
-        resize(800, 600);
+        QRect rect = QApplication::desktop()->screenGeometry();
+        resize(static_cast<int>(rect.width() * 0.8), static_cast<int>(rect.height() * 0.8));
         centerWindow();
     }
 }

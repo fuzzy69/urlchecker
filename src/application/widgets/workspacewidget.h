@@ -33,6 +33,7 @@ public:
     LogWidget* logWidget();
     WorkerManager* workerManager();
     void setCurrentProgress(int value);
+    QTabWidget* sideTabWidget();
 
 public Q_SLOTS:
     void toggleTools();

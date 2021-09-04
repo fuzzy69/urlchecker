@@ -8,6 +8,6 @@ ScrapeImagesTool::ScrapeImagesTool()
         QIcon(ICON_IMAGES),
         QString(QStringLiteral("Scrape Images")),
         QStringList() << QStringLiteral("Image Source") << QStringLiteral("Source") << QStringLiteral("Details"),
-        QList<float>() << 0.5f << 0.3f)
+        QList<float>() << 0.5f << 0.2f)
 {
 }

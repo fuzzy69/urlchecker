@@ -23,26 +23,25 @@ TestWorker::TestWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mute
 
 void TestWorker::doWork(const QVariantMap& inputData)
 {
-    Q_UNUSED(inputData)
+    int rowId = inputData[FIELD_ROW_ID].toInt();
     QString url = "http://httpbin.org/headers";
-    int rowId = inputData["rowId"].toInt();
-
+    logMessage(QString("Test URL '%1'...").arg(url));
     Q_EMIT Worker::status(rowId, ResultStatus::PROCESSING);
     Requests requests(m_settings);
     cpr::Response response = requests.get(url.toStdString());
-    // TODO: Better result status handling
     ResultStatus status((response.status_code == 200) ? ResultStatus::OK : ResultStatus::FAILED);
+    QString details(QString::fromUtf8(response.status_line.c_str()));
     std::string text(trim_whitespaces(response.text));
     logMessage(QString::fromUtf8(text.c_str()));
-
     auto data = QMap<QString, QVariant> {
-        { QString("rowId"), QVariant(rowId) },
-        { QString("URL"), QVariant(url) },
-        { QString("Result"), QVariant(QString::fromUtf8(text.c_str())) },
-        { QString("Details"), QVariant("") }
+        { QStringLiteral(FIELD_ROW_ID), inputData[FIELD_ROW_ID] },
+        { QStringLiteral("URL"), inputData[FIELD_URL] },
+        { QStringLiteral("Details"), QVariant(details) },
+
+        { QString("Result"), QVariant(static_cast<qlonglong>(response.status_code)) }
     };
 
     Q_EMIT Worker::result(m_toolId, data);
-    Q_EMIT Worker::itemDone(true);
+    Q_EMIT Worker::itemDone(status == ResultStatus::OK);
     Q_EMIT Worker::status(rowId, status);
 }
