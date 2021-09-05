@@ -4,7 +4,7 @@
 ScrapeLinksTool::ScrapeLinksTool()
     : Tool(
         Tools::SCRAPE_LINKS,
-        ToolCategory::SCRAPERS,
+        ToolCategory::EXTRACTORS,
         QIcon(ICON_CHAIN),
         QString(QStringLiteral("Scrape Links")),
         QStringList() << QStringLiteral("URL") << QStringLiteral("Source") << QStringLiteral("Details"),
