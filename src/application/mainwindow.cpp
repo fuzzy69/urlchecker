@@ -1,4 +1,6 @@
-﻿#include <QAction>
+﻿#include <sstream>
+
+#include <QAction>
 #include <QApplication>
 #include <QDateTime>
 #include <QDebug>
@@ -16,6 +18,8 @@
 #include <QTimer>
 #include <QToolBar>
 #include <QWidget>
+
+#include "libs/csv/single_include/csv.hpp"
 
 #include "my/browserutils.h"
 #include "my/file.h"
@@ -450,24 +454,46 @@ void MainWindow::exportResults()
     if (filePath.length() > 0) {
         QFileInfo fileInfo(filePath);
         QStringList lines;
+        // CSV
         if (fileInfo.suffix().toLower() == QStringLiteral("csv")) {
-            lines << resultsTable->columnNames().join(QStringLiteral(","));
-            for (int i = 0; i < resultsTable->rowCount(); ++i) {
-                QStringList cells;
-                for (int j = 0; j < resultsTable->columnCount(); ++j) {
-                    cells.append(resultsTable->cell(i, j).toString());
+            std::ofstream fstream(filePath.toStdString());
+            std::stringstream sstream;
+            csv::CSVWriter<std::ofstream> writer = csv::make_csv_writer(fstream);
+            {
+                std::vector<std::string> row;
+                for (const auto& column : resultsTable->columnNames()) {
+                    row.push_back(column.toStdString());
                 }
-                lines << cells.join(QStringLiteral(","));
+                writer << row;
             }
+            for (int i = 0; i < resultsTable->rowCount(); ++i) {
+                std::vector<std::string> row;
+                for (int j = 0; j < resultsTable->columnCount(); ++j) {
+                    row.push_back(resultsTable->cell(i, j).toString().toStdString());
+                }
+                writer << row;
+            }
+            fstream << sstream.str();
+            sstream.str(std::string());
+            //            lines << resultsTable->columnNames().join(QStringLiteral(","));
+            //            for (int i = 0; i < resultsTable->rowCount(); ++i) {
+            //                QStringList cells;
+            //                for (int j = 0; j < resultsTable->columnCount(); ++j) {
+            //                    cells.append(resultsTable->cell(i, j).toString());
+            //                }
+            //                lines << cells.join(QStringLiteral(","));
+            //            }
+            // Text
         } else if (fileInfo.suffix().toLower() == QStringLiteral("txt")) {
             for (int i = 0; i < resultsTable->rowCount(); ++i) {
                 lines << resultsTable->cell(i, 0).toString();
             }
+            File::writeTextFile(filePath, lines);
         } else {
             QMessageBox::warning(this, QStringLiteral("Export Results"), QStringLiteral("Unsupported file type!"));
             return;
         }
-        File::writeTextFile(filePath, lines);
+        //        File::writeTextFile(filePath, lines);
         m_lastDirectory = QDir(filePath).absolutePath();
     }
 }

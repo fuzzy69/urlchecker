@@ -126,6 +126,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${CPR_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${MY_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)
 target_link_libraries(${PROJECT_NAME} PRIVATE tidy)
+target_link_libraries(${PROJECT_NAME} PRIVATE csv)
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD

@@ -2,6 +2,7 @@
 cpr_option(BUILD_CPR_TESTS "Set to ON to build cpr tests." OFF)
 add_subdirectory(my)
 add_subdirectory(pugixml)
+add_subdirectory(csv)
 add_library(tidy SHARED IMPORTED)
 set_property(
     TARGET tidy
