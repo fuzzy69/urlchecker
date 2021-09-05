@@ -65,6 +65,17 @@ void Table::setColumn(int columnIndex, QVariant value)
     }
 }
 
+void Table::applyToColumn(int columnIndex, std::function<QString(const QString&)> function)
+{
+    if (columnIndex >= 0 and columnIndex < columnCount()) {
+        for (int i = 0; i < rowCount(); ++i) {
+            QString value(m_tableModel->data(m_tableModel->index(i, columnIndex)).toString());
+            QString newValue(function(value));
+            m_tableModel->setData(m_tableModel->index(i, columnIndex), newValue);
+        }
+    }
+}
+
 void Table::setColumnRatios(const QList<float>& columnRatios)
 {
     m_columnRatios = columnRatios;

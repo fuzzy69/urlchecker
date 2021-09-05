@@ -80,7 +80,7 @@ MainWindow::MainWindow(QWidget* parent)
     initUserAgents(applicationDir);
     initProxies(applicationDir);
 
-    ActionsManager::instance().disableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
+    ActionsManager::instance().disableActions(TableActions);
 
     // Init recent files
     for (QAction* action : m_recentFiles->actions()) {
@@ -112,13 +112,13 @@ void MainWindow::createMenuBar()
     m_selectionMenu = menuBar()->addMenu(tr("Selection"));
     m_editMenu = menuBar()->addMenu(tr("Edit"));
     m_filterMenu = menuBar()->addMenu(tr("Filter"));
+    m_urlMenu = menuBar()->addMenu(tr("URL"));
     m_windowMenu = menuBar()->addMenu(tr("Window"));
     m_helpMenu = menuBar()->addMenu(tr("Help"));
     // File menu
     m_fileMenu->addAction(ActionsManager::instance().action("importUrls"));
     m_recentUrlFilesMenu = new QMenu(tr("Open Recent URL File"), this);
     m_fileMenu->addMenu(m_recentUrlFilesMenu);
-    //    m_recentUrlFilesMenu->addAction(m_clearRecentUrlFilesAction);
     m_recentUrlFilesMenu->addAction(ActionsManager::instance().action("clearRecentUrlFiles"));
     m_recentUrlFilesMenu->addSeparator();
     m_fileMenu->addAction(ActionsManager::instance().action("exportResults"));
@@ -133,6 +133,9 @@ void MainWindow::createMenuBar()
     m_editMenu->addAction(ActionsManager::instance().action("removAllRows"));
     m_editMenu->addAction(ActionsManager::instance().action("removeDuplicates"));
     // Filter menu
+    // URL menu
+    m_urlMenu->addAction(ActionsManager::instance().action(ACTION_TRIM_URL_TO_ROOT));
+    m_urlMenu->addAction(ActionsManager::instance().action(ACTION_STRIP_TRAILING_SLASH));
     // Window menu
     m_windowMenu->addAction(ActionsManager::instance().action("centerWindow"));
     // Help menu
@@ -150,13 +153,16 @@ void MainWindow::createToolBar()
     m_toolBar->addAction(ActionsManager::instance().action("importUrls"));
     m_toolBar->addAction(ActionsManager::instance().action("exportResults"));
     m_toolBar->addSeparator();
+    m_toolBar->addAction(ActionsManager::instance().action("selectAllRows"));
+    m_toolBar->addAction(ActionsManager::instance().action("invertRowsSelection"));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_SELECT_GROUP));
+    m_toolBar->addSeparator();
     m_toolBar->addAction(ActionsManager::instance().action("removeSelectedRows"));
     m_toolBar->addAction(ActionsManager::instance().action("removeDuplicates"));
     m_toolBar->addAction(ActionsManager::instance().action("removAllRows"));
     m_toolBar->addSeparator();
-    m_toolBar->addAction(ActionsManager::instance().action("selectAllRows"));
-    m_toolBar->addAction(ActionsManager::instance().action("invertRowsSelection"));
-    m_toolBar->addAction(ActionsManager::instance().action(ACTION_SELECT_GROUP));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_TRIM_URL_TO_ROOT));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_STRIP_TRAILING_SLASH));
     m_toolBar->addSeparator();
     m_toolBar->addAction(ActionsManager::instance().action("quit"));
 }
@@ -264,10 +270,10 @@ void MainWindow::createConnections()
         m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
     connect(m_workspaceWidget->tablesWidget()->focusedTable(), &Table::emptied, [] {
-        ActionsManager::instance().disableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
+        ActionsManager::instance().disableActions(TableActions);
     });
     connect(m_workspaceWidget->tablesWidget()->focusedTable(), &Table::populated, [] {
-        ActionsManager::instance().enableActions(ActionGroup::EDIT | ActionGroup::SELECTION | ActionGroup::FILTER);
+        ActionsManager::instance().enableActions(TableActions);
     });
 
     // Table actions
@@ -283,6 +289,20 @@ void MainWindow::createConnections()
     connect(ActionsManager::instance().action(ACTION_REMOVE_SELECTED_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected(); });
     connect(ActionsManager::instance().action(ACTION_REMOVE_DUPLICATE_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates(); });
     connect(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows(); });
+    connect(ActionsManager::instance().action(ACTION_TRIM_URL_TO_ROOT), &QAction::triggered, [this] {
+        m_workspaceWidget->tablesWidget()->focusedTable()->applyToColumn(0, [](const QString& value) -> QString {
+            QUrl url(value);
+            QUrl rootUrl;
+            rootUrl.setScheme(url.scheme());
+            rootUrl.setHost(url.host());
+            return rootUrl.toString();
+        });
+    });
+    connect(ActionsManager::instance().action(ACTION_STRIP_TRAILING_SLASH), &QAction::triggered, [this] {
+        m_workspaceWidget->tablesWidget()->focusedTable()->applyToColumn(0, [](const QString& value) -> QString {
+            return (value.endsWith("/")) ? value.mid(0, value.size() - 1) : value;
+        });
+    });
 
     // Tools
     connect(m_workspaceWidget->toolsWidget(), &ToolsWidget::toolSettingsRequested, [this](const Tool& tool) {

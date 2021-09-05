@@ -8,10 +8,10 @@
 
 void createActions()
 {
-    ActionsManager::instance().createAction(QStringLiteral(ACTION_IMPORT_URLS), ActionGroup::FILE_GROUP, QStringLiteral(ICON_TABLE_IMPORT), QStringLiteral("Import URLs"));
-    ActionsManager::instance().createAction(QStringLiteral(ACTION_CLEAR_RECENT_URL_FILES), ActionGroup::FILE_GROUP, QStringLiteral(ICON_BROOM), QStringLiteral("Clear Recent URL Files"));
-    ActionsManager::instance().createAction(QStringLiteral(ACTION_EXPORT_RESULTS), ActionGroup::FILE_GROUP, QStringLiteral(ICON_TABLE_EXPORT), QStringLiteral("Export Results"));
-    ActionsManager::instance().createAction(QStringLiteral(ACTION_QUIT), ActionGroup::FILE_GROUP, QStringLiteral(ICON_CONTROL_POWER), QStringLiteral("Quit"));
+    ActionsManager::instance().createAction(QStringLiteral(ACTION_IMPORT_URLS), ActionGroup::FILE, QStringLiteral(ICON_TABLE_IMPORT), QStringLiteral("Import URLs"));
+    ActionsManager::instance().createAction(QStringLiteral(ACTION_CLEAR_RECENT_URL_FILES), ActionGroup::FILE, QStringLiteral(ICON_BROOM), QStringLiteral("Clear Recent URL Files"));
+    ActionsManager::instance().createAction(QStringLiteral(ACTION_EXPORT_RESULTS), ActionGroup::FILE, QStringLiteral(ICON_TABLE_EXPORT), QStringLiteral("Export Results"));
+    ActionsManager::instance().createAction(QStringLiteral(ACTION_QUIT), ActionGroup::FILE, QStringLiteral(ICON_CONTROL_POWER), QStringLiteral("Quit"));
 
     ActionsManager::instance().createAction(QStringLiteral(ACTION_REMOVE_ALL_ROWS), ActionGroup::EDIT, QStringLiteral(ICON_BROOM), QStringLiteral("Remove All Rows"));
     ActionsManager::instance().createAction(QStringLiteral(ACTION_REMOVE_DUPLICATE_ROWS), ActionGroup::EDIT, QStringLiteral(ICON_TABLE_DELETE_ROW), QStringLiteral("Remove Duplicates"));
@@ -21,7 +21,13 @@ void createActions()
     ActionsManager::instance().createAction(QStringLiteral(ACTION_INVERT_ROWS_SELECTION), ActionGroup::SELECTION, QStringLiteral(ICON_TABLE), QStringLiteral("Invert Rows Selection"));
     ActionsManager::instance().createAction(QStringLiteral(ACTION_SELECT_GROUP), ActionGroup::SELECTION, QStringLiteral(ICON_TABLE_SELECT_GROUP), QStringLiteral(TEXT_SELECT_GROUP));
 
+    ActionsManager::instance().createAction(QStringLiteral(ACTION_SELECT_GROUP), ActionGroup::SELECTION, QStringLiteral(ICON_TABLE_SELECT_GROUP), QStringLiteral(TEXT_SELECT_GROUP));
+
+    ActionsManager::instance().createAction(QStringLiteral(ACTION_TRIM_URL_TO_ROOT), ActionGroup::URL, QStringLiteral(ICON_ASTERISK), QStringLiteral("Trim URL to Root"));
+    ActionsManager::instance().createAction(QStringLiteral(ACTION_STRIP_TRAILING_SLASH), ActionGroup::URL, QStringLiteral(ICON_CHAIN_MINUS), QStringLiteral("Strip Trailing Slashes"));
+
     ActionsManager::instance().createAction(QStringLiteral(ACTION_CENTER_WINDOW), ActionGroup::WINDOW, QStringLiteral(ICON_RESIZE), QStringLiteral("Center Window"));
+
     ActionsManager::instance().createAction(QStringLiteral(ACTION_ABOUT), ActionGroup::HELP, QStringLiteral(ICON_INFORMATION), QStringLiteral("About"));
 
     // Sidebar

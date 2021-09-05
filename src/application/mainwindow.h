@@ -58,6 +58,7 @@ private:
     QMenu* m_selectionMenu;
     QMenu* m_editMenu;
     QMenu* m_filterMenu;
+    QMenu* m_urlMenu;
     QMenu* m_windowMenu;
     QMenu* m_helpMenu;
 

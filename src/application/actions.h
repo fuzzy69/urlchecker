@@ -12,5 +12,7 @@
 #define ACTION_CENTER_WINDOW "centerWindow"
 #define ACTION_ABOUT "about"
 #define ACTION_SELECT_GROUP "selectGroup"
+#define ACTION_TRIM_URL_TO_ROOT "trimUrlToRoot"
+#define ACTION_STRIP_TRAILING_SLASH "stripTrailingSlash"
 
 void createActions();

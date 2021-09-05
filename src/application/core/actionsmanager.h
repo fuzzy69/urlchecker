@@ -12,20 +12,23 @@ class QAction;
 
 enum class ActionGroup {
     NONE = 1 << 0,
-    FILE_GROUP = 1 << 1,
+    FILE = 1 << 1,
     SELECTION = 1 << 2,
     EDIT = 1 << 3,
     FILTER = 1 << 4,
-    WINDOW = 1 << 5,
-    HELP = 1 << 6,
-    SIDEBAR = 1 << 7,
-    ALL = 1 << 8
+    URL = 1 << 5,
+    WINDOW = 1 << 6,
+    HELP = 1 << 7,
+    SIDEBAR = 1 << 8,
+    ALL = 1 << 9
 };
 
 //inline ActionGroup operator|(ActionGroup x, ActionGroup y)
 //{
 //    return static_cast<ActionGroup>(static_cast<int>(x) | static_cast<int>(y));
 //}
+
+static const ActionGroup TableActions = ActionGroup::SELECTION | ActionGroup::EDIT | ActionGroup::FILTER | ActionGroup::URL;
 
 class ActionsManager final : public QObject {
     Q_OBJECT

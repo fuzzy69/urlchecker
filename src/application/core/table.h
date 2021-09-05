@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <functional>
+
 #include <QColor>
 #include <QObject>
 #include <QStringList>
@@ -41,6 +43,7 @@ public:
     void resetColumns(const QStringList& columns);
     void setContextMenu(QMenu* contextMenu);
     void setColumn(int columnIndex, QVariant value);
+    void applyToColumn(int columnIndex, std::function<QString(const QString&)> function);
 
 Q_SIGNALS:
     void doubleClicked(const QModelIndex& modelIndex);

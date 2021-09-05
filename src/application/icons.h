@@ -38,3 +38,5 @@
 #define ICON_NETWORK_IP ":assets/icons/network-ip.png"
 #define ICON_USER_SILHOUETTE ":assets/icons/user-silhouette.png"
 #define ICON_USER_SILHOUETTE_QUESTION ":assets/icons/user-silhouette-question.png"
+#define ICON_CHAIN_MINUS ":assets/icons/chain--minus.png"
+#define ICON_ASTERISK ":assets/icons/asterisk.png"
