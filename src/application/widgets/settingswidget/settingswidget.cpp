@@ -24,9 +24,12 @@
 #include "proxiessettingspage.h"
 #include "useragentssettingspage.h"
 
+#include "../../tools/scrapehtml/settingspage.h"
 #include "../../tools/scrapeimages/scrapeimagessettingspage.h"
 #include "../../tools/scrapelinks/scrapelinkssettingspage.h"
 #include "../../tools/scrapesitemaps/scrapesitemapssettingspage.h"
+
+// TODO: Remove tools include dependecies
 
 SettingsWidget::SettingsWidget(QWidget* parent)
     : QWidget(parent)
@@ -44,9 +47,11 @@ SettingsWidget::SettingsWidget(QWidget* parent)
     addItem(QIcon(ICON_NETWORK_IP), QStringLiteral("Connection"), new ConnectionSettingsPage);
     addItem(QIcon(ICON_USER_SILHOUETTE_QUESTION), QStringLiteral("User Agents"), new UserAgentsSettingsPage);
     addItem(QIcon(ICON_MASK), QStringLiteral("Proxies"), new ProxiesSettingsPage);
+
     addItem(QIcon(ICON_IMAGES), QStringLiteral("Scrape Images"), new ScrapeImagesSettingsPage);
     addItem(QIcon(ICON_CHAIN), QStringLiteral("Scrape Links"), new ScrapeLinksSettingsPage);
     addItem(QIcon(ICON_SITEMAP), QStringLiteral("Scrape Sitemaps"), new ScrapeSitemapsSettingsPage);
+    addItem(QIcon(ICON_DOCUMENT_NUMBER), QStringLiteral("Scrape HTML"), new ScrapeHtmlSettingsPage);
 
     m_mainLayout = new QHBoxLayout(this);
     m_mainLayout->addWidget(m_categoriesListWidget);

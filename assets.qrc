@@ -42,5 +42,6 @@
         <file>assets/icons/table-insert-row.png</file>
         <file>assets/icons/asterisk.png</file>
         <file>assets/icons/chain--minus.png</file>
+        <file>assets/icons/document-number.png</file>
     </qresource>
 </RCC>

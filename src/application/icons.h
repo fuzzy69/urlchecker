@@ -40,3 +40,4 @@
 #define ICON_USER_SILHOUETTE_QUESTION ":assets/icons/user-silhouette-question.png"
 #define ICON_CHAIN_MINUS ":assets/icons/chain--minus.png"
 #define ICON_ASTERISK ":assets/icons/asterisk.png"
+#define ICON_DOCUMENT_NUMBER ":assets/icons/document-number.png"

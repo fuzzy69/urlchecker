@@ -217,4 +217,18 @@ void WorkspaceWidget::onStatus(const int rowId, const ResultStatus& resultStatus
 {
     QVariant status(ResultStatusText.value(resultStatus));
     m_tablesWidget->inputTable()->setCell(rowId, 1, status);
+    //    switch (resultStatus) {
+    //    case ResultStatus::OK:
+    //        m_tablesWidget->inputTable()->setRowColor(rowId, Qt::white, Qt::green);
+    //        break;
+    //    case ResultStatus::PROCESSING:
+    //        m_tablesWidget->inputTable()->setRowColor(rowId, Qt::white, Qt::blue);
+    //        break;
+    //    case ResultStatus::FAILED:
+    //        m_tablesWidget->inputTable()->setRowColor(rowId, Qt::white, Qt::red);
+    //        break;
+    //        //    default:
+    //        //        m_tablesWidget->inputTable()->setRowColor(rowId, Qt::black, Qt::white);
+    //        //        break;
+    //    }
 }

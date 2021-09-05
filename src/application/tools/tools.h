@@ -33,6 +33,7 @@ enum Tools {
     SCRAPE_EMAILS,
     SCRAPE_PHONE_NUMBERS,
     SCRAPE_IMAGES,
+    SCRAPE_HTML,
     TEST,
 #if APP_DEBUG
     DUMMY,

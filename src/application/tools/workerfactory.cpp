@@ -5,6 +5,7 @@
 #include "checksearchengineindex/checksearchengineindexworker.h"
 #include "dummy/dummyworker.h"
 #include "scrapeemails/scrapeemailsworker.h"
+#include "scrapehtml/worker.h"
 #include "scrapeimages/scrapeimagesworker.h"
 #include "scrapelinks/scrapelinksworker.h"
 #include "scrapephonenumbers/scrapephonenumbersworker.h"
@@ -13,7 +14,7 @@
 #include "test/testworker.h"
 #include "urlstatus/checkurlstatusworker.h"
 
-// FIXME: This is temporary solution, switching tools/worker should be resolved differently
+// FIXME: This is temporary solution, switching tools/workers should be resolved differently
 Worker* workerFactory(int id, int workerId, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings)
 {
     Worker* worker(nullptr);
@@ -45,6 +46,9 @@ Worker* workerFactory(int id, int workerId, QQueue<QVariantMap>* inputDataQueue,
         break;
     case Tools::SCRAPE_IMAGES:
         worker = new ScrapeImagesWorker(workerId, inputDataQueue, mutex, settings);
+        break;
+    case Tools::SCRAPE_HTML:
+        worker = new ScrapeHtmlWorker(workerId, inputDataQueue, mutex, settings);
         break;
     case Tools::TEST:
         worker = new TestWorker(workerId, inputDataQueue, mutex, settings);
