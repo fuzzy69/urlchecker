@@ -43,5 +43,6 @@
         <file>assets/icons/asterisk.png</file>
         <file>assets/icons/chain--minus.png</file>
         <file>assets/icons/document-number.png</file>
+        <file>assets/icons/tag-hash.png</file>
     </qresource>
 </RCC>

@@ -8,6 +8,7 @@
 #include "scrapehtml/worker.h"
 #include "scrapeimages/scrapeimagesworker.h"
 #include "scrapelinks/scrapelinksworker.h"
+#include "scrapemeta/worker.h"
 #include "scrapephonenumbers/scrapephonenumbersworker.h"
 #include "scrapeproxies/scrapeproxiesworker.h"
 #include "scrapesitemaps/scrapesitemapsworker.h"
@@ -49,6 +50,9 @@ Worker* workerFactory(int id, int workerId, QQueue<QVariantMap>* inputDataQueue,
         break;
     case Tools::SCRAPE_HTML:
         worker = new ScrapeHtmlWorker(workerId, inputDataQueue, mutex, settings);
+        break;
+    case Tools::SCRAPE_META:
+        worker = new ScrapeMetaWorker(workerId, inputDataQueue, mutex, settings);
         break;
     case Tools::TEST:
         worker = new TestWorker(workerId, inputDataQueue, mutex, settings);

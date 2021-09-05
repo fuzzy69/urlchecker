@@ -34,6 +34,7 @@ enum Tools {
     SCRAPE_PHONE_NUMBERS,
     SCRAPE_IMAGES,
     SCRAPE_HTML,
+    SCRAPE_META,
     TEST,
 #if APP_DEBUG
     DUMMY,
@@ -53,6 +54,8 @@ static QMap<Tools, QString> ToolsTexts
         { Tools::SCRAPE_SITEMAPS, QStringLiteral("Scrape Sitemaps") },
         { Tools::SCRAPE_EMAILS, QStringLiteral("Scrape Emails") },
         { Tools::SCRAPE_PHONE_NUMBERS, QStringLiteral("Scrape Phone Numbers") },
+        { Tools::SCRAPE_HTML, QStringLiteral("Scrape HTML") },
+        { Tools::SCRAPE_META, QStringLiteral("Scrape Meta") },
         { Tools::TEST, QStringLiteral("Test") },
 #if APP_DEBUG
         { Tools::SCRAPE_EMAILS, QStringLiteral("Scrape Emails") },

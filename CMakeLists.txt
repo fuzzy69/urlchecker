@@ -80,6 +80,9 @@ add_executable(
     src/application/tools/scrapehtml/worker.cpp
     src/application/tools/scrapehtml/utilities.cpp
 
+    src/application/tools/scrapemeta/tool.cpp
+    src/application/tools/scrapemeta/worker.cpp
+
     src/application/tools/scrapeemails/scrapeemailstool.cpp
     src/application/tools/scrapeemails/scrapeemailsworker.cpp
     src/application/tools/scrapeemails/utilities.cpp

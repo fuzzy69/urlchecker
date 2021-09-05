@@ -8,18 +8,22 @@
                 <section title="Overview" ref="overview.html"></section>
                 <section title="User Interface" ref="user_interface.html"></section>
                 <section title="Configuration" ref="configuration.html"></section>
+                <section title="Table Tools" ref="table_tools.html"></section>
             </section>
         </toc>
         <keywords>
             <keyword name="Overview" ref="overview.html"/>
             <keyword name="User Interface" ref="user_interface.html"/>
             <keyword name="Configuration" ref="configuration.html"/>
+            <keyword name="Table Tools" ref="table_tools.html"/>
         </keywords>
         <files>
             <file>index.html</file>
             <file>overview.html</file>
             <file>user_interface.html</file>
             <file>configuration.html</file>
+            <file>table_tools.html</file>
+
             <file>images/test.png</file>
         </files>
     </filterSection>

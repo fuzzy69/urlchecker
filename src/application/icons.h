@@ -41,3 +41,4 @@
 #define ICON_CHAIN_MINUS ":assets/icons/chain--minus.png"
 #define ICON_ASTERISK ":assets/icons/asterisk.png"
 #define ICON_DOCUMENT_NUMBER ":assets/icons/document-number.png"
+#define ICON_TAG_HASH ":assets/icons/tag-hash.png"

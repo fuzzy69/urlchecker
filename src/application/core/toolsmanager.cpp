@@ -7,6 +7,7 @@
 #include "../tools/scrapehtml/tool.h"
 #include "../tools/scrapeimages/scrapeimagestool.h"
 #include "../tools/scrapelinks/scrapelinkstool.h"
+#include "../tools/scrapemeta/tool.h"
 #include "../tools/scrapephonenumbers/scrapephonenumberstool.h"
 #include "../tools/scrapeproxies/scrapeproxiestool.h"
 #include "../tools/scrapesitemaps/scrapesitemapstool.h"
@@ -29,6 +30,7 @@ ToolsManager::ToolsManager()
     addTool(std::unique_ptr<Tool>(new CheckSearchEngineIndexTool));
     addTool(std::unique_ptr<Tool>(new ScrapeImagesTool));
     addTool(std::unique_ptr<Tool>(new ScrapeHtmlTool));
+    addTool(std::unique_ptr<Tool>(new ScrapeMetaTool));
 
     setCurrentTool(ToolsTexts.value(Tools::CHECK_URL_STATUS));
 }
