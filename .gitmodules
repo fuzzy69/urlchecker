@@ -7,3 +7,6 @@
 [submodule "libs/pugixml"]
 	path = libs/pugixml
 	url = https://github.com/zeux/pugixml.git
+[submodule "libs/csv"]
+	path = libs/csv
+	url = https://github.com/vincentlaucsb/csv-parser.git
