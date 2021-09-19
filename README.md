@@ -40,8 +40,6 @@ Download dependencies:
 git submodule update --init --recursive 
 ```
 
-Build and install HTML Tidy by following build instructions on https://github.com/htacg/tidy-html5/blob/next/README/BUILD.md. Copy created shared object to urlchecker/libs/tidy-html5/ directory.
-
 Create build directory somewhere (preferably out of project directory) and navigate into it:
 ```
 mkdir build
