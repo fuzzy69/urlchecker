@@ -44,6 +44,6 @@ HelpWidget::HelpWidget(QWidget* parent)
     m_mainLayout->addWidget(m_splitter);
     m_splitter->setSizes(QList<int>({ 300, 1000 }));
 
-    connect(m_helpEngine->contentWidget(), &QHelpContentWidget::linkActivated, m_helpBrowser, &HelpBrowser::setSource);
-    connect(m_helpEngine->indexWidget(), &QHelpIndexWidget::linkActivated, m_helpBrowser, &HelpBrowser::setSource);
+    // connect(m_helpEngine->contentWidget(), &QHelpContentWidget::linkActivated, m_helpBrowser, &HelpBrowser::setSource);
+    // connect(m_helpEngine->indexWidget(), &QHelpIndexWidget::linkActivated, m_helpBrowser, &HelpBrowser::setSource);
 }
