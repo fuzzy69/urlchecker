@@ -47,9 +47,15 @@ cd build
 ```
 
 Build project by passing the full path to a cloned urlchecker project:
+- *nix
 ```
 cmake <YOUR PATH>/urlchecker
 make
+```
+- Windows
+```
+cmake.exe <YOUR PATH>/urlchecker
+cmake.exe --build . --config Debug
 ```
 
 Compiled application  executable and required files are located in bin directory. Run executable with:

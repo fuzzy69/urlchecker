@@ -1,4 +1,8 @@
-﻿#include <QAbstractItemView>
+﻿#include <qglobal.h>
+#ifdef Q_OS_WIN
+#include <ciso646>
+#endif
+#include <QAbstractItemView>
 #include <QBrush>
 #include <QColor>
 #include <QHeaderView>

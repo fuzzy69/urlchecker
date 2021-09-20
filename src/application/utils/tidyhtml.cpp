@@ -1,5 +1,10 @@
 ﻿#include "tidybuffio.h"
 
+#include <qglobal.h>
+#ifdef Q_OS_WIN
+#include <ciso646>
+#endif
+
 #include "tidyhtml.h"
 
 TidyHtml::TidyHtml()

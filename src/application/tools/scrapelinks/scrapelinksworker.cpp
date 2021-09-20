@@ -1,7 +1,10 @@
 ﻿#include <optional>
 #include <string>
 #include <unordered_set>
-
+#include <qglobal.h>
+#ifdef Q_OS_WIN
+#include <ciso646>
+#endif
 #include <QDebug>
 #include <QUrl>
 

@@ -1,5 +1,8 @@
 ﻿#include <sstream>
-
+#include <qglobal.h>
+#ifdef Q_OS_WIN
+#include <ciso646>
+#endif
 #include <QAction>
 #include <QApplication>
 #include <QDateTime>

@@ -1,5 +1,9 @@
 ﻿#include "settingswidget.h"
 
+#include <qglobal.h>
+#ifdef Q_OS_WIN
+#include <ciso646>
+#endif
 #include <QApplication>
 #include <QCheckBox>
 #include <QDebug>
