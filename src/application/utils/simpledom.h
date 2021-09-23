@@ -9,6 +9,8 @@
 struct HTMLElement {
     explicit HTMLElement(const pugi::xpath_node& node);
     ///
+    std::string name() const;
+    ///
     std::string text() const;
     ///
     std::string attribute(const std::string& name);

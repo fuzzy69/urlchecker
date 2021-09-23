@@ -17,5 +17,8 @@ protected:
     void showEvent(QShowEvent* event) override;
 
 private:
+    void setScrapeHtmlStrategy(ScrapeHtmlStrategy strategy);
+    ScrapeHtmlStrategy scrapeHtmlStrategy();
+
     Ui_settingsPageWidget* m_ui;
 };

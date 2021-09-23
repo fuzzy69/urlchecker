@@ -5,6 +5,11 @@ HTMLElement::HTMLElement(const pugi::xpath_node& node)
 {
 }
 
+std::string HTMLElement::name() const
+{
+    return m_node.node().name();
+}
+
 std::string HTMLElement::text() const
 {
     return std::string(m_node.node().text().as_string());
