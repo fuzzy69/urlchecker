@@ -23,7 +23,7 @@
       <item row="0" column="0">
        <widget class="QCheckBox" name="downloadHtmlCheckBox">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text">
          <string>Download HTML to directory</string>
