@@ -163,17 +163,17 @@ add_custom_command(
         ${CMAKE_BINARY_DIR}/bin/docs/help.qch
 )
 
-## Tests
-#option(ENABLE_TEST "Turn on to enable tests" ON)
-#if (ENABLE_TEST)
-#    enable_testing()
+# Tests
+option(ENABLE_TEST "Turn on to enable tests" ON)
+if (ENABLE_TEST)
+    enable_testing()
 
-#    set(CATCH2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/catch2)
-#    add_library(catch INTERFACE)
-#    target_include_directories(catch INTERFACE ${CATCH2_INCLUDE_DIR})
+    set(CATCH2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/catch2)
+    add_library(catch INTERFACE)
+    target_include_directories(catch INTERFACE ${CATCH2_INCLUDE_DIR})
 
-#    add_subdirectory(tests)
-#endif()
+    add_subdirectory(tests)
+endif()
 
 else()
     message(FATAL_ERROR "Failed to locate Tidy static lib '${tidy_static_lib}'!")
