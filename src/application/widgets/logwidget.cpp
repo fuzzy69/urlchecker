@@ -7,7 +7,7 @@ LogWidget::LogWidget(QWidget* parent)
     : QWidget(parent)
 {
     m_mainLayout = new QHBoxLayout(this);
-    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+    m_mainLayout->setContentsMargins(0, 0, 0, 2);
     m_mainLayout->setSpacing(0);
     m_logPlainTextEdit = new QPlainTextEdit;
     m_logPlainTextEdit->setReadOnly(true);

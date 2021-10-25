@@ -9,6 +9,7 @@ ToolsWidget::ToolsWidget(QWidget* parent)
 {
     setMinimumWidth(200);
     setColumnCount(1);
+    setContentsMargins(0, 0, 0, 0);
     setHeaderLabel(tr("Tools"));
     for (const auto& categoryId : ToolCategoryTexts.keys())
         m_categories.insert(ToolCategoryTexts.value(categoryId));

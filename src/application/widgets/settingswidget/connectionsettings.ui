@@ -113,7 +113,7 @@
           </item>
          </layout>
         </item>
-        <item row="3" column="0">
+        <item row="2" column="0">
          <widget class="QCheckBox" name="verifySslCheckBox">
           <property name="toolTip">
            <string>Force SSL verification for HTTPS connection. May fail on some servers.</string>
@@ -148,7 +148,6 @@
  </widget>
  <tabstops>
   <tabstop>connectionTimeoutSpinBox</tabstop>
-  <tabstop>verifySslCheckBox</tabstop>
  </tabstops>
  <resources/>
  <connections/>

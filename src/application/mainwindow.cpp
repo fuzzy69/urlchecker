@@ -1,5 +1,5 @@
-﻿#include <sstream>
-#include <qglobal.h>
+﻿#include <qglobal.h>
+#include <sstream>
 #ifdef Q_OS_WIN
 #include <ciso646>
 #endif
@@ -170,8 +170,8 @@ void MainWindow::createToolBar()
     m_toolBar->addSeparator();
     m_toolBar->addAction(ActionsManager::instance().action(ACTION_TRIM_URL_TO_ROOT));
     m_toolBar->addAction(ActionsManager::instance().action(ACTION_STRIP_TRAILING_SLASH));
-    m_toolBar->addSeparator();
-    m_toolBar->addAction(ActionsManager::instance().action("quit"));
+    //    m_toolBar->addSeparator();
+    //    m_toolBar->addAction(ActionsManager::instance().action("quit"));
 }
 
 void MainWindow::createWidgets()
@@ -200,6 +200,8 @@ void MainWindow::createWidgets()
     // Central widget
     m_centralWidget = new QWidget;
     m_centralLayout = new QHBoxLayout(m_centralWidget);
+    m_centralLayout->setContentsMargins(2, 2, 2, 0);
+    m_centralLayout->setSpacing(2);
     m_centralLayout->addWidget(m_sideBarWidget);
     m_centralLayout->addWidget(m_mainStackedWidget);
 
@@ -213,6 +215,7 @@ void MainWindow::createStatusBar()
 {
     m_statusBar = new QStatusBar;
     setStatusBar(m_statusBar);
+    m_statusBar->setContentsMargins(0, 0, 0, 0);
 
     m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), QStringLiteral(" Tools"));
     m_toolsPushButton->setCheckable(true);

@@ -14,6 +14,7 @@ TablesWidget::TablesWidget(QWidget* parent)
     : QWidget(parent)
 {
     m_tabWidget = new QTabWidget;
+    m_tabWidget->setContentsMargins(0, 0, 0, 0);
     m_inputTable = new Table(QStringList() << QStringLiteral("URL") << QStringLiteral("Status"), this);
     m_inputTable->setColumnRatios(QList<float>() << 0.8f);
     m_resultsTable = new Table(QStringList() << QStringLiteral("Result"), this);

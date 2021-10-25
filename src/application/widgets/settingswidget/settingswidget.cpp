@@ -58,6 +58,8 @@ SettingsWidget::SettingsWidget(QWidget* parent)
     addItem(QIcon(ICON_DOCUMENT_NUMBER), QStringLiteral("Scrape HTML"), new ScrapeHtmlSettingsPage);
 
     m_mainLayout = new QHBoxLayout(this);
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+    m_mainLayout->setSpacing(0);
     m_mainLayout->addWidget(m_categoriesListWidget);
     m_mainLayout->addWidget(m_contentsStackedWidget);
 

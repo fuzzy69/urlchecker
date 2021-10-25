@@ -33,7 +33,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
 {
     m_mainLayout = new QVBoxLayout(this);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
-    m_mainLayout->setSpacing(0);
+    m_mainLayout->setSpacing(2);
 
     m_topLayout = new QHBoxLayout;
     m_bottomLayout = new QHBoxLayout;
@@ -42,6 +42,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
 
     m_toolsWidget = new ToolsWidget;
     m_sideTabWidget = new QTabWidget;
+    m_sideTabWidget->setContentsMargins(0, 0, 0, 0);
     m_tablesWidget = new TablesWidget;
     m_fileSystemWidget = new FilesystemWidget;
     m_logWidget = new LogWidget;
