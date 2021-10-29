@@ -44,6 +44,13 @@ ApplicationStateMachine::ApplicationStateMachine(QObject* parent)
     setInitialState(m_applicationStartingState);
 }
 
+ApplicationStateMachine* ApplicationStateMachine::self()
+{
+    static ApplicationStateMachine instance;
+
+    return &instance;
+}
+
 ApplicationState ApplicationStateMachine::currentState() const
 {
     if (configuration().contains(m_applicationStartingState))

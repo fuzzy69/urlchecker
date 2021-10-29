@@ -34,10 +34,9 @@ static const QMap<ApplicationState, QString> ApplicationStates {
 
 class ApplicationStateMachine final : public QStateMachine {
     Q_OBJECT
-
+    Q_DISABLE_COPY(ApplicationStateMachine)
 public:
-    ApplicationStateMachine(QObject* parent = nullptr);
-
+    static ApplicationStateMachine* self();
     ApplicationState currentState() const;
     QString currentStateText() const;
 
@@ -60,6 +59,10 @@ Q_SIGNALS:
     void jobDone();
 
 private:
+    explicit ApplicationStateMachine(QObject* parent = nullptr);
+
+    static ApplicationStateMachine* m_instance;
+
     QState* m_applicationStartingState;
     QState* m_applicationIdlingState;
     QState* m_applicationExitingState;
