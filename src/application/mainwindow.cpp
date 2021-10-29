@@ -279,40 +279,6 @@ void MainWindow::createConnections()
         double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
         m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
-    connect(m_workspaceWidget->tablesWidget()->focusedTable(), &Table::emptied, [] {
-        ActionsManager::instance().disableActions(TableActions);
-    });
-    connect(m_workspaceWidget->tablesWidget()->focusedTable(), &Table::populated, [] {
-        ActionsManager::instance().enableActions(TableActions);
-    });
-
-    // Table actions
-    connect(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->selectAll(); });
-    connect(ActionsManager::instance().action(ACTION_INVERT_ROWS_SELECTION), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->invertSelection(); });
-    connect(ActionsManager::instance().action(ACTION_SELECT_GROUP), &QAction::triggered, [this] {
-        bool ok;
-        QString maskText = QInputDialog::getText(this, tr(TEXT_SELECT_GROUP), tr("Input Mask:"), QLineEdit::Normal, "*", &ok);
-        if (ok and !maskText.isEmpty()) {
-            m_workspaceWidget->tablesWidget()->focusedTable()->selectByMask(0, maskText);
-        }
-    });
-    connect(ActionsManager::instance().action(ACTION_REMOVE_SELECTED_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeSelected(); });
-    connect(ActionsManager::instance().action(ACTION_REMOVE_DUPLICATE_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeDuplicates(); });
-    connect(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS), &QAction::triggered, [this] { m_workspaceWidget->tablesWidget()->focusedTable()->removeAllRows(); });
-    connect(ActionsManager::instance().action(ACTION_TRIM_URL_TO_ROOT), &QAction::triggered, [this] {
-        m_workspaceWidget->tablesWidget()->focusedTable()->applyToColumn(0, [](const QString& value) -> QString {
-            QUrl url(value);
-            QUrl rootUrl;
-            rootUrl.setScheme(url.scheme());
-            rootUrl.setHost(url.host());
-            return rootUrl.toString();
-        });
-    });
-    connect(ActionsManager::instance().action(ACTION_STRIP_TRAILING_SLASH), &QAction::triggered, [this] {
-        m_workspaceWidget->tablesWidget()->focusedTable()->applyToColumn(0, [](const QString& value) -> QString {
-            return (value.endsWith("/")) ? value.mid(0, value.size() - 1) : value;
-        });
-    });
 
     // Tools
     connect(m_workspaceWidget->toolsWidget(), &ToolsWidget::toolSettingsRequested, [this](const Tool& tool) {
