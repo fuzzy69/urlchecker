@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget* parent)
     QDir applicationDir(QApplication::applicationDirPath());
     applicationDir.mkdir("data");
     //
-    m_applicationStateMachine = new ApplicationStateMachine(this);
+    //    m_applicationStateMachine = new ApplicationStateMachine(this);
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(MAX_RECENT_FILES, this);
 
@@ -96,7 +96,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
 
-    m_applicationStateMachine->start();
+    ApplicationStateMachine::self()->start();
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
     QTimer::singleShot(3 * MILLIS_IN_SECOND, [this]() {
         //
@@ -104,7 +104,7 @@ MainWindow::MainWindow(QWidget* parent)
         m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
         m_logPushButton->setEnabled(true);
         m_logPushButton->setChecked(m_workspaceWidget->logWidget()->isVisible());
-        Q_EMIT m_applicationStateMachine->applicationReady();
+        Q_EMIT ApplicationStateMachine::self()->applicationReady();
     });
 }
 
@@ -272,13 +272,6 @@ void MainWindow::createConnections()
     connect(m_pulseTimer, &QTimer::timeout, this, &MainWindow::onPulse);
 
     // Workspace widget
-    connect(m_workspaceWidget->workerManager(), &WorkerManager::jobStarted, m_applicationStateMachine, &ApplicationStateMachine::jobStart);
-    connect(m_workspaceWidget->workerManager(), &WorkerManager::jobStopped, m_applicationStateMachine, &ApplicationStateMachine::jobStop);
-    connect(m_workspaceWidget->workerManager(), &WorkerManager::progress, [this](const int itemsSuccessfullyDone, const int itemsDone, const int totalItems, const double progressPercentage) {
-        m_workspaceWidget->setCurrentProgress(static_cast<int>(progressPercentage));
-        double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
-        m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
-    });
 
     // Tools
     connect(m_workspaceWidget->toolsWidget(), &ToolsWidget::toolSettingsRequested, [this](const Tool& tool) {
@@ -302,27 +295,6 @@ void MainWindow::createConnections()
         m_workspaceWidget->toggleLogWidget();
         m_logPushButton->setChecked(m_workspaceWidget->logWidget()->isVisible());
     });
-
-    // Application states
-    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationStarted, [this]() {
-        m_workspaceWidget->onApplicationStart();
-    });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationIdling, [this]() {
-        m_workspaceWidget->onApplicationReady();
-        m_statusBarLabel->setText(ApplicationStates.value(ApplicationState::APPLICATION_IDLING));
-    });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::applicationExiting, [this]() {
-        m_workspaceWidget->onApplicationExit();
-    });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStarted, [this]() {
-        m_workspaceWidget->onJobStart();
-    });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::jobStopping, [this]() {
-        m_workspaceWidget->onJobStop();
-    });
-    connect(m_applicationStateMachine, &ApplicationStateMachine::jobFinished, [this]() {
-        m_workspaceWidget->onJobDone();
-    });
 }
 
 void MainWindow::loadSettings()
@@ -344,7 +316,7 @@ void MainWindow::saveSettings()
 // Events
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-    if (m_applicationStateMachine->currentState() == ApplicationState::JOB_RUNNING) {
+    if (ApplicationStateMachine::self()->currentState() == ApplicationState::JOB_RUNNING) {
         auto reply = QMessageBox::question(this, QStringLiteral("Close Confirmation"), QStringLiteral("Some jobs are stil running, close anyway?"),
             QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::No) {
@@ -353,7 +325,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
         }
     }
     // TODO: Stop remaining running workers/threads
-    Q_EMIT m_applicationStateMachine->applicationExiting();
+    Q_EMIT ApplicationStateMachine::self()->applicationExiting();
     saveSettings();
     // Save user agents to file
     File::writeTextFile(Settings::instance().value(QStringLiteral(USER_AGENTS_FILE)).toString(), m_userAgentsWidget->toPlainText());
@@ -367,13 +339,13 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::onPulse()
 {
     m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
-    if (static_cast<bool>(m_applicationStateMachine->currentState() & JobActiveStates) and Thread::count() == 0)
-        emit m_applicationStateMachine->jobDone();
-    if (static_cast<bool>(m_applicationStateMachine->currentState() & JobActiveStates)) {
+    if (static_cast<bool>(ApplicationStateMachine::self()->currentState() & JobActiveStates) and Thread::count() == 0)
+        Q_EMIT ApplicationStateMachine::self()->jobDone();
+    if (static_cast<bool>(ApplicationStateMachine::self()->currentState() & JobActiveStates)) {
         QString jobRuntime = QDateTime::fromTime_t(static_cast<uint>(m_workspaceWidget->workerManager()->jobRuntime())).toUTC().toString("hh:mm:ss");
         m_jobRuntimeLabel->setText(QString(" Job runtime: %1 ").arg(jobRuntime));
     }
-    m_statusBarLabel->setText(m_applicationStateMachine->currentStateText());
+    m_statusBarLabel->setText(ApplicationStateMachine::self()->currentStateText());
 }
 
 void MainWindow::importUrlFile(const QString& filePath)

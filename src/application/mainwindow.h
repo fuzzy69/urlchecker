@@ -9,7 +9,7 @@ class QLabel;
 class QPushButton;
 class QStackedWidget;
 
-class ApplicationStateMachine;
+//class ApplicationStateMachine;
 class HelpWidget;
 class ProxiesWidget;
 class RecentFiles;
@@ -88,7 +88,7 @@ private:
     QLabel* m_jobStatsLabel;
     QLabel* m_jobRuntimeLabel;
 
-    ApplicationStateMachine* m_applicationStateMachine;
+    //    ApplicationStateMachine* m_applicationStateMachine;
     QTimer* m_pulseTimer;
     RecentFiles* m_recentFiles;
 
