@@ -134,6 +134,7 @@ if (EXISTS ${tidy_static_lib})
         src/application/widgets/mainwindowbase.cpp
         src/application/widgets/proxieswidget.cpp
         src/application/widgets/sidebarwidget.cpp
+        src/application/widgets/statusbarwidget.cpp
         src/application/widgets/tableswidget.cpp
         src/application/widgets/toolswidget.cpp
         src/application/widgets/useragentswidget.cpp

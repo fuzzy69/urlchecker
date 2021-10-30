@@ -50,6 +50,7 @@
 #include "widgets/proxieswidget.h"
 #include "widgets/settingswidget/settingswidget.h"
 #include "widgets/sidebarwidget.h"
+#include "widgets/statusbarwidget.h"
 #include "widgets/tableswidget.h"
 #include "widgets/toolswidget.h"
 #include "widgets/useragentswidget.h"
@@ -94,16 +95,17 @@ MainWindow::MainWindow(QWidget* parent)
         m_recentUrlFilesMenu->addAction(action);
     }
 
-    m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
+    //    m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
 
     ApplicationStateMachine::self()->start();
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
     QTimer::singleShot(3 * MILLIS_IN_SECOND, [this]() {
+        m_statusBarWidget->initButtons();
         //
-        m_toolsPushButton->setEnabled(true);
-        m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
-        m_logPushButton->setEnabled(true);
-        m_logPushButton->setChecked(m_workspaceWidget->logWidget()->isVisible());
+        //        m_toolsPushButton->setEnabled(true);
+        //        m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
+        //        m_logPushButton->setEnabled(true);
+        //        m_logPushButton->setChecked(m_workspaceWidget->logWidget()->isVisible());
         Q_EMIT ApplicationStateMachine::self()->applicationReady();
     });
 }
@@ -197,48 +199,60 @@ void MainWindow::createWidgets()
     m_mainStackedWidget->addWidget(m_userAgentsWidget);
     m_mainStackedWidget->addWidget(m_proxiesWidget);
     m_mainStackedWidget->addWidget(m_helpWidget);
+
+    m_statusBarWidget = new StatusBarWidget(this);
+
     // Central widget
+    m_mainLayout = new QHBoxLayout;
+    m_mainLayout->addWidget(m_sideBarWidget);
+    m_mainLayout->addWidget(m_mainStackedWidget);
     m_centralWidget = new QWidget;
-    m_centralLayout = new QHBoxLayout(m_centralWidget);
+    m_centralLayout = new QVBoxLayout(m_centralWidget);
     m_centralLayout->setContentsMargins(2, 2, 2, 0);
     m_centralLayout->setSpacing(2);
-    m_centralLayout->addWidget(m_sideBarWidget);
-    m_centralLayout->addWidget(m_mainStackedWidget);
+    m_centralLayout->addLayout(m_mainLayout);
+    m_centralLayout->addWidget(m_statusBarWidget);
+    //    m_centralLayout->addWidget(m_sideBarWidget);
+    //    m_centralLayout->addWidget(m_mainStackedWidget);
 
     setCentralWidget(m_centralWidget);
 
     ApplicationBridge::instance().setSettingsWidget(m_settingsWidget);
     ApplicationBridge::instance().setProxiesWidget(m_proxiesWidget);
+    ApplicationBridge::instance().setWorkspaceWidget(m_workspaceWidget);
+    ApplicationBridge::instance().setStatusBarWidget(m_statusBarWidget);
 }
 
 void MainWindow::createStatusBar()
 {
-    m_statusBar = new QStatusBar;
-    setStatusBar(m_statusBar);
-    m_statusBar->setContentsMargins(0, 0, 0, 0);
+    //    m_statusBar = new QStatusBar;
+    //    setStatusBar(m_statusBar);
+    //    m_statusBar->setContentsMargins(0, 0, 0, 0);
 
-    m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), QStringLiteral(" Tools"));
-    m_toolsPushButton->setCheckable(true);
-    m_toolsPushButton->setEnabled(false);
-    m_logPushButton = new QPushButton(QIcon(ICON_DOCUMENT_LIST), QStringLiteral(" Log"));
-    m_logPushButton->setCheckable(true);
-    m_logPushButton->setEnabled(false);
-    m_statusBarLabel = new QLabel;
-    m_activeThreadsLabel = new QLabel(tr(TEXT_ACTIVE_THREADS));
-    m_jobStatsLabel = new QLabel(" Completed 0/0 of 0 items. Success ratio 0.0% ");
-    m_jobStatsLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
-    m_jobRuntimeLabel = new QLabel(" Job runtime: ");
-    m_jobRuntimeLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
+    //    m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), QStringLiteral(" Tools"));
+    //    m_toolsPushButton->setCheckable(true);
+    //    m_toolsPushButton->setEnabled(false);
+    //    m_logPushButton = new QPushButton(QIcon(ICON_DOCUMENT_LIST), QStringLiteral(" Log"));
+    //    m_logPushButton->setCheckable(true);
+    //    m_logPushButton->setEnabled(false);
+    //    m_statusBarLabel = new QLabel;
+    //    m_activeThreadsLabel = new QLabel(tr(TEXT_ACTIVE_THREADS));
+    //    m_jobStatsLabel = new QLabel(" Completed 0/0 of 0 items. Success ratio 0.0% ");
+    //    m_jobStatsLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
+    //    m_jobRuntimeLabel = new QLabel(" Job runtime: ");
+    //    m_jobRuntimeLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
 
-    m_statusBar->addPermanentWidget(m_toolsPushButton);
-    m_statusBar->addPermanentWidget(m_logPushButton);
-    m_statusBar->addPermanentWidget(m_statusBarLabel, 1);
+    //    m_statusBar->addPermanentWidget(m_toolsPushButton);
+    //    m_statusBar->addPermanentWidget(m_logPushButton);
+    //    m_statusBar->addPermanentWidget(m_statusBarLabel, 1);
 
-    m_statusBar->addPermanentWidget(m_jobRuntimeLabel);
-    m_statusBar->addPermanentWidget(m_jobStatsLabel);
-    m_statusBar->addPermanentWidget(m_activeThreadsLabel);
+    //    m_statusBar->addPermanentWidget(m_jobRuntimeLabel);
+    //    m_statusBar->addPermanentWidget(m_jobStatsLabel);
+    //    m_statusBar->addPermanentWidget(m_activeThreadsLabel);
 
-    ApplicationBridge::instance().setStatusBar(m_statusBar);
+    //    ApplicationBridge::instance().setStatusBar(m_statusBar);
+
+    //    m_statusBarWidget = new StatusBarWidget(this);
 }
 
 void MainWindow::createConnections()
@@ -285,16 +299,6 @@ void MainWindow::createConnections()
         importUrlFile(filePath);
         m_recentFiles->addFile(filePath);
     });
-
-    // Statusbar
-    connect(m_toolsPushButton, &QPushButton::clicked, [this]() {
-        m_workspaceWidget->toggleSideTabWidget();
-        m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
-    });
-    connect(m_logPushButton, &QPushButton::clicked, [this]() {
-        m_workspaceWidget->toggleLogWidget();
-        m_logPushButton->setChecked(m_workspaceWidget->logWidget()->isVisible());
-    });
 }
 
 void MainWindow::loadSettings()
@@ -338,14 +342,16 @@ void MainWindow::closeEvent(QCloseEvent* event)
 // Slots
 void MainWindow::onPulse()
 {
-    m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
+    m_statusBarWidget->setActiveThreadsStatus(Thread::count());
+    //    m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
     if (static_cast<bool>(ApplicationStateMachine::self()->currentState() & JobActiveStates) and Thread::count() == 0)
         Q_EMIT ApplicationStateMachine::self()->jobDone();
     if (static_cast<bool>(ApplicationStateMachine::self()->currentState() & JobActiveStates)) {
         QString jobRuntime = QDateTime::fromTime_t(static_cast<uint>(m_workspaceWidget->workerManager()->jobRuntime())).toUTC().toString("hh:mm:ss");
-        m_jobRuntimeLabel->setText(QString(" Job runtime: %1 ").arg(jobRuntime));
+        //        m_jobRuntimeLabel->setText(QString(" Job runtime: %1 ").arg(jobRuntime));
     }
-    m_statusBarLabel->setText(ApplicationStateMachine::self()->currentStateText());
+    m_statusBarWidget->setStatusMessage(ApplicationStateMachine::self()->currentStateText());
+    //    m_statusBarLabel->setText(ApplicationStateMachine::self()->currentStateText());
 }
 
 void MainWindow::importUrlFile(const QString& filePath)

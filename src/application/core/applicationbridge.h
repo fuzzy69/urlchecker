@@ -1,13 +1,15 @@
 ﻿#pragma once
 
 class QProgressBar;
-class QStatusBar;
+//class QStatusBar;
 
 class LogWidget;
 class ProxiesWidget;
 class SettingsWidget;
+class StatusBarWidget;
 class TablesWidget;
 class ToolsWidget;
+class WorkspaceWidget;
 
 class ApplicationBridge final {
 public:
@@ -20,16 +22,18 @@ public:
     LogWidget* logWidget();
     ProxiesWidget* proxiesWidget();
     SettingsWidget* settingsWidget();
+    WorkspaceWidget* workspaceWidget();
     QProgressBar* progressBar();
-    QStatusBar* statusBar();
+    StatusBarWidget* statusBarWidget();
 
     void setTablesWidget(TablesWidget* tablesWidget);
     void setToolsWidget(ToolsWidget* toolsWidget);
     void setLogWidget(LogWidget* logWidget);
     void setProxiesWidget(ProxiesWidget* proxiesWidget);
     void setSettingsWidget(SettingsWidget* settingsWidget);
+    void setWorkspaceWidget(WorkspaceWidget* workspaceWidget);
     void setProgressBar(QProgressBar* progressBar);
-    void setStatusBar(QStatusBar* statusBar);
+    void setStatusBarWidget(StatusBarWidget* statusBarWidget);
 
 private:
     explicit ApplicationBridge() = default;
@@ -41,6 +45,7 @@ private:
     LogWidget* m_logWidget = nullptr;
     ProxiesWidget* m_proxiesWidget = nullptr;
     SettingsWidget* m_settingsWidget = nullptr;
+    WorkspaceWidget* m_workspaceWidget = nullptr;
     QProgressBar* m_progressBar = nullptr;
-    QStatusBar* m_statusBar = nullptr;
+    StatusBarWidget* m_statusBarWidget = nullptr;
 };

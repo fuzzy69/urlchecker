@@ -1,5 +1,7 @@
 ﻿#include "applicationbridge.h"
 
+#include "../widgets/statusbarwidget.h"
+
 ApplicationBridge& ApplicationBridge::instance()
 {
     static ApplicationBridge instance;
@@ -32,14 +34,19 @@ SettingsWidget* ApplicationBridge::settingsWidget()
     return m_settingsWidget;
 }
 
+WorkspaceWidget* ApplicationBridge::workspaceWidget()
+{
+    return m_workspaceWidget;
+}
+
 QProgressBar* ApplicationBridge::progressBar()
 {
     return m_progressBar;
 }
 
-QStatusBar* ApplicationBridge::statusBar()
+StatusBarWidget* ApplicationBridge::statusBarWidget()
 {
-    return m_statusBar;
+    return m_statusBarWidget;
 }
 
 void ApplicationBridge::setTablesWidget(TablesWidget* tablesWidget)
@@ -67,12 +74,17 @@ void ApplicationBridge::setSettingsWidget(SettingsWidget* settingsWidget)
     m_settingsWidget = settingsWidget;
 }
 
+void ApplicationBridge::setWorkspaceWidget(WorkspaceWidget* workspaceWidget)
+{
+    m_workspaceWidget = workspaceWidget;
+}
+
 void ApplicationBridge::setProgressBar(QProgressBar* progressBar)
 {
     m_progressBar = progressBar;
 }
 
-void ApplicationBridge::setStatusBar(QStatusBar* statusBar)
+void ApplicationBridge::setStatusBarWidget(StatusBarWidget* statusBarWidget)
 {
-    m_statusBar = statusBar;
+    m_statusBarWidget = statusBarWidget;
 }

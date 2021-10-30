@@ -22,6 +22,7 @@
 #include "../texts.h"
 #include "../widgets/filesystemwidget.h"
 #include "../widgets/logwidget.h"
+#include "../widgets/statusbarwidget.h"
 #include "../widgets/tableswidget.h"
 #include "toolswidget.h"
 
@@ -84,8 +85,9 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
     connect(m_workerManager, &WorkerManager::jobStopped, ApplicationStateMachine::self(), &ApplicationStateMachine::jobStop);
     connect(m_workerManager, &WorkerManager::progress, [this](const int itemsSuccessfullyDone, const int itemsDone, const int totalItems, const double progressPercentage) {
         m_progressBar->setValue(static_cast<int>(progressPercentage));
-        //        double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
-        //        m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
+        double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
+        ApplicationBridge::instance().statusBarWidget()->setJobStatsStatus(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
+        //            m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
 
     // Application states

@@ -5,6 +5,7 @@
 #include "widgets/mainwindowbase.h"
 
 class QHBoxLayout;
+class QVBoxLayout;
 class QLabel;
 class QPushButton;
 class QStackedWidget;
@@ -15,6 +16,7 @@ class ProxiesWidget;
 class RecentFiles;
 class SettingsWidget;
 class SideBarWidget;
+class StatusBarWidget;
 class UserAgentsWidget;
 class WorkspaceWidget;
 
@@ -67,7 +69,8 @@ private:
 
     // Widgets
     QWidget* m_centralWidget;
-    QHBoxLayout* m_centralLayout;
+    QHBoxLayout* m_mainLayout;
+    QVBoxLayout* m_centralLayout;
 
     SideBarWidget* m_sideBarWidget;
 
@@ -80,13 +83,14 @@ private:
     HelpWidget* m_helpWidget;
 
     // Statusbar
-    QStatusBar* m_statusBar;
-    QPushButton* m_toolsPushButton;
-    QPushButton* m_logPushButton;
-    QLabel* m_activeThreadsLabel;
-    QLabel* m_statusBarLabel;
-    QLabel* m_jobStatsLabel;
-    QLabel* m_jobRuntimeLabel;
+    //    QStatusBar* m_statusBar;
+    //    QPushButton* m_toolsPushButton;
+    //    QPushButton* m_logPushButton;
+    //    QLabel* m_activeThreadsLabel;
+    //    QLabel* m_statusBarLabel;
+    //    QLabel* m_jobStatsLabel;
+    //    QLabel* m_jobRuntimeLabel;
+    StatusBarWidget* m_statusBarWidget;
 
     //    ApplicationStateMachine* m_applicationStateMachine;
     QTimer* m_pulseTimer;
