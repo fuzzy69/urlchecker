@@ -87,14 +87,12 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
         m_progressBar->setValue(static_cast<int>(progressPercentage));
         double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
         ApplicationBridge::instance().statusBarWidget()->setJobStatsStatus(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
-        //            m_jobStatsLabel->setText(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
 
     // Application states
     connect(ApplicationStateMachine::self(), &ApplicationStateMachine::applicationStarted, this, &WorkspaceWidget::onApplicationStart);
     connect(ApplicationStateMachine::self(), &ApplicationStateMachine::applicationIdling, [this]() {
         onApplicationReady();
-        //        m_statusBarLabel->setText(ApplicationStates.value(ApplicationState::APPLICATION_IDLING));
     });
     connect(ApplicationStateMachine::self(), &ApplicationStateMachine::applicationExiting, this, &WorkspaceWidget::onApplicationExit);
     connect(ApplicationStateMachine::self(), &ApplicationStateMachine::jobStarted, this, &WorkspaceWidget::onJobStart);

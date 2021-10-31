@@ -72,8 +72,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     QDir applicationDir(QApplication::applicationDirPath());
     applicationDir.mkdir("data");
-    //
-    //    m_applicationStateMachine = new ApplicationStateMachine(this);
+
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(MAX_RECENT_FILES, this);
 
@@ -95,17 +94,10 @@ MainWindow::MainWindow(QWidget* parent)
         m_recentUrlFilesMenu->addAction(action);
     }
 
-    //    m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
-
     ApplicationStateMachine::self()->start();
     m_pulseTimer->start(1 * MILLIS_IN_SECOND);
     QTimer::singleShot(3 * MILLIS_IN_SECOND, [this]() {
         m_statusBarWidget->initButtons();
-        //
-        //        m_toolsPushButton->setEnabled(true);
-        //        m_toolsPushButton->setChecked(m_workspaceWidget->sideTabWidget()->isVisible());
-        //        m_logPushButton->setEnabled(true);
-        //        m_logPushButton->setChecked(m_workspaceWidget->logWidget()->isVisible());
         Q_EMIT ApplicationStateMachine::self()->applicationReady();
     });
 }
@@ -125,30 +117,30 @@ void MainWindow::createMenuBar()
     m_windowMenu = menuBar()->addMenu(tr("Window"));
     m_helpMenu = menuBar()->addMenu(tr("Help"));
     // File menu
-    m_fileMenu->addAction(ActionsManager::instance().action("importUrls"));
+    m_fileMenu->addAction(ActionsManager::instance().action(ACTION_IMPORT_URLS));
     m_recentUrlFilesMenu = new QMenu(tr("Open Recent URL File"), this);
     m_fileMenu->addMenu(m_recentUrlFilesMenu);
-    m_recentUrlFilesMenu->addAction(ActionsManager::instance().action("clearRecentUrlFiles"));
+    m_recentUrlFilesMenu->addAction(ActionsManager::instance().action(ACTION_CLEAR_RECENT_URL_FILES));
     m_recentUrlFilesMenu->addSeparator();
-    m_fileMenu->addAction(ActionsManager::instance().action("exportResults"));
+    m_fileMenu->addAction(ActionsManager::instance().action(ACTION_EXPORT_RESULTS));
     m_fileMenu->addSeparator();
-    m_fileMenu->addAction(ActionsManager::instance().action("quit"));
+    m_fileMenu->addAction(ActionsManager::instance().action(ACTION_QUIT));
     // Selection menu
-    m_selectionMenu->addAction(ActionsManager::instance().action("selectAllRows"));
-    m_selectionMenu->addAction(ActionsManager::instance().action("invertRowsSelection"));
-    m_selectionMenu->addAction(ActionsManager::instance().action("selectGroup"));
+    m_selectionMenu->addAction(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS));
+    m_selectionMenu->addAction(ActionsManager::instance().action(ACTION_INVERT_ROWS_SELECTION));
+    m_selectionMenu->addAction(ActionsManager::instance().action(ACTION_SELECT_GROUP));
     // Edit menu
-    m_editMenu->addAction(ActionsManager::instance().action("removeSelectedRows"));
-    m_editMenu->addAction(ActionsManager::instance().action("removAllRows"));
-    m_editMenu->addAction(ActionsManager::instance().action("removeDuplicates"));
+    m_editMenu->addAction(ActionsManager::instance().action(ACTION_REMOVE_SELECTED_ROWS));
+    m_editMenu->addAction(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS));
+    m_editMenu->addAction(ActionsManager::instance().action(ACTION_REMOVE_DUPLICATE_ROWS));
     // Filter menu
     // URL menu
     m_urlMenu->addAction(ActionsManager::instance().action(ACTION_TRIM_URL_TO_ROOT));
     m_urlMenu->addAction(ActionsManager::instance().action(ACTION_STRIP_TRAILING_SLASH));
     // Window menu
-    m_windowMenu->addAction(ActionsManager::instance().action("centerWindow"));
+    m_windowMenu->addAction(ActionsManager::instance().action(ACTION_CENTER_WINDOW));
     // Help menu
-    m_helpMenu->addAction(ActionsManager::instance().action("about"));
+    m_helpMenu->addAction(ActionsManager::instance().action(ACTION_ABOUT));
 }
 
 void MainWindow::createToolBar()
@@ -159,21 +151,19 @@ void MainWindow::createToolBar()
     m_toolBar->setFloatable(false);
     m_toolBar->setMovable(false);
     // Buttons
-    m_toolBar->addAction(ActionsManager::instance().action("importUrls"));
-    m_toolBar->addAction(ActionsManager::instance().action("exportResults"));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_IMPORT_URLS));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_EXPORT_RESULTS));
     m_toolBar->addSeparator();
-    m_toolBar->addAction(ActionsManager::instance().action("selectAllRows"));
-    m_toolBar->addAction(ActionsManager::instance().action("invertRowsSelection"));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_SELECT_ALL_ROWS));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_INVERT_ROWS_SELECTION));
     m_toolBar->addAction(ActionsManager::instance().action(ACTION_SELECT_GROUP));
     m_toolBar->addSeparator();
-    m_toolBar->addAction(ActionsManager::instance().action("removeSelectedRows"));
-    m_toolBar->addAction(ActionsManager::instance().action("removeDuplicates"));
-    m_toolBar->addAction(ActionsManager::instance().action("removAllRows"));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_REMOVE_SELECTED_ROWS));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_REMOVE_DUPLICATE_ROWS));
+    m_toolBar->addAction(ActionsManager::instance().action(ACTION_REMOVE_ALL_ROWS));
     m_toolBar->addSeparator();
     m_toolBar->addAction(ActionsManager::instance().action(ACTION_TRIM_URL_TO_ROOT));
     m_toolBar->addAction(ActionsManager::instance().action(ACTION_STRIP_TRAILING_SLASH));
-    //    m_toolBar->addSeparator();
-    //    m_toolBar->addAction(ActionsManager::instance().action("quit"));
 }
 
 void MainWindow::createWidgets()
@@ -212,8 +202,6 @@ void MainWindow::createWidgets()
     m_centralLayout->setSpacing(2);
     m_centralLayout->addLayout(m_mainLayout);
     m_centralLayout->addWidget(m_statusBarWidget);
-    //    m_centralLayout->addWidget(m_sideBarWidget);
-    //    m_centralLayout->addWidget(m_mainStackedWidget);
 
     setCentralWidget(m_centralWidget);
 
@@ -221,38 +209,6 @@ void MainWindow::createWidgets()
     ApplicationBridge::instance().setProxiesWidget(m_proxiesWidget);
     ApplicationBridge::instance().setWorkspaceWidget(m_workspaceWidget);
     ApplicationBridge::instance().setStatusBarWidget(m_statusBarWidget);
-}
-
-void MainWindow::createStatusBar()
-{
-    //    m_statusBar = new QStatusBar;
-    //    setStatusBar(m_statusBar);
-    //    m_statusBar->setContentsMargins(0, 0, 0, 0);
-
-    //    m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), QStringLiteral(" Tools"));
-    //    m_toolsPushButton->setCheckable(true);
-    //    m_toolsPushButton->setEnabled(false);
-    //    m_logPushButton = new QPushButton(QIcon(ICON_DOCUMENT_LIST), QStringLiteral(" Log"));
-    //    m_logPushButton->setCheckable(true);
-    //    m_logPushButton->setEnabled(false);
-    //    m_statusBarLabel = new QLabel;
-    //    m_activeThreadsLabel = new QLabel(tr(TEXT_ACTIVE_THREADS));
-    //    m_jobStatsLabel = new QLabel(" Completed 0/0 of 0 items. Success ratio 0.0% ");
-    //    m_jobStatsLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
-    //    m_jobRuntimeLabel = new QLabel(" Job runtime: ");
-    //    m_jobRuntimeLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
-
-    //    m_statusBar->addPermanentWidget(m_toolsPushButton);
-    //    m_statusBar->addPermanentWidget(m_logPushButton);
-    //    m_statusBar->addPermanentWidget(m_statusBarLabel, 1);
-
-    //    m_statusBar->addPermanentWidget(m_jobRuntimeLabel);
-    //    m_statusBar->addPermanentWidget(m_jobStatsLabel);
-    //    m_statusBar->addPermanentWidget(m_activeThreadsLabel);
-
-    //    ApplicationBridge::instance().setStatusBar(m_statusBar);
-
-    //    m_statusBarWidget = new StatusBarWidget(this);
 }
 
 void MainWindow::createConnections()
@@ -343,15 +299,12 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::onPulse()
 {
     m_statusBarWidget->setActiveThreadsStatus(Thread::count());
-    //    m_activeThreadsLabel->setText(QString(" Active threads: %1").arg(Thread::count()));
     if (static_cast<bool>(ApplicationStateMachine::self()->currentState() & JobActiveStates) and Thread::count() == 0)
         Q_EMIT ApplicationStateMachine::self()->jobDone();
     if (static_cast<bool>(ApplicationStateMachine::self()->currentState() & JobActiveStates)) {
         QString jobRuntime = QDateTime::fromTime_t(static_cast<uint>(m_workspaceWidget->workerManager()->jobRuntime())).toUTC().toString("hh:mm:ss");
-        //        m_jobRuntimeLabel->setText(QString(" Job runtime: %1 ").arg(jobRuntime));
     }
     m_statusBarWidget->setStatusMessage(ApplicationStateMachine::self()->currentStateText());
-    //    m_statusBarLabel->setText(ApplicationStateMachine::self()->currentStateText());
 }
 
 void MainWindow::importUrlFile(const QString& filePath)

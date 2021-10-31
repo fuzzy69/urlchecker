@@ -10,7 +10,6 @@ class QLabel;
 class QPushButton;
 class QStackedWidget;
 
-//class ApplicationStateMachine;
 class HelpWidget;
 class ProxiesWidget;
 class RecentFiles;
@@ -82,17 +81,8 @@ private:
     ProxiesWidget* m_proxiesWidget;
     HelpWidget* m_helpWidget;
 
-    // Statusbar
-    //    QStatusBar* m_statusBar;
-    //    QPushButton* m_toolsPushButton;
-    //    QPushButton* m_logPushButton;
-    //    QLabel* m_activeThreadsLabel;
-    //    QLabel* m_statusBarLabel;
-    //    QLabel* m_jobStatsLabel;
-    //    QLabel* m_jobRuntimeLabel;
     StatusBarWidget* m_statusBarWidget;
 
-    //    ApplicationStateMachine* m_applicationStateMachine;
     QTimer* m_pulseTimer;
     RecentFiles* m_recentFiles;
 
