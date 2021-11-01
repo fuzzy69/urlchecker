@@ -80,7 +80,6 @@ MainWindow::MainWindow(QWidget* parent)
     createMenuBar();
     createToolBar();
     createWidgets();
-    createStatusBar();
     createConnections();
 
     initSettings(applicationDir);

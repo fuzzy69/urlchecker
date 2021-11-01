@@ -41,7 +41,6 @@ private:
     void createMenuBar();
     void createToolBar();
     void createWidgets();
-    void createStatusBar();
     void createConnections();
 
     void loadSettings() override;
