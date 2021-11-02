@@ -173,7 +173,8 @@ if (ENABLE_TEST)
     add_library(catch INTERFACE)
     target_include_directories(catch INTERFACE ${CATCH2_INCLUDE_DIR})
 
-    add_subdirectory(tests)
+    add_subdirectory(tests/misc)
+    add_subdirectory(tests/widgets)
 endif()
 
 else()

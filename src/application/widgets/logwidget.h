@@ -10,7 +10,7 @@ class LogWidget : public QWidget {
 public:
     explicit LogWidget(QWidget* parent = nullptr);
 
-signals:
+    QString text() const;
 
 public Q_SLOTS:
     void onLog(const QString& message);

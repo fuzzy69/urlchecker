@@ -15,6 +15,11 @@ LogWidget::LogWidget(QWidget* parent)
     m_mainLayout->addWidget(m_logPlainTextEdit);
 }
 
+QString LogWidget::text() const
+{
+    return m_logPlainTextEdit->toPlainText();
+}
+
 void LogWidget::onLog(const QString& message)
 {
     m_logPlainTextEdit->appendPlainText(message);
