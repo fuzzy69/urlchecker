@@ -65,5 +65,7 @@ bin/urlchecker
 
 Run tests with:
 ```
-bin/tests
+bin/testcommon
+bin/testtools
+bin/testwidgets
 ```

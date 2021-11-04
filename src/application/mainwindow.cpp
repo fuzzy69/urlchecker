@@ -24,12 +24,6 @@
 
 #include "libs/csv/single_include/csv.hpp"
 
-#include "my/browserutils.h"
-#include "my/file.h"
-#include "my/proxymanager.h"
-#include "my/proxyutils.h"
-#include "my/useragents.h"
-
 #include "config.h"
 #include "constants.h"
 #include "core/applicationbridge.h"
@@ -60,10 +54,19 @@
 #include "core/actionsmanager.h"
 #include "core/workermanager.h"
 
-using my::browser::UserAgentsManager;
-using my::data::USER_AGENTS_TEXT;
-using my::filesystem::File;
-using my::network::ProxyManager;
+#include "../common/file.h"
+#include "../common/proxymanager.h"
+#include "../common/proxyutils.h"
+#include "../common/urlutils.h"
+#include "../common/useragentmanager.h"
+#include "../data/useragents.h"
+
+using common::browser::UserAgentManager;
+using common::filesystem::File;
+using common::network::loadProxiesFromFile;
+using common::network::ProxyManager;
+using common::url::loadUrlsFromFile;
+using data::USER_AGENTS_TEXT;
 
 MainWindow::MainWindow(QWidget* parent)
     : MainWindowBase(parent)
@@ -428,10 +431,10 @@ void MainWindow::initUserAgents(const QDir& applicationDir)
         File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
     }
     for (auto& line : File::readTextLines(userAgentsFilePath)) {
-        UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
+        UserAgentManager::self().add_user_agent(line.trimmed().toStdString());
         m_userAgentsWidget->append(line);
     }
-    UserAgentsManager<QString>::instance().set_default_user_agent(USER_AGENT);
+    UserAgentManager::self().set_default_user_agent(USER_AGENT);
 }
 
 void MainWindow::initProxies(const QDir& applicationDir)
@@ -440,8 +443,8 @@ void MainWindow::initProxies(const QDir& applicationDir)
     if (!QFile::exists(proxiesFilePath)) {
         File::writeTextFile(proxiesFilePath, QStringLiteral(""));
     }
-    for (auto& proxy : my::network::loadProxiesFromFile(proxiesFilePath)) {
-        ProxyManager::instance().add_proxy(proxy);
+    for (auto& proxy : loadProxiesFromFile(proxiesFilePath)) {
+        ProxyManager::self().add_proxy(proxy);
         m_proxiesWidget->append(QString::fromStdString(proxy));
     }
 }

@@ -1,7 +1,7 @@
 ﻿#include <optional>
+#include <qglobal.h>
 #include <string>
 #include <unordered_set>
-#include <qglobal.h>
 #ifdef Q_OS_WIN
 #include <ciso646>
 #endif
@@ -10,7 +10,7 @@
 #include <QDir>
 #include <QUrl>
 
-#include "my/text.h"
+#include "../../../common/text.h"
 
 #include "../../config.h"
 #include "../../constants.h"
@@ -23,7 +23,7 @@
 #include "scrapeimagesworker.h"
 #include "utilities.h"
 
-using my::text::starts_with;
+using common::text::starts_with;
 
 ScrapeImagesWorker::ScrapeImagesWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
     : Worker(id, inputDataQueue, mutex, settings, parent)

@@ -2,16 +2,16 @@
 
 #include "requests.h"
 
-#include "my/browserutils.h"
-#include "my/httpproxy.h"
-#include "my/proxymanager.h"
+#include "../../common/httpproxy.h"
+#include "../../common/proxymanager.h"
+#include "../../common/useragentmanager.h"
 
 #include "../config.h"
 #include "../constants.h"
 
-using my::browser::UserAgentsManager;
-using my::network::HttpProxy;
-using my::network::ProxyManager;
+using common::browser::UserAgentManager;
+using common::network::HttpProxy;
+using common::network::ProxyManager;
 
 Requests::Requests(const QVariantMap& settings)
     : m_settings(settings)
@@ -24,10 +24,10 @@ Requests::Requests(const QVariantMap& settings)
 cpr::Response Requests::get(const std::string& url)
 {
     auto headers = cpr::Header {
-        { "user-agent", UserAgentsManager<QString>::instance().get_user_agent().toStdString() }
+        { "user-agent", UserAgentManager::self().get_user_agent() }
     };
     if (m_useProxies) {
-        auto proxy = ProxyManager::instance().get_proxy();
+        auto proxy = ProxyManager::self().get_proxy();
         auto proxies = cpr::Proxies {
             { "http", proxy.to_text() },
             { "https", proxy.to_text() }
@@ -41,10 +41,10 @@ cpr::Response Requests::get(const std::string& url)
 cpr::Response Requests::head(const std::string& url)
 {
     auto headers = cpr::Header {
-        { "user-agent", UserAgentsManager<QString>::instance().get_user_agent().toStdString() }
+        { "user-agent", UserAgentManager::self().get_user_agent() }
     };
     if (m_useProxies) {
-        auto proxy = ProxyManager::instance().get_proxy();
+        auto proxy = ProxyManager::self().get_proxy();
         auto proxies = cpr::Proxies {
             { "http", proxy.to_text() },
             { "https", proxy.to_text() }
@@ -59,7 +59,7 @@ cpr::Response Requests::download(const std::string& url, const std::string& file
 {
     auto ofstream = std::ofstream(filePath);
     auto headers = cpr::Header {
-        { "user-agent", UserAgentsManager<QString>::instance().get_user_agent().toStdString() }
+        { "user-agent", UserAgentManager::self().get_user_agent() }
     };
     auto session = cpr::Session();
     session.SetUrl(cpr::Url(url));

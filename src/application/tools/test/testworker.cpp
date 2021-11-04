@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QUrl>
 
-#include "my/text.h"
+#include "../../../common/text.h"
 
 #include "../../config.h"
 #include "../../constants.h"
@@ -13,7 +13,7 @@
 #include "../tools.h"
 #include "testworker.h"
 
-using my::text::trim_whitespaces;
+using common::text::trim_whitespaces;
 
 TestWorker::TestWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
     : Worker(id, inputDataQueue, mutex, settings, parent)

@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QUrl>
 
+#include "../../../common/text.h"
 #include "../../config.h"
 #include "../../constants.h"
 #include "../../core/resultstatus.h"
@@ -15,11 +16,10 @@
 #include "../../utils/tidyhtml.h"
 #include "../tools.h"
 #include "common.h"
-#include "my/text.h"
 #include "utilities.h"
 #include "worker.h"
 
-using my::text::strip;
+using common::text::strip;
 
 ScrapeHtmlWorker::ScrapeHtmlWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
     : Worker(id, inputDataQueue, mutex, settings, parent)

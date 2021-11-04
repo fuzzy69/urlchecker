@@ -38,7 +38,7 @@ if (NOT EXISTS ${tidy_static_lib})
     endif()
 endif()
 
-option(ENABLE_TESTS "Turn on to enable tests" ON)
+option(ENABLE_TESTS "Turn on to enable tests" OFF)
 
 if (EXISTS ${tidy_static_lib})
     add_executable(
@@ -142,6 +142,15 @@ if (EXISTS ${tidy_static_lib})
         src/application/widgets/useragentswidget.cpp
         src/application/widgets/workspacewidget.cpp
 
+        src/common/file.cpp
+        src/common/httpproxy.cpp
+        src/common/proxymanager.cpp
+        src/common/proxyutils.cpp
+        src/common/random.cpp
+        src/common/text.cpp
+        src/common/urlutils.cpp
+        src/common/useragentmanager.cpp
+
     )
 
 if (ENABLE_TESTS)
@@ -152,7 +161,7 @@ endif()
     target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)
     target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Help)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${CPR_LIBRARIES})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${MY_LIBRARIES})
+#    target_link_libraries(${PROJECT_NAME} PRIVATE ${MY_LIBRARIES})
     target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)
     #target_link_libraries(${PROJECT_NAME} PRIVATE tidy)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${tidy_static_lib})
@@ -179,8 +188,9 @@ if (ENABLE_TESTS)
     add_library(catch INTERFACE)
     target_include_directories(catch INTERFACE ${CATCH2_INCLUDE_DIR})
 
-    add_subdirectory(tests/misc)
-    add_subdirectory(tests/widgets)
+    add_subdirectory(tests)
+#    add_subdirectory(tests/misc)
+#    add_subdirectory(tests/widgets)
 endif()
 
 else()

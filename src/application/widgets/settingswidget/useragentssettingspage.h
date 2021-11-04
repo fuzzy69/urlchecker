@@ -2,11 +2,11 @@
 
 #include <QWidget>
 
-#include "my/browserutils.h"
+#include "../../../common/useragentmanager.h"
 
 class Ui_UserAgentsSettings;
 
-using my::browser::RotationStrategy;
+using common::browser::RotationStrategy;
 
 class UserAgentsSettingsPage : public QWidget {
     Q_OBJECT

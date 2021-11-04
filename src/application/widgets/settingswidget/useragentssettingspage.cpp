@@ -6,7 +6,7 @@
 #include "../../icons.h"
 #include "../../texts.h"
 
-using my::browser::UserAgentsManager;
+using common::browser::UserAgentManager;
 
 UserAgentsSettingsPage::UserAgentsSettingsPage(QWidget* parent)
     : QWidget(parent)
@@ -26,8 +26,8 @@ void UserAgentsSettingsPage::hideEvent(QHideEvent* event)
     const auto defaultUserAgent = m_ui->globalUserAgentLineEdit->text();
     Settings::instance().setValue(USER_AGENT, QVariant(defaultUserAgent));
     Settings::instance().setValue(QStringLiteral("userAgentsStrategy"), QVariant(static_cast<int>(rotationStrategy())));
-    UserAgentsManager<QString>::instance().set_default_user_agent(defaultUserAgent);
-    UserAgentsManager<QString>::instance().set_rotation_strategy(rotationStrategy());
+    UserAgentManager::self().set_default_user_agent(defaultUserAgent.toStdString());
+    UserAgentManager::self().set_rotation_strategy(rotationStrategy());
 }
 
 void UserAgentsSettingsPage::showEvent(QShowEvent* event)

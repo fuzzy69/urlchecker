@@ -5,8 +5,6 @@
 #include <QThread>
 #include <QUrl>
 
-#include "my/text.h"
-
 #include "../../config.h"
 #include "../../constants.h"
 #include "../../core/resultstatus.h"

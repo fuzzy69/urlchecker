@@ -2,19 +2,15 @@
 
 #include <QFile>
 
-#include "my/browserutils.h"
-#include "my/file.h"
-#include "my/proxymanager.h"
-#include "my/proxyutils.h"
-#include "my/useragents.h"
+#include "../../common/file.h"
+#include "../../common/useragentmanager.h"
+#include "../../data/useragents.h"
 
 #include "../texts.h"
 
-using my::browser::UserAgentsManager;
-using my::data::USER_AGENTS_TEXT;
-using my::filesystem::File;
-using my::network::loadProxiesFromFile;
-using my::network::ProxyManager;
+using common::browser::UserAgentManager;
+using common::filesystem::File;
+using data::USER_AGENTS_TEXT;
 
 void initUserAgents(const QString& userAgentsFilePath)
 {
@@ -22,6 +18,6 @@ void initUserAgents(const QString& userAgentsFilePath)
         File::writeTextFile(userAgentsFilePath, QString(USER_AGENTS_TEXT));
     }
     for (auto& line : File::readTextLines(userAgentsFilePath)) {
-        UserAgentsManager<QString>::instance().add_user_agent(line.trimmed());
+        UserAgentManager::self().add_user_agent(line.trimmed().toStdString());
     }
 }

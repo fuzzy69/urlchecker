@@ -1,6 +1,5 @@
 ﻿option(CPR_BUILD_TESTS "Set to ON to build cpr tests." ON)
 set(CPR_BUILD_TESTS OFF)
 add_subdirectory(cpr)
-add_subdirectory(my)
 add_subdirectory(pugixml)
 add_subdirectory(csv)

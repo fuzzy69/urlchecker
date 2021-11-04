@@ -6,7 +6,7 @@
 #include <QThread>
 #include <QUrl>
 
-#include "my/text.h"
+#include "../../../common/text.h"
 
 #include "../../config.h"
 #include "../../constants.h"
@@ -17,7 +17,7 @@
 #include "scrapesitemapsworker.h"
 #include "utilities.h"
 
-using my::text::starts_with;
+using common::text::starts_with;
 
 ScrapeSitemapskWorker::ScrapeSitemapskWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
     : Worker(id, inputDataQueue, mutex, settings, parent)
