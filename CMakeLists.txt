@@ -38,6 +38,8 @@ if (NOT EXISTS ${tidy_static_lib})
     endif()
 endif()
 
+option(ENABLE_TESTS "Turn on to enable tests" ON)
+
 if (EXISTS ${tidy_static_lib})
     add_executable(
         ${PROJECT_NAME}
@@ -142,6 +144,11 @@ if (EXISTS ${tidy_static_lib})
 
     )
 
+if (ENABLE_TESTS)
+    add_definitions(-DUNIT_TESTING=1)
+#    target_compile_definitions(${PROJECT_NAME} PRIVATE UNIT_TESTING=1)
+endif()
+
     target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets)
     target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Help)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${CPR_LIBRARIES})
@@ -165,8 +172,7 @@ add_custom_command(
 )
 
 # Tests
-option(ENABLE_TEST "Turn on to enable tests" ON)
-if (ENABLE_TEST)
+if (ENABLE_TESTS)
     enable_testing()
 
     set(CATCH2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/catch2)

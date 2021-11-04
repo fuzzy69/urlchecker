@@ -18,6 +18,14 @@ public:
     QSize minimumSizeHint() const override;
     void setCurrentAction(int index);
 
+#if UNIT_TESTING
+    QList<QAction*> actions()
+    {
+        return m_actions;
+    }
+    QAction* checkedAction() { return m_checkedAction; }
+#endif
+
 Q_SIGNALS:
     void currentActionIndexChanged(int index);
 
