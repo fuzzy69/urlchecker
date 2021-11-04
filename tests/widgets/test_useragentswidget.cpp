@@ -13,7 +13,7 @@ Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
 Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36)");
     UserAgentsWidget userAgentsWidget;
     QApplication::clipboard()->setText(userAgentsText);
-    userAgentsWidget.m_pasteUserAgentsAction->trigger();
+    userAgentsWidget.pasteUserAgentsAction()->trigger();
     QCOMPARE(userAgentsWidget.toPlainText(), userAgentsText);
 }
 
@@ -23,8 +23,8 @@ void TestUserAgentsWidget::testRemoveAllUserAgents()
     UserAgentsWidget userAgentsWidget;
     QApplication::clipboard()->setText(userAgentsText);
     QCOMPARE(userAgentsWidget.toPlainText().size(), 0);
-    userAgentsWidget.m_pasteUserAgentsAction->trigger();
+    userAgentsWidget.pasteUserAgentsAction()->trigger();
     QCOMPARE(userAgentsWidget.toPlainText().size(), userAgentsText.size());
-    userAgentsWidget.m_removeAllUserAgentsAction->trigger();
+    userAgentsWidget.removeAllUserAgentsAction()->trigger();
     QCOMPARE(userAgentsWidget.toPlainText().size(), 0);
 }
