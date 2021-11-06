@@ -16,6 +16,10 @@ public:
     void setJobRuntimeStatus(const QString& jobRuntime);
     void setJobStatsStatus(const QString& jobStats);
 
+Q_SIGNALS:
+    void toggleToolsWidget(bool visible);
+    void toggleLogWidget(bool visible);
+
 private:
     QHBoxLayout* m_mainLayout;
     QPushButton* m_toolsPushButton;

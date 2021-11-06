@@ -257,6 +257,14 @@ void MainWindow::createConnections()
         importUrlFile(filePath);
         m_recentFiles->addFile(filePath);
     });
+
+    // Statusbar
+    connect(m_statusBarWidget, &StatusBarWidget::toggleToolsWidget, [this](bool visible) {
+        m_workspaceWidget->sideTabWidget()->setVisible(visible);
+    });
+    connect(m_statusBarWidget, &StatusBarWidget::toggleLogWidget, [this](bool visible) {
+        m_workspaceWidget->logWidget()->setVisible(visible);
+    });
 }
 
 void MainWindow::loadSettings()
@@ -305,6 +313,7 @@ void MainWindow::onPulse()
         Q_EMIT ApplicationStateMachine::self()->jobDone();
     if (static_cast<bool>(ApplicationStateMachine::self()->currentState() & JobActiveStates)) {
         QString jobRuntime = QDateTime::fromTime_t(static_cast<uint>(m_workspaceWidget->workerManager()->jobRuntime())).toUTC().toString("hh:mm:ss");
+        m_statusBarWidget->setJobRuntimeStatus(jobRuntime);
     }
     m_statusBarWidget->setStatusMessage(ApplicationStateMachine::self()->currentStateText());
 }

@@ -1,33 +1,37 @@
-﻿#include <QHBoxLayout>
+﻿#include <QDebug>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QTabWidget>
 
-#include "../core/applicationbridge.h"
 #include "../icons.h"
 #include "../texts.h"
-#include "logwidget.h"
 #include "statusbarwidget.h"
-#include "workspacewidget.h"
 
 StatusBarWidget::StatusBarWidget(QWidget* parent)
     : QWidget(parent)
 {
+    setObjectName("statusBar");
     m_mainLayout = new QHBoxLayout(this);
     m_mainLayout->setContentsMargins(0, 0, 0, 2);
     m_mainLayout->setSpacing(2);
     m_toolsPushButton = new QPushButton(QIcon(ICON_HAMMER), QStringLiteral(" Tools"));
+    m_toolsPushButton->setObjectName("toolsPushButton");
     m_toolsPushButton->setCheckable(true);
     m_toolsPushButton->setEnabled(false);
     m_logPushButton = new QPushButton(QIcon(ICON_DOCUMENT_LIST), QStringLiteral(" Log"));
+    m_logPushButton->setObjectName("logPushButton");
     m_logPushButton->setCheckable(true);
     m_logPushButton->setEnabled(false);
     m_statusMessageLabel = new QLabel(tr("Ready."));
     m_jobRuntimeLabel = new QLabel(" Job runtime: ");
+    m_jobRuntimeLabel->setObjectName("jobRuntimeLabel");
     m_jobRuntimeLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
     m_jobStatsLabel = new QLabel(" Completed 0/0 of 0 items. Success ratio 0.0% ");
+    m_jobStatsLabel->setObjectName("jobStatsLabel");
     m_jobStatsLabel->setStyleSheet(QStringLiteral("border-left: 1px solid #BFBFBF;"));
     m_activeThreadsLabel = new QLabel(tr(TEXT_ACTIVE_THREADS));
+    m_activeThreadsLabel->setObjectName("activeThreadsLabel");
 
     m_mainLayout->addWidget(m_toolsPushButton);
     m_mainLayout->addWidget(m_logPushButton);
@@ -37,29 +41,20 @@ StatusBarWidget::StatusBarWidget(QWidget* parent)
     m_mainLayout->addWidget(m_jobStatsLabel);
     m_mainLayout->addWidget(m_activeThreadsLabel);
 
-    connect(m_toolsPushButton, &QPushButton::clicked, [this]() {
-        WorkspaceWidget* workspaceWidget = ApplicationBridge::instance().workspaceWidget();
-        workspaceWidget->toggleSideTabWidget();
-        m_toolsPushButton->setChecked(workspaceWidget->sideTabWidget()->isVisible());
+    connect(m_toolsPushButton, &QPushButton::clicked, [this](bool checked) {
+        Q_EMIT toggleToolsWidget(checked);
     });
-    connect(m_logPushButton, &QPushButton::clicked, [this]() {
-        LogWidget* logWidget = ApplicationBridge::instance().logWidget();
-        if (logWidget->isVisible()) {
-            logWidget->hide();
-            m_logPushButton->setChecked(false);
-        } else {
-            logWidget->show();
-            m_logPushButton->setChecked(true);
-        }
+    connect(m_logPushButton, &QPushButton::clicked, [this](bool checked) {
+        Q_EMIT toggleLogWidget(checked);
     });
 }
 
 void StatusBarWidget::initButtons()
 {
     m_toolsPushButton->setEnabled(true);
-    m_toolsPushButton->setChecked(ApplicationBridge::instance().workspaceWidget()->sideTabWidget()->isVisible());
+    m_toolsPushButton->setChecked(true);
     m_logPushButton->setEnabled(true);
-    m_logPushButton->setChecked(ApplicationBridge::instance().logWidget()->isVisible());
+    m_logPushButton->setChecked(true);
 }
 
 void StatusBarWidget::setStatusMessage(const QString& message)
