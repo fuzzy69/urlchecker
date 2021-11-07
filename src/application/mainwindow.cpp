@@ -52,6 +52,7 @@
 
 #include "actions.h"
 #include "core/actionsmanager.h"
+#include "core/toolsmanager.h"
 #include "core/workermanager.h"
 
 #include "../common/file.h"
@@ -60,6 +61,20 @@
 #include "../common/urlutils.h"
 #include "../common/useragentmanager.h"
 #include "../data/useragents.h"
+
+#include "tools/alexarank/alexaranktool.h"
+#include "tools/checksearchengineindex/checksearchengineindextool.h"
+#include "tools/dummy/dummytool.h"
+#include "tools/scrapeemails/scrapeemailsstool.h"
+#include "tools/scrapehtml/tool.h"
+#include "tools/scrapeimages/scrapeimagestool.h"
+#include "tools/scrapelinks/scrapelinkstool.h"
+#include "tools/scrapemeta/tool.h"
+#include "tools/scrapephonenumbers/scrapephonenumberstool.h"
+#include "tools/scrapeproxies/scrapeproxiestool.h"
+#include "tools/scrapesitemaps/scrapesitemapstool.h"
+#include "tools/test/testtool.h"
+#include "tools/urlstatus/urlstatustool.h"
 
 using common::browser::UserAgentManager;
 using common::filesystem::File;
@@ -78,6 +93,22 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_pulseTimer = new QTimer(this);
     m_recentFiles = new RecentFiles(MAX_RECENT_FILES, this);
+
+    // Add tools
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new DummyTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new TestTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new ScrapeProxiesTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new ScrapeLinksTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new UrlStatusTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new AlexaRankTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new ScrapeSitemapsTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new ScrapeEmailsTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new ScrapePhoneNumbersTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new CheckSearchEngineIndexTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new ScrapeImagesTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new ScrapeHtmlTool));
+    ToolsManager::instance().addTool(std::unique_ptr<Tool>(new ScrapeMetaTool));
+    ToolsManager::instance().setCurrentTool(ToolsTexts.value(Tools::CHECK_URL_STATUS));
 
     createActions();
     createMenuBar();

@@ -11,15 +11,17 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Test REQUIRED)
 
-set(test_lib urlcheckertests)
+set(test_lib widgetslib)
 
 add_library(
     ${test_lib}
     OBJECT
+    ${CMAKE_SOURCE_DIR}/src/application/tools/tool.cpp
     ${CMAKE_SOURCE_DIR}/src/application/widgets/logwidget.cpp
     ${CMAKE_SOURCE_DIR}/src/application/widgets/proxieswidget.cpp
     ${CMAKE_SOURCE_DIR}/src/application/widgets/sidebarwidget.cpp
     ${CMAKE_SOURCE_DIR}/src/application/widgets/statusbarwidget.cpp
+    ${CMAKE_SOURCE_DIR}/src/application/widgets/toolswidget2.cpp
     ${CMAKE_SOURCE_DIR}/src/application/widgets/useragentswidget.cpp
 )
 target_include_directories(${test_lib} INTERFACE ${CMAKE_SOURCE_DIR}/src)
@@ -36,6 +38,7 @@ add_executable(
     test_proxieswidget.cpp
     test_sidebarwidget.cpp
     test_statusbarwidget.cpp
+    test_toolswidget.cpp
     test_useragentswidget.cpp
 )
 

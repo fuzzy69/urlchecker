@@ -44,21 +44,17 @@ enum Tools {
 
 Q_DECLARE_METATYPE(Tools)
 
-static QMap<Tools, QString> ToolsTexts
-{
+static QMap<Tools, QString> ToolsTexts {
     { Tools::CHECK_URL_STATUS, QStringLiteral("Check URL Status") },
-        { Tools::CHECK_ALEXA_RANK, QStringLiteral("Check Alexa Rank") },
-        { Tools::CHECK_SEARCH_ENGINE_INDEX, QStringLiteral("Check Search Engine Index") },
-        { Tools::SCRAPE_PROXIES, QStringLiteral("Scrape Proxies") },
-        { Tools::SCRAPE_LINKS, QStringLiteral("Scrape Links") },
-        { Tools::SCRAPE_SITEMAPS, QStringLiteral("Scrape Sitemaps") },
-        { Tools::SCRAPE_EMAILS, QStringLiteral("Scrape Emails") },
-        { Tools::SCRAPE_PHONE_NUMBERS, QStringLiteral("Scrape Phone Numbers") },
-        { Tools::SCRAPE_HTML, QStringLiteral("Scrape HTML") },
-        { Tools::SCRAPE_META, QStringLiteral("Scrape Meta") },
-        { Tools::TEST, QStringLiteral("Test") },
-#if APP_DEBUG
-        { Tools::SCRAPE_EMAILS, QStringLiteral("Scrape Emails") },
-#endif
-        { Tools::NONE, QStringLiteral("") },
+    { Tools::CHECK_ALEXA_RANK, QStringLiteral("Check Alexa Rank") },
+    { Tools::CHECK_SEARCH_ENGINE_INDEX, QStringLiteral("Check Search Engine Index") },
+    { Tools::SCRAPE_PROXIES, QStringLiteral("Scrape Proxies") },
+    { Tools::SCRAPE_LINKS, QStringLiteral("Scrape Links") },
+    { Tools::SCRAPE_SITEMAPS, QStringLiteral("Scrape Sitemaps") },
+    { Tools::SCRAPE_EMAILS, QStringLiteral("Scrape Emails") },
+    { Tools::SCRAPE_PHONE_NUMBERS, QStringLiteral("Scrape Phone Numbers") },
+    { Tools::SCRAPE_HTML, QStringLiteral("Scrape HTML") },
+    { Tools::SCRAPE_META, QStringLiteral("Scrape Meta") },
+    { Tools::TEST, QStringLiteral("Test") },
+    { Tools::NONE, QStringLiteral("") },
 };

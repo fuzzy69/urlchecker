@@ -5,6 +5,7 @@
 #include "test_proxieswidget.h"
 #include "test_sidebarwidget.h"
 #include "test_statusbarwidget.h"
+#include "test_toolswidget.h"
 #include "test_useragentswidget.h"
 
 int main(int argc, char** argv)
@@ -24,6 +25,7 @@ int main(int argc, char** argv)
     ASSERT_TEST(new TestProxiesWidget());
     ASSERT_TEST(new TestSideBarWidget());
     ASSERT_TEST(new TestStatusBarWidget());
+    ASSERT_TEST(new TestToolsWidget());
     ASSERT_TEST(new TestUserAgentsWidget());
 
     return status;

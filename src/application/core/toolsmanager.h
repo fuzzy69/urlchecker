@@ -20,6 +20,11 @@ public:
 private:
     explicit ToolsManager();
 
+#if UNIT_TESTING
+public:
+#else
+private:
+#endif
     std::unordered_map<Tools, std::unique_ptr<Tool>> m_toolIdToolMap;
     Tools m_currentTool;
 };

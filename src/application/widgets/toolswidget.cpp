@@ -2,7 +2,7 @@
 #include "../core/toolsmanager.h"
 #include "../icons.h"
 
-#include <QDebug>
+//#include <QDebug>
 
 ToolsWidget::ToolsWidget(QWidget* parent)
     : QTreeWidget(parent)
