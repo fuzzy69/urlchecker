@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <QString>
+#include <QVariant>
+
 /// Simple settings class for storing application settings into a JSON file
 class Settings final {
 public:
@@ -15,7 +18,7 @@ public:
     void setFilePath(const QString& filePath);
 
     /// Loads settings from a file. If file path is not passed it uses default path
-    void load(const QString& filePath = QString());
+    bool load(const QString& filePath = QString());
     /// Saves current settings to a file. If file path is not passed it uses default path
     void save(const QString& filePath = QString());
     /**

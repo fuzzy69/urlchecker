@@ -1,7 +1,6 @@
 ﻿#include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QVariantMap>
 
 #include "settings.h"
 
@@ -28,16 +27,18 @@ void Settings::setFilePath(const QString& filePath)
     m_settingsFilePath = filePath;
 }
 
-void Settings::load(const QString& filePath)
+bool Settings::load(const QString& filePath)
 {
     if (!QFile::exists((filePath.isEmpty() ? m_settingsFilePath : filePath)))
-        return;
+        return false;
     QFile file((filePath.isEmpty() ? m_settingsFilePath : filePath));
     file.open(QFile::ReadOnly);
     QByteArray buffer = file.readAll();
     file.close();
     QJsonDocument jsonDocument = QJsonDocument::fromJson(buffer);
     m_settings = jsonDocument.object().toVariantMap();
+
+    return true;
 }
 
 void Settings::save(const QString& filePath)
