@@ -150,8 +150,9 @@ if (EXISTS ${tidy_static_lib})
         src/common/text.cpp
         src/common/urlutils.cpp
         src/common/useragentmanager.cpp
-
     )
+
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME})
 
 if (ENABLE_TESTS)
     add_definitions(-DUNIT_TESTING=1)
@@ -168,13 +169,13 @@ add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_SOURCE_DIR}/docs/help.qhc
-        ${CMAKE_BINARY_DIR}/bin/docs/help.qhc
+        ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}/docs/help.qhc
 )
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         ${CMAKE_SOURCE_DIR}/docs/help.qch
-        ${CMAKE_BINARY_DIR}/bin/docs/help.qch
+        ${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}/docs/help.qch
 )
 
 # Tests

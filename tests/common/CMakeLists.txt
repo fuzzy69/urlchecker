@@ -25,3 +25,9 @@ add_executable(
 target_link_libraries(${test_name} PRIVATE catchmain)
 target_link_libraries(${test_name} PRIVATE ${test_lib})
 target_link_libraries(${test_name} PRIVATE stdc++fs)
+
+set_target_properties(
+    ${test_name}
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests
+)
