@@ -1,0 +1,10 @@
+{
+    "geometry": "01d9d0cb00020000000000a00000006a000005a100000352000000a100000082000005a00000035100000000000000000640",
+    "lastDirectory": "/mnt/ramdisk/urls.txt",
+    "parallelTasks": 1,
+    "proxiesFilePath": "/mnt/ramdisk/urlchecker/bin/data/proxies.txt",
+    "timeout": 15,
+    "useProxies": false,
+    "userAgentsFilePath": "/mnt/ramdisk/urlchecker/bin/data/user_agents.txt",
+    "windowState": "000000ff00000000fd00000000000005000000029200000004000000040000000800000008fc00000001000000020000000100000016006d00610069006e0054006f006f006c0042006100720100000000ffffffff0000000000000000"
+}
