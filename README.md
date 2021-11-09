@@ -1,4 +1,4 @@
-# URL Checker (**WIP**)
+﻿# URL Checker (**WIP**)
 
 
 ### About
@@ -60,12 +60,13 @@ cmake.exe --build . --config Debug
 
 Compiled application  executable and required files are located in bin directory. Run executable with:
 ```
-bin/urlchecker
+bin/urlchecker/urlchecker
 ```
 
 Run tests with:
 ```
-bin/testcommon
-bin/testtools
-bin/testwidgets
+bin/tests/testcommon
+bin/tests/testcore
+bin/tests/testtools
+bin/tests/testwidgets
 ```

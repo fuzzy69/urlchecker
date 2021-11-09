@@ -7,7 +7,7 @@
 //#include "application/texts.h"
 #include "test_toolswidget.h"
 #include "application/tools/tool.h"
-#include "application/widgets/toolswidget2.h"
+#include "application/widgets/toolswidget.h"
 
 void TestToolsWidget::testAddTool()
 {

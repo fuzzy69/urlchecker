@@ -23,4 +23,6 @@ TEST_CASE("Test settings class", "[settings]")
     REQUIRE(Settings::instance().value("parallelTasks").toInt() == 1);
     REQUIRE(!Settings::instance().value("useProxies").toBool());
     REQUIRE(Settings::instance().value("userAgentsFilePath").toString() == QStringLiteral("/mnt/ramdisk/urlchecker/bin/data/user_agents.txt"));
+    QVariantMap settings = Settings::instance().get();
+    REQUIRE(settings.key(QStringLiteral("parallelTasks")).toInt() == 1);
 }
