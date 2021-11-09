@@ -20,6 +20,9 @@ public:
     explicit WorkerManager(QObject* parent = nullptr);
     void init();
 
+    QMutex& lock() { return m_mutex; }
+    QQueue<QVariantMap>& inputData() { return m_inputDataQueue; }
+
 Q_SIGNALS:
     void jobStarted();
     void jobStopped();
@@ -27,9 +30,10 @@ Q_SIGNALS:
     void result(Tools toolId, const QVariantMap& resultData);
     void status(const int rowId, const ResultStatus& resultStatus);
     void progress(const int itemsSuccessfullyDone, const int itemsDone, const int totalItems, const double progressPercentage);
+    void log(const QString& message);
 
 public Q_SLOTS:
-    void startJob();
+    void startJob(QList<Worker*> workers);
     void stopJob();
     void onItemDone(bool itemSuccess);
     qint64 jobRuntime();
@@ -39,7 +43,6 @@ private:
     QList<Worker*> m_workers;
     QQueue<QVariantMap> m_inputDataQueue;
     QMutex m_mutex;
-    QVariantMap m_currentSettings;
 
     int m_itemsSuccessfullyDone;
     int m_itemsDone;

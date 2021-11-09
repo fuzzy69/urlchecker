@@ -20,6 +20,7 @@
 #include "../core/workermanager.h"
 #include "../icons.h"
 #include "../texts.h"
+#include "../tools/workerfactory.h"
 #include "../widgets/filesystemwidget.h"
 #include "../widgets/logwidget.h"
 #include "../widgets/statusbarwidget.h"
@@ -88,6 +89,7 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
         double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
         ApplicationBridge::instance().statusBarWidget()->setJobStatsStatus(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
+    connect(m_workerManager, &WorkerManager::log, m_logWidget, &LogWidget::onLog);
 
     // Application states
     connect(ApplicationStateMachine::self(), &ApplicationStateMachine::applicationStarted, this, &WorkspaceWidget::onApplicationStart);
@@ -207,12 +209,22 @@ void WorkspaceWidget::startJob()
     auto& currentTool = ToolsManager::instance().currentTool();
     // Clear input's table status column
     m_tablesWidget->inputTable()->setColumn(1, QVariant(QStringLiteral("")));
-    //
     m_tablesWidget->resultsTable()->resetColumns(currentTool.columns());
     m_tablesWidget->resultsTable()->setColumnRatios(currentTool.columnRatios());
-
-    m_workerManager->startJob();
-
+    Table* inputTable = m_tablesWidget->inputTable();
+    m_workerManager->inputData().clear();
+    for (int i = 0; i < inputTable->rowCount(); ++i) {
+        QString url(inputTable->cell(i, 0).toString());
+        m_workerManager->inputData().enqueue({ { QString("rowId"), QVariant(i) },
+            { QString("url"), QVariant(url) } });
+    }
+    QList<Worker*> workers;
+    QVariantMap currentSettings = Settings::instance().get();
+    const int threadCount = currentSettings.value(QStringLiteral(TEXT_THREADS)).toInt();
+    for (int i = 0; i < threadCount; ++i) {
+        workers.append(workerFactory(currentTool.id(), i + 1, &(m_workerManager->inputData()), &(m_workerManager->lock()), currentSettings));
+    }
+    m_workerManager->startJob(workers);
     m_tablesWidget->switchToResultsTab();
     m_tablesWidget->resultsTable()->setContextMenu(currentTool.contextMenu());
 }

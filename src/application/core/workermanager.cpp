@@ -3,14 +3,8 @@
 #include <QProgressBar>
 
 #include "../texts.h"
-#include "../tools/workerfactory.h"
-#include "../widgets/logwidget.h"
-#include "../widgets/tableswidget.h"
-#include "applicationbridge.h"
 #include "settings.h"
-#include "table.h"
 #include "thread.h"
-#include "toolsmanager.h"
 #include "worker.h"
 #include "workermanager.h"
 
@@ -20,7 +14,6 @@ WorkerManager::WorkerManager(QObject* parent)
     , m_workers(QList<Worker*>())
     , m_inputDataQueue(QQueue<QMap<QString, QVariant>>())
     , m_mutex(QMutex())
-    , m_currentSettings(QVariantMap())
     , m_itemsSuccessfullyDone(0)
     , m_itemsDone(0)
     , m_totalItems(0)
@@ -32,38 +25,21 @@ WorkerManager::WorkerManager(QObject* parent)
 
 void WorkerManager::init()
 {
-    Table* inputTable = ApplicationBridge::instance().tablesWidget()->inputTable();
-    m_totalItems = inputTable->rowCount();
+    m_totalItems = m_inputDataQueue.size();
     m_itemsSuccessfullyDone = 0;
     m_itemsDone = 0;
     m_jobStartTimestamp = QDateTime::currentSecsSinceEpoch();
     m_jobEndTimestamp = 0;
     m_threads.clear();
     m_workers.clear();
-    m_inputDataQueue.clear();
 }
 
-void WorkerManager::startJob()
+void WorkerManager::startJob(QList<Worker*> workers)
 {
     init();
-    auto& currentTool = ToolsManager::instance().currentTool();
-    Table* inputTable = ApplicationBridge::instance().tablesWidget()->inputTable();
-    for (int i = 0; i < inputTable->rowCount(); ++i) {
-        auto url = inputTable->cell(i, 0).toString();
-        m_inputDataQueue.enqueue({ { QString("rowId"), QVariant(i) },
-            { QString("url"), QVariant(url) } });
-    }
-    const int parallelTasks = Settings::instance().value(QStringLiteral(TEXT_THREADS)).toInt();
-    assert(parallelTasks > 0);
-    auto logWidget = ApplicationBridge::instance().logWidget();
-    m_currentSettings = Settings::instance().get();
-    for (int i = 0; i < parallelTasks; ++i) {
-        int workerId(i + 1);
+    for (int i = 0; i < workers.size(); ++i) {
+        Worker* worker = workers.at(i);
         auto thread = new Thread;
-        Worker* worker;
-
-        worker = workerFactory(currentTool.id(), workerId, &m_inputDataQueue, &m_mutex, m_currentSettings);
-
         m_threads.append(thread);
         m_workers.append(worker);
         m_workers[i]->moveToThread(m_threads[i]);
@@ -76,15 +52,14 @@ void WorkerManager::startJob()
         connect(worker, &Worker::finished, thread, &Thread::quit);
         connect(worker, &Worker::finished, worker, &Worker::deleteLater);
         connect(worker, &Worker::finished, [this] {
-            //            qDebug() << "Worker finished";
             m_jobEndTimestamp = QDateTime::currentSecsSinceEpoch();
         });
         connect(worker, &Worker::requestStop, worker, &Worker::stop);
-        connect(worker, &Worker::log, logWidget, &LogWidget::onLog);
+        connect(worker, &Worker::log, this, &WorkerManager::log);
     }
 
     Q_EMIT jobStarted();
-    for (int i = 0; i < parallelTasks; ++i) {
+    for (int i = 0; i < workers.size(); ++i) {
         m_threads[i]->start();
     }
 }
