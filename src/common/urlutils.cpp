@@ -7,13 +7,13 @@ using common::filesystem::File;
 
 namespace common {
 namespace url {
-    QList<QUrl> loadUrlsFromFile(const QString& filePath)
+    QList<QString> loadUrlsFromFile(const QString& filePath)
     {
-        QList<QUrl> urls;
+        QList<QString> urls;
         for (QString& line : File::readTextLines(filePath)) {
             line = line.trimmed();
             if (is_valid_url(line.toStdString()))
-                urls.append(QUrl(line));
+                urls.append(line);
         }
 
         return urls;

@@ -1,6 +1,4 @@
 ﻿#include <QApplication>
-#include <QDebug>
-#include <QWidget>
 
 #include "application/config.h"
 #include "application/icons.h"

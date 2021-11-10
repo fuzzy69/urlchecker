@@ -22,8 +22,6 @@
 #include <QToolBar>
 #include <QWidget>
 
-#include "libs/csv/single_include/csv.hpp"
-
 #include "config.h"
 #include "constants.h"
 #include "core/applicationbridge.h"
@@ -55,6 +53,7 @@
 #include "core/toolsmanager.h"
 #include "core/workermanager.h"
 
+#include "../common/csvwriter.h"
 #include "../common/file.h"
 #include "../common/proxymanager.h"
 #include "../common/proxyutils.h"
@@ -365,11 +364,8 @@ void MainWindow::importUrlFile(const QString& filePath)
         if (pushedButton == QMessageBox::No)
             inputTable->removeAllRows();
     }
-    for (auto& line : File::readTextLines(filePath)) {
-        line = line.trimmed();
-        // TODO: validate URL
-        if (line.length() > 0)
-            inputTable->appendRow(QStringList() << line << "");
+    for (auto& url : common::url::loadUrlsFromFile(filePath)) {
+        inputTable->appendRow(QStringList() << url << "");
     }
     m_lastDirectory = QDir(filePath).absolutePath();
     m_workspaceWidget->tablesWidget()->switchToSourcesTab();
@@ -401,33 +397,18 @@ void MainWindow::exportResults()
         QStringList lines;
         // CSV
         if (fileInfo.suffix().toLower() == QStringLiteral("csv")) {
-            std::ofstream fstream(filePath.toStdString());
-            std::stringstream sstream;
-            csv::CSVWriter<std::ofstream> writer = csv::make_csv_writer(fstream);
-            {
-                std::vector<std::string> row;
-                for (const auto& column : resultsTable->columnNames()) {
-                    row.push_back(column.toStdString());
-                }
-                writer << row;
+            std::vector<std::string> columns;
+            for (const auto& column : resultsTable->columnNames()) {
+                columns.push_back(column.toStdString());
             }
+            CSVWriter csvWriter(columns, filePath.toStdString());
             for (int i = 0; i < resultsTable->rowCount(); ++i) {
                 std::vector<std::string> row;
                 for (int j = 0; j < resultsTable->columnCount(); ++j) {
                     row.push_back(resultsTable->cell(i, j).toString().toStdString());
                 }
-                writer << row;
+                csvWriter.write_row(row);
             }
-            fstream << sstream.str();
-            sstream.str(std::string());
-            //            lines << resultsTable->columnNames().join(QStringLiteral(","));
-            //            for (int i = 0; i < resultsTable->rowCount(); ++i) {
-            //                QStringList cells;
-            //                for (int j = 0; j < resultsTable->columnCount(); ++j) {
-            //                    cells.append(resultsTable->cell(i, j).toString());
-            //                }
-            //                lines << cells.join(QStringLiteral(","));
-            //            }
             // Text
         } else if (fileInfo.suffix().toLower() == QStringLiteral("txt")) {
             for (int i = 0; i < resultsTable->rowCount(); ++i) {
@@ -438,8 +419,7 @@ void MainWindow::exportResults()
             QMessageBox::warning(this, QStringLiteral("Export Results"), QStringLiteral("Unsupported file type!"));
             return;
         }
-        //        File::writeTextFile(filePath, lines);
-        m_lastDirectory = QDir(filePath).absolutePath();
+        m_lastDirectory = QFileInfo(filePath).absoluteDir().absolutePath();
     }
 }
 

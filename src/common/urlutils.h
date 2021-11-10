@@ -6,15 +6,12 @@
 #include <QString>
 #include <QUrl>
 
+namespace common {
+namespace url {
+    QList<QString> loadUrlsFromFile(const QString& filePath);
 
-namespace common
-{
-namespace url
-{
-QList<QUrl> loadUrlsFromFile(const QString& filePath);
+    void saveUrlsToFile(const QString& filePath, const QList<QUrl>& urls);
 
-void saveUrlsToFile(const QString& filePath, const QList<QUrl>& urls);
-
-bool is_valid_url(const std::string& url);
+    bool is_valid_url(const std::string& url);
 }
 }

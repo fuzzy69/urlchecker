@@ -142,6 +142,7 @@ if (EXISTS ${tidy_static_lib})
         src/application/widgets/useragentswidget.cpp
         src/application/widgets/workspacewidget.cpp
 
+        src/common/csvwriter.cpp
         src/common/file.cpp
         src/common/httpproxy.cpp
         src/common/proxymanager.cpp
