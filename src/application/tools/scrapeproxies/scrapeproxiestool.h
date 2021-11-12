@@ -12,7 +12,7 @@ class ScrapeProxiesTool : public Tool {
 public:
     ScrapeProxiesTool();
 
-public Q_SLOTS:
-    void addProxiesToProxiesList();
-    void copyProxiesToSourcesTable();
+    //public Q_SLOTS:
+    //    void addProxiesToProxiesList();
+    //    void copyProxiesToSourcesTable();
 };

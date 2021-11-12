@@ -24,7 +24,7 @@
 
 #include "config.h"
 #include "constants.h"
-#include "core/applicationbridge.h"
+//#include "core/applicationbridge.h"
 #include "core/applicationstatemachine.h"
 #include "core/misc.h"
 #include "core/recentfiles.h"
@@ -237,10 +237,10 @@ void MainWindow::createWidgets()
 
     setCentralWidget(m_centralWidget);
 
-    ApplicationBridge::instance().setSettingsWidget(m_settingsWidget);
-    ApplicationBridge::instance().setProxiesWidget(m_proxiesWidget);
-    ApplicationBridge::instance().setWorkspaceWidget(m_workspaceWidget);
-    ApplicationBridge::instance().setStatusBarWidget(m_statusBarWidget);
+    //    ApplicationBridge::instance().setSettingsWidget(m_settingsWidget);
+    //    ApplicationBridge::instance().setProxiesWidget(m_proxiesWidget);
+    //    ApplicationBridge::instance().setWorkspaceWidget(m_workspaceWidget);
+    //    ApplicationBridge::instance().setStatusBarWidget(m_statusBarWidget);
 }
 
 void MainWindow::createConnections()
@@ -294,6 +294,12 @@ void MainWindow::createConnections()
     });
     connect(m_statusBarWidget, &StatusBarWidget::toggleLogWidget, [this](bool visible) {
         m_workspaceWidget->logWidget()->setVisible(visible);
+    });
+    connect(m_workspaceWidget->workerManager(), &WorkerManager::progress, [this](const int itemsSuccessfullyDone, const int itemsDone, const int totalItems, const double progressPercentage) {
+        Q_UNUSED(progressPercentage)
+        //        m_progressBar->setValue(static_cast<int>(progressPercentage));
+        double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
+        m_statusBarWidget->setJobStatsStatus(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
 }
 

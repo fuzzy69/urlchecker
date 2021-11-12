@@ -13,7 +13,7 @@
 #include <QUrl>
 #include <QVBoxLayout>
 
-#include "../core/applicationbridge.h"
+//#include "../core/applicationbridge.h"
 #include "../core/applicationstatemachine.h"
 #include "../core/settings.h"
 #include "../core/table.h"
@@ -72,10 +72,10 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
 
     m_workerManager = new WorkerManager(this);
 
-    ApplicationBridge::instance().setToolsWidget(m_toolsWidget);
-    ApplicationBridge::instance().setTablesWidget(m_tablesWidget);
-    ApplicationBridge::instance().setLogWidget(m_logWidget);
-    ApplicationBridge::instance().setProgressBar(m_progressBar);
+    //    ApplicationBridge::instance().setToolsWidget(m_toolsWidget);
+    //    ApplicationBridge::instance().setTablesWidget(m_tablesWidget);
+    //    ApplicationBridge::instance().setLogWidget(m_logWidget);
+    //    ApplicationBridge::instance().setProgressBar(m_progressBar);
 
     connect(m_startPushButton, &QPushButton::clicked, this, &WorkspaceWidget::startJob);
     connect(m_stopPushButton, &QPushButton::clicked, this, &WorkspaceWidget::stopJob);
@@ -85,9 +85,12 @@ WorkspaceWidget::WorkspaceWidget(QWidget* parent)
     connect(m_workerManager, &WorkerManager::jobStarted, ApplicationStateMachine::self(), &ApplicationStateMachine::jobStart);
     connect(m_workerManager, &WorkerManager::jobStopped, ApplicationStateMachine::self(), &ApplicationStateMachine::jobStop);
     connect(m_workerManager, &WorkerManager::progress, [this](const int itemsSuccessfullyDone, const int itemsDone, const int totalItems, const double progressPercentage) {
+        Q_UNUSED(itemsSuccessfullyDone)
+        Q_UNUSED(itemsDone)
+        Q_UNUSED(totalItems)
         m_progressBar->setValue(static_cast<int>(progressPercentage));
-        double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
-        ApplicationBridge::instance().statusBarWidget()->setJobStatsStatus(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
+        //        double successRatio = static_cast<double>(itemsSuccessfullyDone) / itemsDone * 100.;
+        //        ApplicationBridge::instance().statusBarWidget()->setJobStatsStatus(QString(" Completed %1 / %2 of %3 items. Success ratio %4% ").arg(itemsSuccessfullyDone).arg(itemsDone).arg(totalItems).arg(successRatio, 0, 'f', 1));
     });
     connect(m_workerManager, &WorkerManager::log, m_logWidget, &LogWidget::onLog);
 
