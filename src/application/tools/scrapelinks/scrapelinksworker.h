@@ -7,12 +7,12 @@
 class SimpleDOM;
 class TidyHtml;
 
-class ScrapeLinkskWorker final : public Worker {
+class ScrapeLinksWorker final : public Worker {
     Q_OBJECT
 
 public:
-    ScrapeLinkskWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent = nullptr);
-    ~ScrapeLinkskWorker() override;
+    ScrapeLinksWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent = nullptr);
+    ~ScrapeLinksWorker() override;
 
 protected:
     void doWork(const QVariantMap& inputData) override;

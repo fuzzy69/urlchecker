@@ -31,7 +31,7 @@ Worker* workerFactory(int id, int workerId, QQueue<QVariantMap>* inputDataQueue,
         worker = new ScrapeProxiesWorker(workerId, inputDataQueue, mutex, settings);
         break;
     case Tools::SCRAPE_LINKS:
-        worker = new ScrapeLinkskWorker(workerId, inputDataQueue, mutex, settings);
+        worker = new ScrapeLinksWorker(workerId, inputDataQueue, mutex, settings);
         break;
     case Tools::SCRAPE_SITEMAPS:
         worker = new ScrapeSitemapskWorker(workerId, inputDataQueue, mutex, settings);

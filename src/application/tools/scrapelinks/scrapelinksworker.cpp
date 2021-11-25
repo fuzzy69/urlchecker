@@ -23,7 +23,7 @@
 
 using common::text::starts_with;
 
-ScrapeLinkskWorker::ScrapeLinkskWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
+ScrapeLinksWorker::ScrapeLinksWorker(int id, QQueue<QVariantMap>* inputDataQueue, QMutex* mutex, const QVariantMap& settings, QObject* parent)
     : Worker(id, inputDataQueue, mutex, settings, parent)
     , m_dom(std::make_unique<SimpleDOM>())
     , m_tidy(std::make_unique<TidyHtml>())
@@ -31,11 +31,11 @@ ScrapeLinkskWorker::ScrapeLinkskWorker(int id, QQueue<QVariantMap>* inputDataQue
     m_toolId = Tools::SCRAPE_LINKS;
 }
 
-ScrapeLinkskWorker::~ScrapeLinkskWorker()
+ScrapeLinksWorker::~ScrapeLinksWorker()
 {
 }
 
-void ScrapeLinkskWorker::doWork(const QVariantMap& inputData)
+void ScrapeLinksWorker::doWork(const QVariantMap& inputData)
 {
     int rowId = inputData[FIELD_ROW_ID].toInt();
     QUrl url(inputData[FIELD_URL].toString());
